@@ -45,8 +45,7 @@ public class UniRemoveCommand extends AbstractCommand<Node> {
         final InstanceIdentifier<?> removedUniIid = dataObject.getRootPath().getRootIdentifier()
                                                                     .firstIdentifierOf(UniAugmentation.class);
         if (uniAugmentation != null) {
-            final OvsdbNodeRef ovsNodedRef = uniAugmentation.getOvsdbNodeRef();
-            final InstanceIdentifier<Node> ovsdbNodeIid = ovsNodedRef.getValue().firstIdentifierOf(Node.class);
+            final InstanceIdentifier<Node> ovsdbNodeIid = uniAugmentation.getOvsdbNodeRef().firstIdentifierOf(Node.class);
             final Optional<Node> optionalNode = MdsalUtils.readNode(dataBroker,
                                                                LogicalDatastoreType.OPERATIONAL,
                                                                ovsdbNodeIid);

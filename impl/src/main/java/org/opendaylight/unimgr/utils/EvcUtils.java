@@ -57,7 +57,6 @@ public class EvcUtils {
             final InstanceIdentifier<Node> ovsdbNodeIid =
                                               uniAugmentation
                                              .getOvsdbNodeRef()
-                                             .getValue()
                                              .firstIdentifierOf(Node.class);
             final Optional<Node> optionalOvsdNode =
                     MdsalUtils.readNode(dataBroker,

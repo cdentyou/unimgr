@@ -52,10 +52,9 @@ public class OvsNodeAddCommand extends AbstractCommand<Node> {
                 for (final Node uniNode: uniNodes) {
                     final UniAugmentation uniAugmentation = uniNode.getAugmentation(UniAugmentation.class);
                     if (uniAugmentation.getOvsdbNodeRef() != null
-                            && uniAugmentation.getOvsdbNodeRef().getValue() != null) {
+                            && uniAugmentation.getOvsdbNodeRef() != null) {
                         final InstanceIdentifier<Node> ovsdbNodeRefIid = uniAugmentation
                                                                     .getOvsdbNodeRef()
-                                                                    .getValue()
                                                                     .firstIdentifierOf(Node.class);
                         if (ovsdbNodeRefIid.equals(ovsdbIid)) {
                             final Optional<Node> optionalOvsdbNode = MdsalUtils.readNode(dataBroker,

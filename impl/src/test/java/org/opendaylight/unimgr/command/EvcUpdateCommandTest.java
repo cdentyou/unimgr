@@ -104,7 +104,7 @@ public class EvcUpdateCommandTest {
         final Optional<Node> optionalOvsdbNode = mock(Optional.class);
         final Optional<EvcAugmentation> optionalEvcAugm = mock(Optional.class);
         final Node node = mock(Node.class);
-        final OvsdbNodeRef ovsNodedRef = mock(OvsdbNodeRef.class);
+        final InstanceIdentifier<?> ovsNodedRef = mock(InstanceIdentifier.class);
         final InstanceIdentifier evcKey = InstanceIdentifier
                 .create(NetworkTopology.class)
                 .child(Topology.class, new TopologyKey(UnimgrConstants.EVC_TOPOLOGY_ID))
@@ -126,7 +126,7 @@ public class EvcUpdateCommandTest {
         when(formerEvc.getUniDest()).thenReturn(formerUnisDest);
         when(formerUniSource.getIpAddress()).thenReturn(ipAddressSource);
         when(formerUniDest.getIpAddress()).thenReturn(ipAddressDest);
-        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsNodedRef);
+//        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsNodedRef);
         when(evcAugmentation.getUniSource()).thenReturn(unisSource);
         when(evcAugmentation.getUniDest()).thenReturn(unisDest);
         when(uniSource.getIpAddress()).thenReturn(ipAddressSource);
@@ -144,7 +144,7 @@ public class EvcUpdateCommandTest {
         when(optionalOvsdbNode.isPresent()).thenReturn(true);
         when(optionalOvsdbNode.get()).thenReturn(node);
         when(node.getAugmentation(any(Class.class))).thenReturn(uniAugmentation);
-        when(ovsNodedRef.getValue()).thenReturn(evcKey);
+        when(ovsNodedRef).thenReturn(evcKey);
 
         PowerMockito.doNothing().when(EvcUtils.class, "deleteEvcData", dataBroker, optionalOvsdbNode);
         when(MdsalUtils.readNode(any(DataBroker.class), any(LogicalDatastoreType.class),

@@ -84,7 +84,6 @@ public class UniUpdateCommandTest {
         final ConnectionInfo connectionInfo = mock(ConnectionInfo.class);
         final IpAddress ipAddress = mock(IpAddress.class);
         final Ipv4Address ipv4Address = mock(Ipv4Address.class);
-        final OvsdbNodeRef ovsNodedRef = mock(OvsdbNodeRef.class);
         final Node node = mock(Node.class);
         final NodeId nodeId = mock(NodeId.class);
         final InstanceIdentifier uniKey = InstanceIdentifier
@@ -98,14 +97,13 @@ public class UniUpdateCommandTest {
         when(optionalOvsdbNode.get()).thenReturn(node);
         when(uniAugmentation.getIpAddress()).thenReturn(ipAddress);
         when(uniAugmentation.getSpeed()).thenReturn(mock(Speed.class));
-        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsNodedRef);
+        when((InstanceIdentifier<Node>)uniAugmentation.getOvsdbNodeRef()).thenReturn(uniKey);
         when(ovsdbNodeAugmentation.getConnectionInfo()).thenReturn(connectionInfo);
         when(ovsdbNodeAugmentation.getManagedNodeEntry()).thenReturn(managedNodeEntries);
         when(connectionInfo.getRemoteIp()).thenReturn(ipAddress);
         when(ipAddress.getIpv4Address()).thenReturn(ipv4Address);
         when(ipv4Address.toString()).thenReturn("ipv4Address_test");
         when(ipv4Address.getValue()).thenReturn("ipv4AddressValue_test");
-        when(ovsNodedRef.getValue()).thenReturn(uniKey);
         when(node.getAugmentation(any(Class.class))).thenReturn(uniAugmentation);
         when(node.getNodeId()).thenReturn(nodeId);
         when(nodeId.toString()).thenReturn("ovsdbNodeId_test");

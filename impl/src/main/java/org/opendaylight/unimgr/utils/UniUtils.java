@@ -218,10 +218,9 @@ public class UniUtils {
                                      Node ovsdbNode,
                                      DataBroker dataBroker) {
         final InstanceIdentifier<Node> ovsdbNodeIid = UnimgrMapper.getOvsdbNodeIid(ovsdbNode.getNodeId());
-        final OvsdbNodeRef ovsdbNodeRef = new OvsdbNodeRef(ovsdbNodeIid);
         final UniAugmentationBuilder updatedUniBuilder = new UniAugmentationBuilder(uni);
-        if (ovsdbNodeRef != null) {
-            updatedUniBuilder.setOvsdbNodeRef(ovsdbNodeRef);
+        if (ovsdbNodeIid != null) {
+            updatedUniBuilder.setOvsdbNodeRef(ovsdbNodeIid);
         }
         final Optional<Node> optionalNode = MdsalUtils.readNode(dataBroker,
                                                LogicalDatastoreType.CONFIGURATION,
@@ -254,10 +253,9 @@ public class UniUtils {
                                      UniAugmentation uni,
                                      InstanceIdentifier<?> ovsdbNodeIid,
                                      DataBroker dataBroker) {
-        final OvsdbNodeRef ovsdbNodeRef = new OvsdbNodeRef(ovsdbNodeIid);
         final UniAugmentationBuilder updatedUniBuilder = new UniAugmentationBuilder(uni);
-        if (ovsdbNodeRef != null) {
-            updatedUniBuilder.setOvsdbNodeRef(ovsdbNodeRef);
+        if (ovsdbNodeIid != null) {
+            updatedUniBuilder.setOvsdbNodeRef(ovsdbNodeIid);
         }
         final Optional<Node> optionalNode = MdsalUtils.readNode(dataBroker,
                                                LogicalDatastoreType.CONFIGURATION,

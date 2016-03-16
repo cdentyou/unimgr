@@ -15,7 +15,6 @@ import org.opendaylight.unimgr.api.AbstractCommand;
 import org.opendaylight.unimgr.utils.MdsalUtils;
 import org.opendaylight.unimgr.utils.OvsdbUtils;
 import org.opendaylight.unimgr.utils.UniUtils;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ovsdb.rev150105.OvsdbNodeRef;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.unimgr.rev151012.UniAugmentation;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -49,8 +48,8 @@ public class UniUpdateCommand extends AbstractCommand<Node> {
             Node ovsdbNode;
             if (updatedUni.getOvsdbNodeRef() != null) {
                 LOG.info("OVSDB NODE ref retreive for updated UNI {}", updatedUni.getOvsdbNodeRef());
-                final OvsdbNodeRef ovsdbNodeRef = updatedUni.getOvsdbNodeRef();
-                final Optional<Node> optOvsdbNode = MdsalUtils.readNode(dataBroker,LogicalDatastoreType.OPERATIONAL, ovsdbNodeRef.getValue());
+                final InstanceIdentifier<?> ovsdbNodeRef = updatedUni.getOvsdbNodeRef();
+                final Optional<Node> optOvsdbNode = MdsalUtils.readNode(dataBroker,LogicalDatastoreType.OPERATIONAL, ovsdbNodeRef);
                 if(optOvsdbNode.isPresent()) {
                     ovsdbNode= optOvsdbNode.get();
                     LOG.info("Retrieved the OVSDB node {}", ovsdbNode.getNodeId());

@@ -78,7 +78,6 @@ public class UniRemoveCommandTest {
     @Test
     public void testExecute() {
         final UniAugmentation uniAugmentation = mock(UniAugmentation.class);
-        final OvsdbNodeRef ovsNodedRef = mock(OvsdbNodeRef.class);
         final Optional<Node> optionalNode = mock(Optional.class);
         final InstanceIdentifier instanceOfNode = mock(InstanceIdentifier.class);
         final InstanceIdentifier uniKey = InstanceIdentifier
@@ -91,8 +90,7 @@ public class UniRemoveCommandTest {
         final Queues queues = mock(Queues.class);
         when(uniNode.getAugmentation(UniAugmentation.class)).thenReturn(uniAugmentation);
         when(uniAugmentation.getIpAddress()).thenReturn(mock(IpAddress.class));
-        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsNodedRef);
-        when(ovsNodedRef.getValue()).thenReturn(uniKey);
+        when((InstanceIdentifier<Node>)uniAugmentation.getOvsdbNodeRef()).thenReturn(uniKey);
         when(optionalNode.isPresent()).thenReturn(true);
         when(optionalNode.get()).thenReturn(ovsdbNode);
         when(ovsdbNode.getAugmentation(OvsdbNodeAugmentation.class)).thenReturn(ovsdbNodeAugmentation);

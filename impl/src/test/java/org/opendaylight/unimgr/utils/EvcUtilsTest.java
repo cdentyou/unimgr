@@ -190,13 +190,13 @@ public class EvcUtilsTest {
         when(optionalUni.get()).thenReturn(node);
         UniAugmentation uniAugmentation = mock(UniAugmentation.class);
         when(node.getAugmentation(UniAugmentation.class)).thenReturn(uniAugmentation);
-        OvsdbNodeRef ovsdbNodeRef = mock(OvsdbNodeRef.class);
+
         InstanceIdentifier<Node> iid = InstanceIdentifier
                 .create(NetworkTopology.class)
                 .child(Topology.class, new TopologyKey(UnimgrConstants.UNI_TOPOLOGY_ID))
                 .child(Node.class, new NodeKey(new NodeId("uni://10.0.0.1")));
-        when((InstanceIdentifier<Node>) ovsdbNodeRef.getValue()).thenReturn(iid);
-        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsdbNodeRef);
+
+        when((InstanceIdentifier<Node>)uniAugmentation.getOvsdbNodeRef()).thenReturn(iid);
         MemberModifier.suppress(MemberMatcher.method(MdsalUtils.class, "readNode", DataBroker.class, LogicalDatastoreType.class, InstanceIdentifier.class));
         Optional<Node> optionalOvsdNode = mock(Optional.class);
         when(MdsalUtils.readNode(any(DataBroker.class), any(LogicalDatastoreType.class), any(InstanceIdentifier.class))).thenReturn(optionalOvsdNode);

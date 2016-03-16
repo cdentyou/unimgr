@@ -197,9 +197,9 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
                     uni.getIpAddress(), LogicalDatastoreType.OPERATIONAL);
             Node ovsdbNode;
             if (uni.getOvsdbNodeRef() != null) {
-                final OvsdbNodeRef ovsdbNodeRef = uni.getOvsdbNodeRef();
+                final InstanceIdentifier<?> ovsdbNodeRef = uni.getOvsdbNodeRef();
                 ovsdbNode= MdsalUtils.readNode(dataBroker,
-                        LogicalDatastoreType.OPERATIONAL, ovsdbNodeRef.getValue()).get();
+                        LogicalDatastoreType.OPERATIONAL, ovsdbNodeRef).get();
 
                 UniUtils.updateUniNode(LogicalDatastoreType.OPERATIONAL, uniIID, uni, ovsdbNode, dataBroker);
                 LOG.trace("UNI updated {}.", uni.getIpAddress().getIpv4Address());

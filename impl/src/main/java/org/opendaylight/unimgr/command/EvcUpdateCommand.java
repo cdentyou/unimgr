@@ -142,14 +142,12 @@ public class EvcUpdateCommand extends AbstractCommand<Link> {
                         MdsalUtils.readNode(dataBroker,
                                 LogicalDatastoreType.OPERATIONAL,
                                 sourceUniAugmentation
-                                .getOvsdbNodeRef()
-                                .getValue());
+                                .getOvsdbNodeRef());
                 final Optional<Node> optionalDestinationOvsdbNode =
                         MdsalUtils.readNode(dataBroker,
                                 LogicalDatastoreType.OPERATIONAL,
                                 destinationUniAugmentation
-                                .getOvsdbNodeRef()
-                                .getValue());
+                                .getOvsdbNodeRef());
                 if (optionalSourceOvsdbNode.isPresent() && optionalDestinationOvsdbNode.isPresent()) {
                     // Retrieve the source and/or destination bridge
                     final InstanceIdentifier<Node> sourceBridgeIid =

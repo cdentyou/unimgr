@@ -45,10 +45,9 @@ public class UniAddCommand extends AbstractCommand<Node>{
                 LOG.info("New UNI created {}.", uni.getIpAddress().getIpv4Address());
                 // We assume the ovs is in active mode tcp:ipAddress:6640
                 if (uni.getOvsdbNodeRef() != null) {
-                    final OvsdbNodeRef ovsdbNodeRef = uni.getOvsdbNodeRef();
                     final Optional<Node> optionalNode = MdsalUtils.readNode(dataBroker,
                                                                        LogicalDatastoreType.OPERATIONAL,
-                                                                       ovsdbNodeRef.getValue());
+                                                                       uni.getOvsdbNodeRef());
                     if (!optionalNode.isPresent()) {
                         LOG.info("Invalid OVSDB node instance identifier specified, "
                                + "attempting to retrieve the node.");

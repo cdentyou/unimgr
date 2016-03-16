@@ -110,7 +110,7 @@ public class OvsdbUtils {
             UniAugmentation uni,
             String bridgeName) {
         LOG.info("Creating a bridge on node {}", ovsdbNode.getNodeId().getValue());
-        final InstanceIdentifier<Node> ovsdbNodeIid = uni.getOvsdbNodeRef().getValue().firstIdentifierOf(Node.class);
+        final InstanceIdentifier<Node> ovsdbNodeIid = uni.getOvsdbNodeRef().firstIdentifierOf(Node.class);
         if (ovsdbNodeIid != null) {
             final NodeBuilder bridgeNodeBuilder = new NodeBuilder();
             final InstanceIdentifier<Node> bridgeIid = UnimgrMapper.createOvsdbBridgeNodeIid(ovsdbNode,
@@ -255,13 +255,13 @@ public class OvsdbUtils {
      * @throws Exception if the Ovsdb Node Reference cannot be found.
      */
     public static OvsdbBridgeAugmentation createOvsdbBridgeAugmentation(Uni uni) throws Exception {
-        final OvsdbNodeRef ovsdbNodeRef = uni.getOvsdbNodeRef();
-        if ((ovsdbNodeRef != null) && (ovsdbNodeRef.getValue() != null)) {
+        final InstanceIdentifier<?> ovsdbNodeRef = uni.getOvsdbNodeRef();
+        if (ovsdbNodeRef != null) {
             final UUID bridgeUuid = UUID.randomUUID();
             final OvsdbBridgeAugmentation ovsdbBridge = new OvsdbBridgeAugmentationBuilder()
                     .setBridgeName(
                             new OvsdbBridgeName(UnimgrConstants.DEFAULT_BRIDGE_NAME))
-                    .setManagedBy(ovsdbNodeRef)
+                    .setManagedBy(new OvsdbNodeRef(ovsdbNodeRef))
                     .setBridgeUuid(
                             new Uuid(bridgeUuid.toString()))
                     .build();

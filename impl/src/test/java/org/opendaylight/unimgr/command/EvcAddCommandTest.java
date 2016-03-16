@@ -90,7 +90,7 @@ public class EvcAddCommandTest {
         final Ipv4Address ipv4Address = mock(Ipv4Address.class);
         final Optional<Node> optionalOvsdbNode = mock(Optional.class);
         final Node node = mock(Node.class);
-        final OvsdbNodeRef ovsNodedRef = mock(OvsdbNodeRef.class);
+        final InstanceIdentifier ovsNodedRef = mock(InstanceIdentifier.class);
         final InstanceIdentifier evcKey = InstanceIdentifier
                 .create(NetworkTopology.class)
                 .child(Topology.class, new TopologyKey(UnimgrConstants.EVC_TOPOLOGY_ID))
@@ -113,7 +113,7 @@ public class EvcAddCommandTest {
         when(optionalOvsdbNode.isPresent()).thenReturn(true);
         when(optionalOvsdbNode.get()).thenReturn(node);
         when(node.getAugmentation(any(Class.class))).thenReturn(uniAugmentation);
-        when(ovsNodedRef.getValue()).thenReturn(evcKey);
+        when(ovsNodedRef).thenReturn(evcKey);
 
         when(MdsalUtils.readLink(any(DataBroker.class), any(LogicalDatastoreType.class),
                 any(InstanceIdentifier.class))).thenReturn(optLinks);

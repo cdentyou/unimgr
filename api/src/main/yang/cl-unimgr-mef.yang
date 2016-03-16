@@ -26,7 +26,6 @@ module cl-unimgr-mef {
     import ietf-inet-types { prefix "inet"; revision-date 2010-09-24; }
     import network-topology { prefix "topo"; revision-date 2013-10-21; }
     import yang-ext { prefix "ext"; }
-    import ovsdb { prefix "ovsdb"; revision-date 2015-01-05;}
 
     revision "2015-10-12" {
         description "Updated revision of the unimgr model.";
@@ -60,7 +59,7 @@ module cl-unimgr-mef {
     // represent simplification of MEF Per Uni Attributes
     grouping uni {
         leaf ovsdb-node-ref {
-            type ovsdb:ovsdb-node-ref;
+            type instance-identifier;
             description "A reference to the ovsdb node.";
         }
         leaf physical-medium {

@@ -153,10 +153,9 @@ public class OvsdbUtilsTest {
                         new TopologyKey(UnimgrConstants.OVSDB_TOPOLOGY_ID))
                 .child(Node.class,
                         new NodeKey(OVSDB_NODE_ID));
-        OvsdbNodeRef ovsdbNodeRef = new OvsdbNodeRef(nodeIid);
         UniAugmentation uni = new UniAugmentationBuilder()
                                       .setIpAddress(new IpAddress(new Ipv4Address("192.168.1.1")))
-                                      .setOvsdbNodeRef(ovsdbNodeRef)
+                                      .setOvsdbNodeRef(nodeIid)
                                       .build();
 
         when(dataBroker.newWriteOnlyTransaction()).thenReturn(transaction);
@@ -261,13 +260,13 @@ public class OvsdbUtilsTest {
 
     @Test
     public void testCreateOvsdbBridgeAugmentation() throws Exception {
-        OvsdbNodeRef ovsdbNodeRef = new OvsdbNodeRef(PowerMockito.mock(InstanceIdentifier.class));
+        InstanceIdentifier<?> ovsdbNodeRef = PowerMockito.mock(InstanceIdentifier.class);
         UniAugmentation uni = new UniAugmentationBuilder().setOvsdbNodeRef(ovsdbNodeRef).build();
         UUID bridgeUuid = PowerMockito.mock(UUID.class);
         PowerMockito.when(UUID.randomUUID()).thenReturn(bridgeUuid);
         OvsdbBridgeAugmentation ovsdbNode = new OvsdbBridgeAugmentationBuilder()
                                                     .setBridgeName(new OvsdbBridgeName(UnimgrConstants.DEFAULT_BRIDGE_NAME))
-                                                    .setManagedBy(ovsdbNodeRef)
+                                                    .setManagedBy(new OvsdbNodeRef(ovsdbNodeRef))
                                                     .setBridgeUuid(new Uuid(bridgeUuid.toString()))
                                                     .build();
         assertEquals(ovsdbNode, OvsdbUtils.createOvsdbBridgeAugmentation(uni));
