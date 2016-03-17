@@ -126,7 +126,6 @@ public class EvcUpdateCommandTest {
         when(formerEvc.getUniDest()).thenReturn(formerUnisDest);
         when(formerUniSource.getIpAddress()).thenReturn(ipAddressSource);
         when(formerUniDest.getIpAddress()).thenReturn(ipAddressDest);
-//        when(uniAugmentation.getOvsdbNodeRef()).thenReturn(ovsNodedRef);
         when(evcAugmentation.getUniSource()).thenReturn(unisSource);
         when(evcAugmentation.getUniDest()).thenReturn(unisDest);
         when(uniSource.getIpAddress()).thenReturn(ipAddressSource);
@@ -144,7 +143,6 @@ public class EvcUpdateCommandTest {
         when(optionalOvsdbNode.isPresent()).thenReturn(true);
         when(optionalOvsdbNode.get()).thenReturn(node);
         when(node.getAugmentation(any(Class.class))).thenReturn(uniAugmentation);
-        when(ovsNodedRef).thenReturn(evcKey);
 
         PowerMockito.doNothing().when(EvcUtils.class, "deleteEvcData", dataBroker, optionalOvsdbNode);
         when(MdsalUtils.readNode(any(DataBroker.class), any(LogicalDatastoreType.class),

@@ -113,7 +113,6 @@ public class EvcAddCommandTest {
         when(optionalOvsdbNode.isPresent()).thenReturn(true);
         when(optionalOvsdbNode.get()).thenReturn(node);
         when(node.getAugmentation(any(Class.class))).thenReturn(uniAugmentation);
-        when(ovsNodedRef).thenReturn(evcKey);
 
         when(MdsalUtils.readLink(any(DataBroker.class), any(LogicalDatastoreType.class),
                 any(InstanceIdentifier.class))).thenReturn(optLinks);
