@@ -47,6 +47,11 @@ Authorization: :basic-auth
   ]
 }
 
+# Delete UNI
+DELETE :host/restconf/config/network-topology:network-topology/topology/unimgr:uni/node/uni:%2f%2f192.168.2.12
+Authorization: :basic-auth
+
+
 # OVSDB
 GET :host/restconf/ovsdb:ovsdb/
 Authorization: :basic-auth
