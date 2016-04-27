@@ -1,0 +1,24 @@
+# -*- restclient -*-
+# Settings
+:host = http://localhost:8181
+:basic-auth := (format "Basic %s" (base64-encode-string (format "%s:%s" "admin" "admin")))
+
+# List ForwardingConstruct
+GET :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstructList
+Authorization: :basic-auth
+
+# Create ForwardingConstruct
+POST :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstructList
+Authorization: :basic-auth
+Content-Type: application/json
+{
+   "ForwardingConstruct" : {
+      "uuid": "an-original-name",
+      "_fcPortList": [ { "id": "a-end" }, { "id": "z-end"} ],
+      "forwardingDirection": "BIDIRECTIONAL"
+   }
+}
+
+# Delete
+DELETE :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstructList/ForwardingConstruct/an-original-name
+Authentication: :basic-auth
