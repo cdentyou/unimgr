@@ -53,6 +53,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private OvsNodeDataTreeChangeListener ovsListener;
     private UniDataTreeChangeListener uniListener;
     private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
+    private FCRouteChangeListener fwConstructListener;
 
     public UnimgrProvider() {
         LOG.info("Unimgr provider initialized");
@@ -79,6 +80,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         uniListener.close();
         evcListener.close();
         ovsListener.close();
+        fwConstructListener.close();
     }
 
     @Override
@@ -152,6 +154,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         uniListener = new UniDataTreeChangeListener(dataBroker);
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
+        fwConstructListener = new FCRouteChangeListener(dataBroker);
 
         // Initialize operational and default config data in MD-SAL data store
         initDatastore(LogicalDatastoreType.CONFIGURATION,
