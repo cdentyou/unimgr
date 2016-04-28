@@ -24,10 +24,10 @@ Content-Type: application/json
 {
    "FcRoute": {
        "id" : "new-route",
-       "fcList": [
+       "ForwardingConstruct": [
        {
           "uuid": "an-original-name",
-          "_fcPortList": [ {
+          "FcPort": [ {
                      "id": "a-end",
                      "_ltpRefList": [ "host-a:a-end-ltp" ]
                      }, {
