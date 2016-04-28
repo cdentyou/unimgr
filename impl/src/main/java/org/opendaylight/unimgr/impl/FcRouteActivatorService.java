@@ -1,7 +1,9 @@
 package org.opendaylight.unimgr.impl;
 
 import org.mef.nrp.impl.ActivationDriver;
+import org.mef.nrp.impl.ActivationDriverBuilder;
 import org.mef.nrp.impl.ActivationTransaction;
+import org.mef.nrp.impl.FakeActivationDriverRepo;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.fcroutelist.FcRoute;
@@ -65,14 +67,17 @@ public class FcRouteActivatorService {
 
     /***
      *
-     * @param a
+     * @param port
      * @param fwdC
      * @return
      * @throws Exception when there is more than one driver
      */
     private ActivationDriver findDriver(GFcPort port, GForwardingConstruct fwdC) throws Exception {
-        //FIXME implement logic
-        return null;
+        final FakeActivationDriverRepo driverRepo = FakeActivationDriverRepo.getInstance();
+
+        final ActivationDriverBuilder builder = driverRepo.getBuilder(port);
+        //FIXME all fake :D
+        return builder.driverFor(port, fwdC).get();
     }
 
     static final class Context {

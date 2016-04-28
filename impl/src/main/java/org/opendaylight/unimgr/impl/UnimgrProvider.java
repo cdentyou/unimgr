@@ -9,10 +9,12 @@ package org.opendaylight.unimgr.impl;
 
 import java.util.List;
 
+import org.mef.nrp.impl.FakeActivationDriverRepo;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.unimgr.api.IUnimgrConsoleProvider;
@@ -165,6 +167,12 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
                       UnimgrConstants.EVC_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.OPERATIONAL,
                       UnimgrConstants.EVC_TOPOLOGY_ID);
+
+        initFakeDriverRepository(session);
+    }
+
+    private void initFakeDriverRepository(ProviderContext session) {
+        FakeActivationDriverRepo.initialize(session);
     }
 
     @Override
