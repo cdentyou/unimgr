@@ -26,6 +26,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
   </prerequisites>
   <modules>
     <module>cisco-xrmodels</module>
+    <module>edgeassure-1000</module>
     <module>api</module>
     <module>impl</module>
     <module>cli</module>
