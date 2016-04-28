@@ -92,7 +92,7 @@ Aggregation is used as for the FD to allow changes in hierarchy.
             description "An FC object can have zero or more routes, each of which is defined as a list of lower level FC objects describing the flow across the network.";
             ordered-by system;
             type leafref {
-                path '/CoreModel-CoreNetworkModule-ObjectClasses:FcRoute/CoreModel-CoreNetworkModule-ObjectClasses:id';
+                path '/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList/CoreModel-CoreNetworkModule-ObjectClasses:FcRoute/CoreModel-CoreNetworkModule-ObjectClasses:id';
             }
         }
         list _fcPortList {
@@ -373,21 +373,18 @@ The referencing LTP is the rovider of capability.";
 - A SOURCE LTP can only contain SOURCE LPs";
         }
     }
-    list FcRoute {
-        key 'id';
-        config true;
-        ordered-by system;
-        uses G_FcRoute;
+    container FcRouteList {
+        list FcRoute {
+            key 'id';
+            config true;
+            ordered-by system;
+            uses G_FcRoute;
+        }
     }
     grouping G_FcRoute {
-        uses CoreModel-CoreFoundationModule-SuperClassesAndCommonPackages:G_LocalClass;
-        leaf-list _fcList {
-            description "The list of FCs describing the route of an FC.";
-            ordered-by system;
-            type leafref {
-                path '/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstructList/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstruct/CoreModel-CoreNetworkModule-ObjectClasses:uuid';
-            }
-            min-elements 2;
+        list fcList {
+            key "uuid";
+            uses G_ForwardingConstruct;
         }
         leaf id {
             type string;
