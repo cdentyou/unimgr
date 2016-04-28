@@ -25,6 +25,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     <maven>3.1.1</maven>
   </prerequisites>
   <modules>
+    <module>cisco-xrmodels</module>
     <module>api</module>
     <module>impl</module>
     <module>cli</module>
