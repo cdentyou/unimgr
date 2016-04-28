@@ -95,7 +95,7 @@ Aggregation is used as for the FD to allow changes in hierarchy.
                 path '/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList/CoreModel-CoreNetworkModule-ObjectClasses:FcRoute/CoreModel-CoreNetworkModule-ObjectClasses:id';
             }
         }
-        list _fcPortList {
+        list FcPort {
             description "The association of the FC to LTPs is made via FcPorts (essentially the ports of the FC).";
             key 'id';
             config true;
@@ -382,7 +382,7 @@ The referencing LTP is the rovider of capability.";
         }
     }
     grouping G_FcRoute {
-        list fcList {
+        list ForwardingConstruct {
             key "uuid";
             uses G_ForwardingConstruct;
         }
