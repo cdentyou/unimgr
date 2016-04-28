@@ -2,7 +2,6 @@ package org.mef.nrp.impl;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.FcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.fcroutelist.FcRoute;
 
@@ -25,8 +24,8 @@ public class OdlServiceActivator implements ServiceActivator {
         String outerName = namingProvider.getOuterName(id);
         String innerName = namingProvider.getInnerName(id);
 
-        GFcPort aEnd = fcRoute.getFcList().get(0).getFcPortList().get(0);
-        GFcPort zEnd = fcRoute.getFcList().get(0).getFcPortList().get(1);
+        GFcPort aEnd = fcRoute.getForwardingConstruct().get(0).getFcPort().get(0);
+        GFcPort zEnd = fcRoute.getForwardingConstruct().get(0).getFcPort().get(1);
 
         String aEndNodeName = aEnd.getLtpRefList().get(0).getValue().split(":")[0];
         resourceActivator.activate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
@@ -43,8 +42,8 @@ public class OdlServiceActivator implements ServiceActivator {
         String outerName = namingProvider.getOuterName(id);
         String innerName = namingProvider.getInnerName(id);
 
-        GFcPort aEnd = fcRoute.getFcList().get(0).getFcPortList().get(0);
-        GFcPort zEnd = fcRoute.getFcList().get(0).getFcPortList().get(1);
+        GFcPort aEnd = fcRoute.getForwardingConstruct().get(0).getFcPort().get(0);
+        GFcPort zEnd = fcRoute.getForwardingConstruct().get(0).getFcPort().get(1);
 
         String aEndNodeName = aEnd.getLtpRefList().get(0).getValue().split(":")[0];
         resourceActivator.deactivate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
