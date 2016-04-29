@@ -1,7 +1,7 @@
 package org.mef.nrp.impl;
 
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
-import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.forwardingconstructlist.ForwardingConstruct;
+import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
     @Override
     public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext ctx) {
-        Optional<ForwardingConstruct> fwd = ctx.get(ForwardingConstruct.class.getName());
+        Optional<GForwardingConstruct> fwd = ctx.get(GForwardingConstruct.class.getName());
         assert fwd != null;
 
         if(isTheSameNode(fwd.get())) {
@@ -29,7 +29,7 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
         return Optional.empty();
     }
 
-    private boolean isTheSameNode(ForwardingConstruct forwardingConstruct) {
+    private boolean isTheSameNode(GForwardingConstruct forwardingConstruct) {
         // check if a and z are on the same node
         return false;
     }
