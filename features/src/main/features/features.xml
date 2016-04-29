@@ -29,6 +29,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <feature version='${ovsdb.version}'>odl-ovsdb-southbound-impl</feature>
     <feature version='${project.version}'>odl-unimgr-api</feature>
     <feature version='1.0.1-Beryllium-SR1'>odl-netconf-connector</feature>
+    <feature version='1.0.1-Beryllium-SR1'>odl-netconf-connector-ssh</feature>
     <bundle>mvn:org.mef.odl/cisco-xrmodels/{{VERSION}}</bundle>
     <bundle>mvn:com.microsemi.ftd.odl/edgeassure-1000/{{VERSION}}</bundle>
     <bundle>mvn:org.opendaylight.unimgr/unimgr-impl/{{VERSION}}</bundle>

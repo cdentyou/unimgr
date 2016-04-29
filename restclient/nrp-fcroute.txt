@@ -3,21 +3,7 @@
 :host = http://localhost:8181
 :basic-auth := (format "Basic %s" (base64-encode-string (format "%s:%s" "admin" "admin")))
 
-# Create FcSoec
-POST :host/restconf/config/CoreModel-CoreModelEnhancements-ProfilesTemplatesAndSpecificationsModule:FcSpecList
-Authorization: :basic-auth
-Content-Type: application/json
-{
-   "FcSpec" : {
-      "uuid": "an-original-name"
-   }
-}
-
-# Delete FcSpec
-
-# List FcSpec
-
-# Create ForwardingConstruct
+# Create FcRoute
 POST :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList
 Authorization: :basic-auth
 Content-Type: application/json
@@ -41,10 +27,10 @@ Content-Type: application/json
    ] }
 }
 
-# Delete ForwardingConstruct
+# Delete FcRoute
 DELETE :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList/FcRoute/new-route
 Authentication: :basic-auth
 
-# List ForwardingConstruct
+# List FcRoute
 GET :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList
 Authorization: :basic-auth
