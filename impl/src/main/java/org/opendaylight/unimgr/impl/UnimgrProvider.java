@@ -54,10 +54,14 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private UniDataTreeChangeListener uniListener;
     private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
     private FCRouteChangeListener fwConstructListener;
-    private ActivationDriverRepoService repo;
+    private static ActivationDriverRepoService repo;
 
     public UnimgrProvider() {
         LOG.info("Unimgr provider initialized");
+    }
+
+    public static void setActivationDriverRepoService(ActivationDriverRepoService activationDriverRepoService) {
+        repo = activationDriverRepoService;
     }
 
     @Override
@@ -98,13 +102,13 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     protected void initDatastore(final LogicalDatastoreType type,
                                  final TopologyId topoId) {
         final InstanceIdentifier<Topology> path = InstanceIdentifier
-                                                .create(NetworkTopology.class)
-                                                .child(Topology.class,
-                                                        new TopologyKey(topoId));
+                .create(NetworkTopology.class)
+                .child(Topology.class,
+                        new TopologyKey(topoId));
         initializeTopology(type);
         final ReadWriteTransaction transaction = dataBroker.newReadWriteTransaction();
         final CheckedFuture<Optional<Topology>, ReadFailedException> unimgrTp = transaction.read(type,
-                                                                                           path);
+                path);
         try {
             if (!unimgrTp.get().isPresent()) {
                 final TopologyBuilder tpb = new TopologyBuilder();
@@ -122,17 +126,17 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private void initializeTopology(final LogicalDatastoreType type) {
         final ReadWriteTransaction transaction = dataBroker.newReadWriteTransaction();
         final InstanceIdentifier<NetworkTopology> path = InstanceIdentifier.create(NetworkTopology.class);
-        final CheckedFuture<Optional<NetworkTopology>, ReadFailedException> topology = transaction.read(type,path);
+        final CheckedFuture<Optional<NetworkTopology>, ReadFailedException> topology = transaction.read(type, path);
         try {
             if (!topology.get().isPresent()) {
                 final NetworkTopologyBuilder ntb = new NetworkTopologyBuilder();
-                transaction.put(type,path,ntb.build());
+                transaction.put(type, path, ntb.build());
                 transaction.submit().get();
             } else {
                 transaction.cancel();
             }
         } catch (final Exception e) {
-            LOG.error("Error initializing unimgr topology {}",e);
+            LOG.error("Error initializing unimgr topology {}", e);
         }
     }
 
@@ -155,7 +159,6 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         uniListener = new UniDataTreeChangeListener(dataBroker);
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
-        initRepo(session);
 
         fwConstructListener = new FCRouteChangeListener(dataBroker);
         fwConstructListener.setActivationDriverRepoService(repo);
@@ -169,10 +172,6 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
                 UnimgrConstants.EVC_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.OPERATIONAL,
                 UnimgrConstants.EVC_TOPOLOGY_ID);
-    }
-
-    private void initRepo(ProviderContext session) {
-       repo= session.getSALService(ActivationDriverRepoService.class);
     }
 
     @Override
@@ -192,7 +191,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
 
     @Override
     public boolean updateEvc(final InstanceIdentifier<Link> evcKey, final EvcAugmentation evc, final UniSource uniSource,
-            final UniDest uniDest) {
+                             final UniDest uniDest) {
         final InstanceIdentifier<?> sourceUniIid = uniSource.getUni();
         final InstanceIdentifier<?> destinationUniIid = uniDest.getUni();
         return EvcUtils.updateEvcNode(LogicalDatastoreType.CONFIGURATION, evcKey, evc, sourceUniIid,
@@ -209,7 +208,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
             Node ovsdbNode;
             if (uni.getOvsdbNodeRef() != null) {
                 final OvsdbNodeRef ovsdbNodeRef = uni.getOvsdbNodeRef();
-                ovsdbNode= MdsalUtils.readNode(dataBroker,
+                ovsdbNode = MdsalUtils.readNode(dataBroker,
                         LogicalDatastoreType.OPERATIONAL, ovsdbNodeRef.getValue()).get();
 
                 UniUtils.updateUniNode(LogicalDatastoreType.OPERATIONAL, uniIID, uni, ovsdbNode, dataBroker);
