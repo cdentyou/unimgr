@@ -10,7 +10,7 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
 import java.util.Optional;
 
 /**
- * Fake driver builder;
+ * Xconnect builder (FIXME no decision logic yet)
  * @author bartosz.michalik@amartus.com
  */
 public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
