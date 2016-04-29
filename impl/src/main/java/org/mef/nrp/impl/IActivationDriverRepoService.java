@@ -11,5 +11,5 @@ public interface IActivationDriverRepoService {
 
     void unbindBuilder(ActivationDriverBuilder builder);
 
-    ActivationDriver getBuilder(GFcPort port, GForwardingConstruct context);
+    ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context);
 }

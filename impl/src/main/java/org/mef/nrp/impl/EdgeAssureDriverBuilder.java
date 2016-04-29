@@ -22,7 +22,7 @@ public class EdgeAssureDriverBuilder implements ActivationDriverBuilder {
     }
 
     @Override
-    public Optional<ActivationDriver> driverFor(GFcPort port, GForwardingConstruct context) {
+    public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext context) {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;
@@ -42,7 +42,7 @@ public class EdgeAssureDriverBuilder implements ActivationDriverBuilder {
             public void initialize(GFcPort from, GFcPort to, GForwardingConstruct ctx) throws Exception {
                 this.zEnd = to;
                 this.aEnd = from;
-                this.ctx = context;
+                this.ctx = ctx;
             }
 
             @Override
