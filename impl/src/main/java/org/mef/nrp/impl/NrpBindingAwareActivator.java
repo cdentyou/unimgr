@@ -1,6 +1,7 @@
 package org.mef.nrp.impl;
 
 import org.opendaylight.controller.sal.binding.api.*;
+import org.opendaylight.unimgr.impl.UnimgrProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -22,6 +23,7 @@ public class NrpBindingAwareActivator extends AbstractBrokerAwareActivator {
     protected void onBrokerAvailable(BindingAwareBroker broker, BundleContext context) {
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable start");
 
+        UnimgrProvider.setActivationDriverRepoService(activationDriverRepoService);
         L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
         //TODO make it registered consumer in case dependencies should be injected
         L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();

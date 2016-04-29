@@ -42,6 +42,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     }
 
     public static void setActivationDriverRepoService(ActivationDriverRepoService activationDriverRepoService) {
+        LOG.info("UnimgrProvider.setActivationDriverRepoService got instance {}",activationDriverRepoService);
         repo = activationDriverRepoService;
     }
 
