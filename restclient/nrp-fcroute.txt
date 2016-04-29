@@ -34,3 +34,27 @@ Authentication: :basic-auth
 # List FcRoute
 GET :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList
 Authorization: :basic-auth
+
+# Create FcRoute
+POST :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList
+Authorization: :basic-auth
+Content-Type: application/json
+{
+   "FcRoute": {
+       "id" : "single-host",
+       "ForwardingConstruct": [
+       {
+          "uuid": "single-host",
+          "FcPort": [ {
+                     "id": "a-end",
+                     "_ltpRefList": [ "asr-101:GigabitEthernet0/0/1/19" ]
+                     }, {
+                     "id": "z-end",
+                     "_ltpRefList": [ "asr-101:GigabitEthernet0/0/1/17" ]
+                     } ],
+          "forwardingDirection": "BIDIRECTIONAL",
+          "layerProtocolName": "funky-layer-protocol",
+          "_fcSpecRef": "nonexistent-fcspec"
+       }
+   ] }
+}
