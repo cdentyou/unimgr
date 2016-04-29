@@ -156,7 +156,6 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
         initRepo(session);
-
         fwConstructListener = new FCRouteChangeListener(dataBroker);
         fwConstructListener.setActivationDriverRepoService(repo);
 

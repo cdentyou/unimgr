@@ -4,7 +4,15 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
 /**
- * Used to state change of the underlying infrastructure
+ * Interface of a driver that maps NRP concepts to the configuration of underlying infrastructure.
+ * The driver is used in following scenario
+ * <ol>
+ *     <li>Driver is initialized. Otherwise stop</li>
+ *     <li>Driver is attached to transaction</li>
+ *     <li>Driver activate/deactivate method gets called</li>
+ *     <li>If all drivers within transaction succeed commit method is called. Otherwise rollback is triggered</li>
+ * </ol>
+ *
  * @author bartosz.michalik@amartus.com
  */
 public interface ActivationDriver {
