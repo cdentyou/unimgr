@@ -128,10 +128,20 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
       <artifactId>unimgr-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-        <dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>unimgr-cli</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mef.odl</groupId>
+      <artifactId>cisco-xrmodels</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.microsemi.ftd.odl</groupId>
+      <artifactId>edgeassure-1000</artifactId>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 </project>
