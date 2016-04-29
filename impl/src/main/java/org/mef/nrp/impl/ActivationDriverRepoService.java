@@ -4,6 +4,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
+import org.opendaylight.controller.sal.binding.api.BindingAwareService;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.AutoDiscoveryBuilder;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
  *
  * @author alex.feigin@hpe.com
  */
-public class ActivationDriverRepoService implements IActivationDriverRepoService, BindingAwareConsumer {
+public class ActivationDriverRepoService implements IActivationDriverRepoService, BindingAwareConsumer, BindingAwareService {
 
     private static DataBroker dataBroker;
     private static MountPointService mountService;
