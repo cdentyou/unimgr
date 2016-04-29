@@ -2,11 +2,13 @@ package org.opendaylight.unimgr.impl;
 
 import org.mef.nrp.impl.*;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
-import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.fcroutelist.FcRoute;
+import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
+import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.forwardingconstructlist.ForwardingConstruct;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.g_forwardingconstruct.FcPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +53,12 @@ public class FcRouteActivatorService {
         Optional<ActivationDriver> zActivator;
         lock.readLock().lock();
         try {
-            aActivator = findDriver(a, fwdC);
-            zActivator = findDriver(z, fwdC);
+
+            final ActivationDriverBuilder.BuilderContext ctx = new ActivationDriverBuilder.BuilderContext();
+            ctx.put(ForwardingConstruct.class.getName(), fwdC);
+
+            aActivator = findDriver(a, ctx);
+            zActivator = findDriver(z, ctx);
             if (aActivator.isPresent() && zActivator.isPresent()) {
                 aActivator.get().initialize(a, z, fwdC);
                 aActivator.get().initialize(z, a, fwdC);
@@ -82,7 +88,7 @@ public class FcRouteActivatorService {
      * @param fwdC
      * @return activation driver or empty
      */
-    protected Optional<ActivationDriver> findDriver(GFcPort port, GForwardingConstruct fwdC) {
+    protected Optional<ActivationDriver> findDriver(GFcPort port, ActivationDriverBuilder.BuilderContext fwdC) {
         if(activationRepoService == null)  {
             LOG.warn("Activation Driver repo is not initialized");
             return Optional.empty();

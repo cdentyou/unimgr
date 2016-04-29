@@ -33,7 +33,7 @@ import java.util.stream.Stream;
         builders.remove(builder);
     }
 
-    public ActivationDriver getBuilder(GFcPort port, GForwardingConstruct context) {
+    public ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         Stream<ActivationDriver> s = Arrays.stream(builders.toArray(new ActivationDriverBuilder[0]))//
                 .map(x -> x.driverFor(port, context))//
                 .filter(x -> x.isPresent())//

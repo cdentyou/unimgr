@@ -1,12 +1,8 @@
 package org.mef.nrp.impl;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.controller.sal.binding.api.*;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
@@ -22,13 +18,13 @@ import java.util.Hashtable;
 public class NrpBindingAwareActivator extends AbstractBrokerAwareActivator {
     private static final Logger LOG = LoggerFactory.getLogger(NrpBindingAwareActivator.class);
     private static final ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoService();
-    private static L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder;
-
     @Override
     protected void onBrokerAvailable(BindingAwareBroker broker, BundleContext context) {
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable start");
 
-        l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
+        L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
+        //TODO make it registered consumer in case dependencies should be injected
+        L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
         broker.registerConsumer(l2vpnXconnectDriverBuilder);
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable register L2vpnXconnectDriverBuilder as a BindingAwareConsumer");
 
@@ -64,8 +60,10 @@ public class NrpBindingAwareActivator extends AbstractBrokerAwareActivator {
                 new ServiceTracker<>(context, ActivationDriverBuilder.class, customizer);
         activationDriverRepoServiceTracker.open();
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable started tracking ActivationDriverBuilder services");
-
-        context.registerService(ActivationDriverBuilder.class, l2vpnXconnectDriverBuilder, new Hashtable());
+        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, new Hashtable());
+        context.registerService(BindingAwareService.class, activationDriverRepoService, new Hashtable());
+        context.registerService(ActivationDriverBuilder.class,l2vpnXconnectDriverBuilder, new Hashtable());
+        context.registerService(ActivationDriverBuilder.class,l2vpnBridgeDriverBuilder, new Hashtable());
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable register L2vpnXconnectDriverBuilder as a ActivationDriverBuilder");
     }
 }

@@ -10,7 +10,7 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
 import java.util.Optional;
 
 /**
- * Fake driver builder;
+ * Xconnect builder (FIXME no decision logic yet)
  * @author bartosz.michalik@amartus.com
  */
 public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
@@ -33,7 +33,7 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
     }
 
     @Override
-    public Optional<ActivationDriver> driverFor(GFcPort port, GForwardingConstruct context) {
+    public Optional<ActivationDriver> driverFor(GFcPort port,BuilderContext  context) {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;
@@ -53,7 +53,7 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
             public void initialize(GFcPort from, GFcPort to, GForwardingConstruct ctx) throws Exception {
                 this.zEnd = to;
                 this.aEnd = from;
-                this.ctx = context;
+                this.ctx = ctx;
             }
 
             @Override

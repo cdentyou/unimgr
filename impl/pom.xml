@@ -44,7 +44,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
                     <instructions>
                         <Bundle-Activator>org.mef.nrp.impl.NrpBindingAwareActivator</Bundle-Activator>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>org.mef.nrp.impl.*, org.opendaylight.unimgr.impl.*
+                        <Export-Package>org.mef.nrp.impl.*, org.opendaylight.unimgr.*
                         </Export-Package>
                     </instructions>
                 </configuration>
