@@ -47,6 +47,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
         <version>1.0.0</version>
     </dependency>
 
+	<!-- Microsemi -->
+	<dependency>
+		<groupId>com.microsemi.ftd.odl</groupId>
+		<artifactId>edgeassure-1000</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>sal-netconf-connector</artifactId>
