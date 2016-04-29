@@ -7,18 +7,15 @@
  */
 package org.opendaylight.unimgr.impl;
 
-import java.util.List;
-
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.CheckedFuture;
 import org.mef.nrp.impl.ActivationDriverRepoService;
-import org.mef.nrp.impl.FakeActivationDriverRepo;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.BindingAwareService;
 import org.opendaylight.unimgr.api.IUnimgrConsoleProvider;
 import org.opendaylight.unimgr.utils.EvcUtils;
 import org.opendaylight.unimgr.utils.MdsalUtils;
@@ -46,8 +43,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import java.util.List;
 
 public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUnimgrConsoleProvider {
 
