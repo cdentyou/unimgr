@@ -7,14 +7,13 @@
  */
 package org.opendaylight.unimgr.impl;
 
-import java.util.List;
-
-import org.mef.nrp.impl.FakeActivationDriverRepo;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.CheckedFuture;
+import org.mef.nrp.impl.ActivationDriverRepoService;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.unimgr.api.IUnimgrConsoleProvider;
@@ -44,8 +43,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import java.util.List;
 
 public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUnimgrConsoleProvider {
 
@@ -56,6 +54,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private UniDataTreeChangeListener uniListener;
     private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
     private FCRouteChangeListener fwConstructListener;
+    private ActivationDriverRepoService repo;
 
     public UnimgrProvider() {
         LOG.info("Unimgr provider initialized");
@@ -147,32 +146,33 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         LOG.info("UnimgrProvider Session Initiated");
 
         // Retrieve the data broker to create transactions
-        dataBroker =  session.getSALService(DataBroker.class);
+        dataBroker = session.getSALService(DataBroker.class);
         // Register the unimgr OSGi CLI
         final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        unimgrConsoleRegistration = context.registerService(IUnimgrConsoleProvider.class,this, null);
+        unimgrConsoleRegistration = context.registerService(IUnimgrConsoleProvider.class, this, null);
 
         // Register the data trees change listener
         uniListener = new UniDataTreeChangeListener(dataBroker);
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
+        initRepo(session);
+
         fwConstructListener = new FCRouteChangeListener(dataBroker);
+        fwConstructListener.setActivationDriverRepoService(repo);
 
         // Initialize operational and default config data in MD-SAL data store
         initDatastore(LogicalDatastoreType.CONFIGURATION,
-                      UnimgrConstants.UNI_TOPOLOGY_ID);
+                UnimgrConstants.UNI_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.OPERATIONAL,
-                      UnimgrConstants.UNI_TOPOLOGY_ID);
+                UnimgrConstants.UNI_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.CONFIGURATION,
-                      UnimgrConstants.EVC_TOPOLOGY_ID);
+                UnimgrConstants.EVC_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.OPERATIONAL,
-                      UnimgrConstants.EVC_TOPOLOGY_ID);
-
-        initFakeDriverRepository(session);
+                UnimgrConstants.EVC_TOPOLOGY_ID);
     }
 
-    private void initFakeDriverRepository(ProviderContext session) {
-        FakeActivationDriverRepo.initialize(session);
+    private void initRepo(ProviderContext session) {
+       repo= session.getSALService(ActivationDriverRepoService.class);
     }
 
     @Override
