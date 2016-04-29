@@ -2,6 +2,8 @@ package org.mef.nrp.impl;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
@@ -11,12 +13,21 @@ import java.util.Optional;
  * Fake driver builder;
  * @author bartosz.michalik@amartus.com
  */
-public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder {
+public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
 
     private final FixedServiceNaming namingProvider;
-    private final L2vpnXconnectActivator xconnectActivator;
+    private L2vpnXconnectActivator xconnectActivator;
+    private static DataBroker dataBroker;
+    private static MountPointService mountService;
 
-    L2vpnXconnectDriverBuilder(DataBroker dataBroker, MountPointService mountService) {
+
+    @Override
+    public void onSessionInitialized(BindingAwareBroker.ConsumerContext session) {
+         dataBroker = session.getSALService(DataBroker.class);
+         mountService = session.getSALService(MountPointService.class);
+    }
+
+    L2vpnXconnectDriverBuilder() {
         this.namingProvider = new FixedServiceNaming();
         xconnectActivator = new L2vpnXconnectActivator(dataBroker, mountService);
     }

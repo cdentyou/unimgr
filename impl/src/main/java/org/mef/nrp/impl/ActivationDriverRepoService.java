@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  *
  * @author alex.feigin@hpe.com
  */
-public class ActivationDriverRepoService implements IActivationDriverRepoService, BindingAwareConsumer, BindingAwareService {
+public class ActivationDriverRepoService implements IActivationDriverRepoService, BindingAwareService {
 
     private static DataBroker dataBroker;
     private static MountPointService mountService;
@@ -64,9 +64,4 @@ public class ActivationDriverRepoService implements IActivationDriverRepoService
 
     }
 
-    @Override
-    public void onSessionInitialized(BindingAwareBroker.ConsumerContext session) {
-        DataBroker dataBroker = session.getSALService(DataBroker.class);
-        MountPointService mountService = session.getSALService(MountPointService.class);
-    }
 }
