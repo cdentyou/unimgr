@@ -27,21 +27,27 @@ public class FcRouteActivatorService {
 
     public void activate(FcRoute route) {
         for(GForwardingConstruct fwdC : route.getForwardingConstruct()) {
-            //TODO NPE is not descriptive enough
-            ActivationTransaction tx = prepareTransaction(fwdC);
-            tx.activate();
+            Optional<ActivationTransaction> tx = prepareTransaction(fwdC);
+            if (tx.isPresent()) {
+                tx.get().activate();
+            } else {
+                LOG.warn("No transaction for this activation request");
+            }
         }
     }
 
     public void deactivate(FcRoute route) {
         for(GForwardingConstruct fwdC : route.getForwardingConstruct()) {
-            //TODO NPE is not descriptive enough
-            ActivationTransaction tx = prepareTransaction(fwdC);
-            tx.deactivate();
+            Optional<ActivationTransaction> tx = prepareTransaction(fwdC);
+            if (tx.isPresent()) {
+                tx.get().deactivate();
+            } else {
+                LOG.warn("No transaction for this deactivation request");
+            }
         }
     }
 
-    private ActivationTransaction prepareTransaction(GForwardingConstruct fwdC) {
+    private Optional<ActivationTransaction> prepareTransaction(GForwardingConstruct fwdC) {
         final List<FcPort> list = fwdC.getFcPort();
         //TODO validate pre-condition
         final GFcPort a = list.get(0);
@@ -64,12 +70,12 @@ public class FcRouteActivatorService {
             } else {
                 // ??? TODO improve comment for better traceability
                 LOG.error("drivers for both ends needed");
-                return null;
+                return Optional.empty();
             }
 
         } catch (Exception e) {
             LOG.error("driver initialization exception",e);
-            return null;
+            return Optional.empty();
         } finally {
             lock.readLock().unlock();
         }
@@ -78,7 +84,7 @@ public class FcRouteActivatorService {
         tx.addDriver(aActivator.get());
         tx.addDriver(zActivator.get());
 
-        return tx;
+        return Optional.of(tx);
     }
 
     /***
