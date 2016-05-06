@@ -1,5 +1,9 @@
 package org.mef.nrp.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +12,8 @@ import java.util.List;
  * @author bartosz.michalik@amartus.com
  */
 public class ActivationTransaction {
-    private List<ActivationDriver> drivers;
+    private static final Logger LOG = LoggerFactory.getLogger(ActivationTransaction.class);
+    private List<ActivationDriver> drivers = new ArrayList<>();
 
 
     public void addDriver(ActivationDriver driver) {
@@ -20,8 +25,10 @@ public class ActivationTransaction {
         try {
             for(ActivationDriver d: drivers) { d.activate(); }
             commit();
+            LOG.info("Activate transaction successful");
         } catch (Exception e) {
-            //TODO add logging
+            //XXX add transaction identification ???
+            LOG.warn("Rolling back activate transaction ", e);
             rollback();
         }
     }
@@ -31,9 +38,11 @@ public class ActivationTransaction {
         sortDrivers();
         try {
             for(ActivationDriver d: drivers) { d.deactivate(); }
+            LOG.info("Deactivate transaction successful");
             commit();
         } catch (Exception e) {
-            //TODO add logging
+            //XXX add transaction identification ???
+            LOG.warn("Rolling back deactivate transaction ", e);
             rollback();
         }
     }
