@@ -7,21 +7,21 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * @author alex.feigin@hpe.com
+ * FIXME [bmi] reimplement as a singleton if we really need a single instance
  */
 public class ActivationDriverRepoService implements BindingAwareService {
     private static final Logger LOG = LoggerFactory.getLogger(ActivationDriverRepoService.class);
     private static DataBroker dataBroker;
     private static MountPointService mountService;
 
-    private static List<ActivationDriverBuilder> builders = Collections.synchronizedList(new ArrayList<>());
+    private static Collection<ActivationDriverBuilder> builders = ConcurrentHashMap.newKeySet();
 
     public void bindBuilder(ActivationDriverBuilder builder) {
         if (builder == null) {
@@ -41,17 +41,18 @@ public class ActivationDriverRepoService implements BindingAwareService {
     }
 
     public ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
-        Stream<ActivationDriver> s = Arrays.stream(builders.toArray(new ActivationDriverBuilder[0]))//
-                .map(x -> x.driverFor(port, context))//
-                .filter(x -> x.isPresent())//
-                .map(x -> x.get());
-        if (s.count() > 1) {
+        final List<ActivationDriver> drivers = builders.stream().map(x -> x.driverFor(port, context))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        if (drivers.size() > 1) {
             throw new ActivationDriverAmbiguousException();
         }
-        if (s.count() == 0) {
+        if (drivers.size() == 0) {
             throw new ActivationDriverNotFoundException();
         }
-        return s.findFirst().get();
+        return drivers.get(0);
     }
 
 }
