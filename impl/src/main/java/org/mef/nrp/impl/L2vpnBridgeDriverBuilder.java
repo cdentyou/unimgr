@@ -2,6 +2,10 @@ package org.mef.nrp.impl;
 
 import java.util.Optional;
 
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.MountPointService;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
@@ -9,16 +13,23 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
  * Provides drivers for binding two ports on the same node.
  * @author bartosz.michalik@amartus.com
  */
-public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
-	
+public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
+
 	private L2vpnBridgeActivator activator;
+
+    @Override
+    public void onSessionInitialized(BindingAwareBroker.ConsumerContext session) {
+         DataBroker dataBroker = session.getSALService(DataBroker.class);
+         MountPointService mountService = session.getSALService(MountPointService.class);
+         activator = new L2vpnBridgeActivator(dataBroker, mountService);
+    }
 
     @Override
     public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext ctx) {
         Optional<GForwardingConstruct> fwd = ctx.get(GForwardingConstruct.class.getName());
         assert fwd != null;
 
-        if(isTheSameNode(fwd.get())) {
+        if(ForwardingConstructHelper.isTheSameNode(fwd.get())) {
             Optional<ActivationDriver> driver= ctx.get("L2vpnBridgeDriverBuilder.driver");
             if(driver.isPresent()) return Optional.of(new DummyActivationDriver());
             ActivationDriver realDriver =  getDriver(port, ctx);
@@ -30,13 +41,6 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
         }
 
         return Optional.empty();
-    }
-
-    private boolean isTheSameNode(GForwardingConstruct forwardingConstruct) {
-    	String aHost = host(ltp(forwardingConstruct, 0));
-    	String zHost = host(ltp(forwardingConstruct, 1));
-
-        return aHost != null && zHost != null && aHost.equals(zHost);
     }
 
     protected ActivationDriver getDriver(GFcPort port, BuilderContext ctx) {
@@ -91,14 +95,5 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
             }
         };
         return driver;
-    }
-        
-    
-    public static String ltp(GForwardingConstruct fc, int port) {
-    	return fc.getFcPort().get(port).getLtpRefList().get(0).getValue();
-    }
-    
-    public static String host(String ltp) {
-    	return ltp.split(":")[0];
     }
 }

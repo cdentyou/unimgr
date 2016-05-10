@@ -20,20 +20,32 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
     private static DataBroker dataBroker;
     private static MountPointService mountService;
 
-
     @Override
     public void onSessionInitialized(BindingAwareBroker.ConsumerContext session) {
          dataBroker = session.getSALService(DataBroker.class);
          mountService = session.getSALService(MountPointService.class);
+         xconnectActivator = new L2vpnXconnectActivator(dataBroker, mountService);
     }
 
     L2vpnXconnectDriverBuilder() {
         this.namingProvider = new FixedServiceNaming();
-        xconnectActivator = new L2vpnXconnectActivator(dataBroker, mountService);
     }
 
     @Override
     public Optional<ActivationDriver> driverFor(GFcPort port,BuilderContext  context) {
+        Optional<GForwardingConstruct> fwd = context.get(GForwardingConstruct.class.getName());
+        assert fwd != null;
+
+        if(ForwardingConstructHelper.isTheSameNode(fwd.get()) == false) {
+            ActivationDriver realDriver =  getDriver(port, context);
+
+            return Optional.of(realDriver);
+        }
+
+        return Optional.empty();
+    }
+
+    protected ActivationDriver getDriver(GFcPort port, BuilderContext context) {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;
@@ -85,6 +97,6 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
             }
         };
 
-        return Optional.of(driver);
+        return driver;
     }
 }

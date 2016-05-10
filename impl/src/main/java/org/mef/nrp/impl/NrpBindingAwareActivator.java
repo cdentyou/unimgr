@@ -106,7 +106,7 @@ public class NrpBindingAwareActivator extends AbstractBrokerAwareActivator {
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable register L2vpnXconnectDriverBuilder as a BindingAwareConsumer");
 
         L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
-
+        broker.registerConsumer(l2vpnBridgeDriverBuilder);
 
         final ServiceRegistration<ActivationDriverBuilder> xconnectReq = context.registerService(ActivationDriverBuilder.class, l2vpnXconnectDriverBuilder, new Hashtable());
         LOG.info("NrpBindingAwareActivator.onBrokerAvailable register L2vpnXconnectDriverBuilder as a ActivationDriverBuilder");
