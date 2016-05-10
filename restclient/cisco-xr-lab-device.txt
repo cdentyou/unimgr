@@ -42,6 +42,10 @@ Content-Type: application/xml
    </processing-executor>
  </module>
 
+# Get node operational status
+GET :host/restconf/operational/network-topology:network-topology/topology/topology-netconf/node/:node/
+Authorization: :basic-auth
+
 # Get interface configuration
 GET :host/restconf/operational/network-topology:network-topology/topology/topology-netconf/node/:node/yang-ext:mount/Cisco-IOS-XR-ifmgr-cfg:interface-configurations/
 Authorization: :basic-auth
