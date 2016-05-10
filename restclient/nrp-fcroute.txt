@@ -58,3 +58,20 @@ Content-Type: application/json
        }
    ] }
 }
+
+# Delete FcRoute
+DELETE :host/restconf/config/CoreModel-CoreNetworkModule-ObjectClasses:FcRouteList/FcRoute/single-host
+Authentication: :basic-auth
+
+
+# Get l2vpn
+:node = asr-101
+GET :host/restconf/operational/network-topology:network-topology/topology/topology-netconf/node/:node/yang-ext:mount/Cisco-IOS-XR-l2vpn-cfg:l2vpn/database/xconnect-groups/xconnect-group/local
+Authorization: :basic-auth
+Accept: application/xml
+
+# Delete p2p xconnect
+:name = fortinet
+GET :host/restconf/operational/network-topology:network-topology/topology/topology-netconf/node/:node/yang-ext:mount/Cisco-IOS-XR-l2vpn-cfg:l2vpn/database/xconnect-groups/xconnect-group/local/p2p-xconnects/p2p-xconnect/fortinet
+Authorization: :basic-auth
+Accept: application/xml
