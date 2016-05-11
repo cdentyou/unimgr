@@ -27,7 +27,7 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
          xconnectActivator = new L2vpnXconnectActivator(dataBroker, mountService);
     }
 
-    L2vpnXconnectDriverBuilder() {
+    public L2vpnXconnectDriverBuilder() {
         this.namingProvider = new FixedServiceNaming();
     }
 

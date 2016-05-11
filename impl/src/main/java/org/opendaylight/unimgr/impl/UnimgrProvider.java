@@ -7,9 +7,11 @@
  */
 package org.opendaylight.unimgr.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import java.util.List;
+
 import org.mef.nrp.impl.ActivationDriverRepoService;
+import org.mef.nrp.impl.L2vpnBridgeDriverBuilder;
+import org.mef.nrp.impl.L2vpnXconnectDriverBuilder;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
@@ -42,9 +44,9 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
-import java.util.List;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.CheckedFuture;
 
 public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUnimgrConsoleProvider {
 
@@ -55,15 +57,9 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private UniDataTreeChangeListener uniListener;
     private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
     private FCRouteChangeListener fwConstructListener;
-    private static ActivationDriverRepoService repo;
 
     public UnimgrProvider() {
         LOG.info("Unimgr provider initialized");
-    }
-
-    public static void setActivationDriverRepoService(ActivationDriverRepoService activationDriverRepoService) {
-        LOG.info("UnimgrProvider.setActivationDriverRepoService got instance {}",activationDriverRepoService);
-        repo = activationDriverRepoService;
     }
 
     @Override
@@ -162,8 +158,16 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
 
+        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoService();
+        L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
+        l2vpnXconnectDriverBuilder.onSessionInitialized(session);
+        activationDriverRepoService.bindBuilder(l2vpnXconnectDriverBuilder);
+        L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
+        l2vpnBridgeDriverBuilder.onSessionInitialized(session);
+        activationDriverRepoService.bindBuilder(l2vpnBridgeDriverBuilder);
+
         fwConstructListener = new FCRouteChangeListener(dataBroker);
-        fwConstructListener.setActivationDriverRepoService(repo);
+        fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
 
         // Initialize operational and default config data in MD-SAL data store
         initDatastore(LogicalDatastoreType.CONFIGURATION,
