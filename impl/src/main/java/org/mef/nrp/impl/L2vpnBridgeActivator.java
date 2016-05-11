@@ -71,7 +71,7 @@ public class L2vpnBridgeActivator implements ResourceActivator {
     	String zEndLtpId = neighbor.getLtpRefList().get(0).getValue();
 
         InterfaceName aEndIfName = new InterfaceName(aEndLtpId.split(":")[1]);
-        InterfaceName zEndIfName = new InterfaceName(zEndLtpId.split(":")[1]);        
+        InterfaceName zEndIfName = new InterfaceName(zEndLtpId.split(":")[1]);
         InterfaceName[] both = new InterfaceName[] {aEndIfName, zEndIfName};
 
         List<InterfaceConfiguration> intConfigs = new LinkedList<>();
@@ -153,17 +153,23 @@ public class L2vpnBridgeActivator implements ResourceActivator {
             log.error("Could not retrieve MountPoint for {}", nodeName);
             return;
         }
-        WriteTransaction w = nodeDataBroker.newWriteOnlyTransaction();
-        w.merge(LogicalDatastoreType.CONFIGURATION,
-                intConfigsId, intConfigsBuilder.build());
-        w.merge(LogicalDatastoreType.CONFIGURATION, l2vpnId,
-                l2vpnBuilder.build());
 
+        WriteTransaction w = null;
         try {
-            w.submit().checkedGet();
-            log.info("Service activated: {} {} {}", nodeName, outerName, innerName);
-        } catch (TransactionCommitFailedException e) {
-            log.error("Transaction failed", e);
+            w = nodeDataBroker.newWriteOnlyTransaction();
+            w.merge(LogicalDatastoreType.CONFIGURATION,
+                    intConfigsId, intConfigsBuilder.build());
+            w.merge(LogicalDatastoreType.CONFIGURATION, l2vpnId,
+                    l2vpnBuilder.build());
+            try {
+                w.submit().checkedGet();
+                log.info("Service activated: {} {} {}", nodeName, outerName, innerName);
+            } catch (TransactionCommitFailedException e) {
+                log.error("Transaction failed", e);
+            }
+        } catch (Throwable t) {
+            if (w != null) w.cancel();
+            log.error("Failed to create write transaction", t);
         }
     }
 
