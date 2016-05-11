@@ -66,7 +66,7 @@ public class FcRouteActivatorService {
             zActivator = findDriver(z, ctx);
             if (aActivator.isPresent() && zActivator.isPresent()) {
                 aActivator.get().initialize(a, z, fwdC);
-                aActivator.get().initialize(z, a, fwdC);
+                zActivator.get().initialize(z, a, fwdC);
             } else {
                 // ??? TODO improve comment for better traceability
                 LOG.error("drivers for both ends needed");
