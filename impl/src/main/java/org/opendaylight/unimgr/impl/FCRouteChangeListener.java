@@ -8,6 +8,7 @@
 package org.opendaylight.unimgr.impl;
 
 import org.mef.nrp.impl.ActivationDriverRepoService;
+import org.mef.nrp.impl.ActivationDriverRepoServiceImpl;
 import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.FcRouteList;

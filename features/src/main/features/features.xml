@@ -30,7 +30,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <feature version='${project.version}'>odl-unimgr-api</feature>
     <feature version='1.0.1-Beryllium-SR1'>odl-netconf-connector</feature>
     <feature version='1.0.1-Beryllium-SR1'>odl-netconf-connector-ssh</feature>
-    <bundle>mvn:org.mef.odl/cisco-xrmodels/{{VERSION}}</bundle>
     <bundle>mvn:com.microsemi.ftd.odl/edgeassure-1000/{{VERSION}}</bundle>
     <bundle>mvn:org.opendaylight.unimgr/unimgr-impl/{{VERSION}}</bundle>
     <configfile finalname="${configfile.directory}/unimgr.xml">mvn:org.opendaylight.unimgr/unimgr-impl/{{VERSION}}/xml/config</configfile>
@@ -52,6 +51,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <feature version="${restconf.version}">odl-mdsal-apidocs</feature>
     <feature version="${mdsal.version}">odl-mdsal-xsql</feature>
     <feature version="${dlux.version}">odl-dlux-all</feature>
+  </feature>
+
+  <feature name='odl-unimgr-cisco-xr-driver' version='${project.version}' description='OpenDaylight :: UniMgr :: Cisco XR Driver'>
+    <feature version='${project.version}'>odl-unimgr</feature>
+    <bundle>mvn:org.mef.odl/cisco-xrmodels/{{VERSION}}</bundle>
+    <bundle>mvn:org.opendaylight.unimgr/unimgr-cisco-xr-driver/{{VERSION}}</bundle>
+    <configfile finalname="${configfile.directory}/unimgr-cisco-xr-driver.xml">mvn:org.opendaylight.unimgr/unimgr-cisco-xr-driver/{{VERSION}}/xml/config</configfile>
   </feature>
 
 </features>

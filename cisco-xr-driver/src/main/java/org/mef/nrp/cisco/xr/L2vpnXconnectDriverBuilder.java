@@ -1,7 +1,11 @@
-package org.mef.nrp.impl;
+package org.mef.nrp.cisco.xr;
 
 import java.util.Optional;
 
+import org.mef.nrp.impl.ActivationDriver;
+import org.mef.nrp.impl.ActivationDriverBuilder;
+import org.mef.nrp.impl.FixedServiceNaming;
+import org.mef.nrp.impl.ForwardingConstructHelper;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -10,40 +14,42 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
 /**
- * Provides drivers for binding two ports on the same node.
+ * Xconnect builder (FIXME no decision logic yet)
  * @author bartosz.michalik@amartus.com
  */
-public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
+public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, BindingAwareConsumer {
 
-	private L2vpnBridgeActivator activator;
+    private final FixedServiceNaming namingProvider;
+    private L2vpnXconnectActivator xconnectActivator;
+    private static DataBroker dataBroker;
+    private static MountPointService mountService;
 
     @Override
     public void onSessionInitialized(BindingAwareBroker.ConsumerContext session) {
-         DataBroker dataBroker = session.getSALService(DataBroker.class);
-         MountPointService mountService = session.getSALService(MountPointService.class);
-         activator = new L2vpnBridgeActivator(dataBroker, mountService);
+         dataBroker = session.getSALService(DataBroker.class);
+         mountService = session.getSALService(MountPointService.class);
+         xconnectActivator = new L2vpnXconnectActivator(dataBroker, mountService);
+    }
+
+    public L2vpnXconnectDriverBuilder() {
+        this.namingProvider = new FixedServiceNaming();
     }
 
     @Override
-    public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext ctx) {
-        Optional<GForwardingConstruct> fwd = ctx.get(GForwardingConstruct.class.getName());
+    public Optional<ActivationDriver> driverFor(GFcPort port,BuilderContext  context) {
+        Optional<GForwardingConstruct> fwd = context.get(GForwardingConstruct.class.getName());
         assert fwd != null;
 
-        if(ForwardingConstructHelper.isTheSameNode(fwd.get())) {
-            Optional<ActivationDriver> driver= ctx.get("L2vpnBridgeDriverBuilder.driver");
-            if(driver.isPresent()) return Optional.of(new DummyActivationDriver());
-            ActivationDriver realDriver =  getDriver(port, ctx);
-            assert realDriver != null;
+        if(ForwardingConstructHelper.isTheSameNode(fwd.get()) == false) {
+            ActivationDriver realDriver =  getDriver(port, context);
 
-            ctx.put("L2vpnBridgeDriverBuilder.driver", realDriver);
             return Optional.of(realDriver);
-
         }
 
         return Optional.empty();
     }
 
-    protected ActivationDriver getDriver(GFcPort port, BuilderContext ctx) {
+    protected ActivationDriver getDriver(GFcPort port, BuilderContext context) {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;
@@ -70,11 +76,11 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, Bindin
             public void activate() throws Exception {
                 String id = ctx.getUuid();
                 long mtu = 1500;
-                String outerName = "outer";
-                String innerName = "inner";
+                String outerName = namingProvider.getOuterName(id);
+                String innerName = namingProvider.getInnerName(id);
 
                 String aEndNodeName = aEnd.getLtpRefList().get(0).getValue().split(":")[0];
-                activator.activate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
+                xconnectActivator.activate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
 
             }
 
@@ -82,11 +88,11 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, Bindin
             public void deactivate() throws Exception {
                 String id = ctx.getUuid();
                 long mtu = 1500;
-                String outerName = "outer";
-                String innerName = "inner";
+                String outerName = namingProvider.getOuterName(id);
+                String innerName = namingProvider.getInnerName(id);
 
                 String aEndNodeName = aEnd.getLtpRefList().get(0).getValue().split(":")[0];
-                activator.deactivate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
+                xconnectActivator.deactivate(aEndNodeName, outerName, innerName, aEnd, zEnd, mtu);
             }
 
             @Override
@@ -94,6 +100,7 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, Bindin
                 return 0;
             }
         };
+
         return driver;
     }
 }

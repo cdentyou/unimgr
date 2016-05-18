@@ -1,8 +1,9 @@
-package org.mef.nrp.impl;
+package org.mef.nrp.cisco.xr;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.mef.nrp.impl.ResourceActivator;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
@@ -67,50 +68,41 @@ public class L2vpnBridgeActivator implements ResourceActivator {
     @Override
     public void activate(String nodeName, String outerName, String innerName, GFcPort port, GFcPort neighbor, long mtu) {
 
-    	String aEndLtpId = port.getLtpRefList().get(0).getValue();
-    	String zEndLtpId = neighbor.getLtpRefList().get(0).getValue();
+        String aEndLtpId = port.getLtpRefList().get(0).getValue();
+        String zEndLtpId = neighbor.getLtpRefList().get(0).getValue();
 
         InterfaceName aEndIfName = new InterfaceName(aEndLtpId.split(":")[1]);
         InterfaceName zEndIfName = new InterfaceName(zEndLtpId.split(":")[1]);
-        InterfaceName[] both = new InterfaceName[] {aEndIfName, zEndIfName};
+        InterfaceName[] both = new InterfaceName[] { aEndIfName, zEndIfName };
 
         List<InterfaceConfiguration> intConfigs = new LinkedList<>();
         for (InterfaceName ifName : both) {
-        	InterfaceConfigurationBuilder intConfigBuilder =
-        			new InterfaceConfigurationBuilder();
-        	intConfigBuilder.setInterfaceName(ifName)
-                	.setActive(new InterfaceActive("act"))
-                	.setShutdown(Boolean.FALSE);
+            InterfaceConfigurationBuilder intConfigBuilder = new InterfaceConfigurationBuilder();
+            intConfigBuilder.setInterfaceName(ifName).setActive(new InterfaceActive("act")).setShutdown(Boolean.FALSE);
 
-        	L2Transport l2transport = new L2TransportBuilder().setEnabled(true).build();
-        	InterfaceConfiguration3 augmentation = new InterfaceConfiguration3Builder().setL2Transport(l2transport).build();
-        	intConfigBuilder.addAugmentation(InterfaceConfiguration3.class, augmentation);
+            L2Transport l2transport = new L2TransportBuilder().setEnabled(true).build();
+            InterfaceConfiguration3 augmentation = new InterfaceConfiguration3Builder().setL2Transport(l2transport)
+                    .build();
+            intConfigBuilder.addAugmentation(InterfaceConfiguration3.class, augmentation);
 
-        	intConfigs.add(intConfigBuilder.build());
+            intConfigs.add(intConfigBuilder.build());
         }
-        InterfaceConfigurationsBuilder intConfigsBuilder =
-                new InterfaceConfigurationsBuilder();
+        InterfaceConfigurationsBuilder intConfigsBuilder = new InterfaceConfigurationsBuilder();
         intConfigsBuilder.setInterfaceConfiguration(intConfigs);
 
-        InstanceIdentifier<InterfaceConfigurations> intConfigsId =
-                InstanceIdentifier.builder(InterfaceConfigurations.class)
-                .build();
+        InstanceIdentifier<InterfaceConfigurations> intConfigsId = InstanceIdentifier
+                .builder(InterfaceConfigurations.class).build();
 
-        AttachmentCircuitBuilder attachmentCircuitBuilderA =
-                new AttachmentCircuitBuilder();
-        attachmentCircuitBuilderA.setName(aEndIfName)
-                .setEnable(Boolean.TRUE);
-        AttachmentCircuitBuilder attachmentCircuitBuilderZ =
-                new AttachmentCircuitBuilder();
-        attachmentCircuitBuilderZ.setName(zEndIfName)
-                .setEnable(Boolean.TRUE);
+        AttachmentCircuitBuilder attachmentCircuitBuilderA = new AttachmentCircuitBuilder();
+        attachmentCircuitBuilderA.setName(aEndIfName).setEnable(Boolean.TRUE);
+        AttachmentCircuitBuilder attachmentCircuitBuilderZ = new AttachmentCircuitBuilder();
+        attachmentCircuitBuilderZ.setName(zEndIfName).setEnable(Boolean.TRUE);
 
         List<AttachmentCircuit> attachmentCircuits = new LinkedList<>();
         attachmentCircuits.add(attachmentCircuitBuilderA.build());
         attachmentCircuits.add(attachmentCircuitBuilderZ.build());
 
-        AttachmentCircuitsBuilder attachmentCircuitsBuilder =
-                new AttachmentCircuitsBuilder();
+        AttachmentCircuitsBuilder attachmentCircuitsBuilder = new AttachmentCircuitsBuilder();
         attachmentCircuitsBuilder.setAttachmentCircuit(attachmentCircuits);
 
         List<Pseudowire> pseudowires = new LinkedList<>();
@@ -119,24 +111,20 @@ public class L2vpnBridgeActivator implements ResourceActivator {
 
         P2pXconnectBuilder p2pXconnectBuilder = new P2pXconnectBuilder();
         p2pXconnectBuilder.setName(new CiscoIosXrString(innerName))
-                .setAttachmentCircuits(attachmentCircuitsBuilder.build())
-                .setPseudowires(pseudowiresBuilder.build());
+                .setAttachmentCircuits(attachmentCircuitsBuilder.build()).setPseudowires(pseudowiresBuilder.build());
 
         List<P2pXconnect> p2pXconnects = new LinkedList<>();
         p2pXconnects.add(p2pXconnectBuilder.build());
         P2pXconnectsBuilder p2pXconnectsBuilder = new P2pXconnectsBuilder();
         p2pXconnectsBuilder.setP2pXconnect(p2pXconnects);
 
-        XconnectGroupBuilder xconnectGroupBuilder =
-                new XconnectGroupBuilder();
+        XconnectGroupBuilder xconnectGroupBuilder = new XconnectGroupBuilder();
         xconnectGroupBuilder.setKey(new XconnectGroupKey(new CiscoIosXrString("local")));
-        xconnectGroupBuilder.setName(new CiscoIosXrString("local"))
-                .setP2pXconnects(p2pXconnectsBuilder.build());
+        xconnectGroupBuilder.setName(new CiscoIosXrString("local")).setP2pXconnects(p2pXconnectsBuilder.build());
 
         List<XconnectGroup> xconnectGroups = new LinkedList<>();
         xconnectGroups.add(xconnectGroupBuilder.build());
-        XconnectGroupsBuilder xconnectGroupsBuilder =
-                new XconnectGroupsBuilder();
+        XconnectGroupsBuilder xconnectGroupsBuilder = new XconnectGroupsBuilder();
         xconnectGroupsBuilder.setXconnectGroup(xconnectGroups);
 
         DatabaseBuilder dbBuilder = new DatabaseBuilder();
@@ -145,8 +133,7 @@ public class L2vpnBridgeActivator implements ResourceActivator {
         L2vpnBuilder l2vpnBuilder = new L2vpnBuilder();
         l2vpnBuilder.setDatabase(dbBuilder.build());
 
-        InstanceIdentifier<L2vpn> l2vpnId = InstanceIdentifier.builder(
-                L2vpn.class).build();
+        InstanceIdentifier<L2vpn> l2vpnId = InstanceIdentifier.builder(L2vpn.class).build();
 
         DataBroker nodeDataBroker = getNodeDataBroker(nodeName);
         if (nodeDataBroker == null) {
@@ -157,10 +144,8 @@ public class L2vpnBridgeActivator implements ResourceActivator {
         WriteTransaction w = null;
         try {
             w = nodeDataBroker.newWriteOnlyTransaction();
-            w.merge(LogicalDatastoreType.CONFIGURATION,
-                    intConfigsId, intConfigsBuilder.build());
-            w.merge(LogicalDatastoreType.CONFIGURATION, l2vpnId,
-                    l2vpnBuilder.build());
+            w.merge(LogicalDatastoreType.CONFIGURATION, intConfigsId, intConfigsBuilder.build());
+            w.merge(LogicalDatastoreType.CONFIGURATION, l2vpnId, l2vpnBuilder.build());
             try {
                 w.submit().checkedGet();
                 log.info("Service activated: {} {} {}", nodeName, outerName, innerName);
@@ -168,32 +153,29 @@ public class L2vpnBridgeActivator implements ResourceActivator {
                 log.error("Transaction failed", e);
             }
         } catch (Throwable t) {
-            if (w != null) w.cancel();
+            if (w != null)
+                w.cancel();
             log.error("Failed to create write transaction", t);
         }
     }
 
     @Override
-    public void deactivate(String nodeName, String outerName, String innerName, GFcPort port, GFcPort neighbor, long mtu) {
-    	String portLtpId = port.getLtpRefList().get(0).getValue();
+    public void deactivate(String nodeName, String outerName, String innerName, GFcPort port, GFcPort neighbor,
+            long mtu) {
+        String portLtpId = port.getLtpRefList().get(0).getValue();
         InterfaceName interfaceName = new InterfaceName(portLtpId.split(":")[1]);
 
         InterfaceActive intActive = new InterfaceActive("act");
 
-        InstanceIdentifier<P2pXconnect> p2pId =
-                InstanceIdentifier.builder(L2vpn.class)
-                .child(Database.class)
+        InstanceIdentifier<P2pXconnect> p2pId = InstanceIdentifier.builder(L2vpn.class).child(Database.class)
                 .child(XconnectGroups.class)
                 .child(XconnectGroup.class, new XconnectGroupKey(new CiscoIosXrString("local")))
-                .child(P2pXconnects.class)
-                .child(P2pXconnect.class, new P2pXconnectKey(new CiscoIosXrString(innerName)))
+                .child(P2pXconnects.class).child(P2pXconnect.class, new P2pXconnectKey(new CiscoIosXrString(innerName)))
                 .build();
 
-        InstanceIdentifier<InterfaceConfiguration> intConfigId =
-                InstanceIdentifier.builder(InterfaceConfigurations.class)
-                .child(InterfaceConfiguration.class,
-                       new InterfaceConfigurationKey(intActive, interfaceName))
-                .build();
+        InstanceIdentifier<InterfaceConfiguration> intConfigId = InstanceIdentifier
+                .builder(InterfaceConfigurations.class)
+                .child(InterfaceConfiguration.class, new InterfaceConfigurationKey(intActive, interfaceName)).build();
 
         DataBroker nodeDataBroker = getNodeDataBroker(nodeName);
         if (nodeDataBroker == null) {
@@ -217,8 +199,7 @@ public class L2vpnBridgeActivator implements ResourceActivator {
 
         InstanceIdentifier<Node> nodeInstanceId = InstanceIdentifier.builder(NetworkTopology.class)
                 .child(Topology.class, new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())))
-                .child(Node.class, new NodeKey(nodeId))
-                .build();
+                .child(Node.class, new NodeKey(nodeId)).build();
 
         final Optional<MountPoint> nodeOptional = mountService.getMountPoint(nodeInstanceId);
 

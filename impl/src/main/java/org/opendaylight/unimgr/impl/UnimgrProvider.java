@@ -10,8 +10,7 @@ package org.opendaylight.unimgr.impl;
 import java.util.List;
 
 import org.mef.nrp.impl.ActivationDriverRepoService;
-import org.mef.nrp.impl.L2vpnBridgeDriverBuilder;
-import org.mef.nrp.impl.L2vpnXconnectDriverBuilder;
+import org.mef.nrp.impl.ActivationDriverRepoServiceImpl;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
@@ -158,13 +157,15 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
 
-        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoService();
-        L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
-        l2vpnXconnectDriverBuilder.onSessionInitialized(session);
-        activationDriverRepoService.bindBuilder(l2vpnXconnectDriverBuilder);
-        L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
-        l2vpnBridgeDriverBuilder.onSessionInitialized(session);
-        activationDriverRepoService.bindBuilder(l2vpnBridgeDriverBuilder);
+        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoServiceImpl();
+        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
+
+//        L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
+//        l2vpnXconnectDriverBuilder.onSessionInitialized(session);
+//        activationDriverRepoService.bindBuilder(l2vpnXconnectDriverBuilder);
+//        L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
+//        l2vpnBridgeDriverBuilder.onSessionInitialized(session);
+//        activationDriverRepoService.bindBuilder(l2vpnBridgeDriverBuilder);
 
         fwConstructListener = new FCRouteChangeListener(dataBroker);
         fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);

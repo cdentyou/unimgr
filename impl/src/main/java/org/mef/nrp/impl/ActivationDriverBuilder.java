@@ -23,7 +23,7 @@ public interface ActivationDriverBuilder {
     Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext context);
 
     /***
-     * Blackboard patter that allows for passing the context information between {@link ActivationDriverBuilder}s taking part in transaction
+     * Blackboard pattern that allows for passing the context information between {@link ActivationDriverBuilder}s taking part in transaction
      */
     class BuilderContext {
         private Map<String, Object> ctx = new ConcurrentHashMap<>();
