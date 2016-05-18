@@ -160,13 +160,6 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoServiceImpl();
         context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
 
-//        L2vpnXconnectDriverBuilder l2vpnXconnectDriverBuilder = new L2vpnXconnectDriverBuilder();
-//        l2vpnXconnectDriverBuilder.onSessionInitialized(session);
-//        activationDriverRepoService.bindBuilder(l2vpnXconnectDriverBuilder);
-//        L2vpnBridgeDriverBuilder l2vpnBridgeDriverBuilder = new L2vpnBridgeDriverBuilder();
-//        l2vpnBridgeDriverBuilder.onSessionInitialized(session);
-//        activationDriverRepoService.bindBuilder(l2vpnBridgeDriverBuilder);
-
         fwConstructListener = new FCRouteChangeListener(dataBroker);
         fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
 
