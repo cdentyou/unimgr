@@ -15,12 +15,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public interface ActivationDriverBuilder {
     /**
-     * Method is meant to prepare a driver for a given port.
+     * Get driver for a single port
      * @param port to configure
      * @param context (de)activation context
      * @return {@link Optional#empty()} in case it cannot be instantiated for a port, driver otherwise
      */
     Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext context);
+
+    /**
+     * Get driver for two ports.
+     * @param aPort
+     * @param zPort
+     * @param context
+     * @return {@link Optional#empty()} in case it cannot be instantiated for a port, driver otherwise
+     */
+    Optional<ActivationDriver> driverFor(GFcPort aPort, GFcPort zPort, BuilderContext context);
 
     /***
      * Blackboard pattern that allows for passing the context information between {@link ActivationDriverBuilder}s taking part in transaction

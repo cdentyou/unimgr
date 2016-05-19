@@ -76,4 +76,9 @@ public class EdgeAssureDriverBuilder implements ActivationDriverBuilder {
 
         return Optional.of(driver);
     }
+
+    @Override
+    public Optional<ActivationDriver> driverFor(GFcPort aPort, GFcPort zPort, BuilderContext context) {
+        return Optional.empty();
+    }
 }

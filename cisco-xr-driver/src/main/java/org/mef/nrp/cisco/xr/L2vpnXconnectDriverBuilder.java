@@ -36,20 +36,16 @@ public class L2vpnXconnectDriverBuilder implements ActivationDriverBuilder, Bind
     }
 
     @Override
-    public Optional<ActivationDriver> driverFor(GFcPort port,BuilderContext  context) {
-        Optional<GForwardingConstruct> fwd = context.get(GForwardingConstruct.class.getName());
-        assert fwd != null;
+    public Optional<ActivationDriver> driverFor(GFcPort port,BuilderContext _ctx) {
+        return Optional.of(getDriver());
+    }
 
-        if(ForwardingConstructHelper.isTheSameNode(fwd.get()) == false) {
-            ActivationDriver realDriver =  getDriver(port, context);
-
-            return Optional.of(realDriver);
-        }
-
+    @Override
+    public Optional<ActivationDriver> driverFor(GFcPort aPort, GFcPort zPort, BuilderContext context) {
         return Optional.empty();
     }
 
-    protected ActivationDriver getDriver(GFcPort port, BuilderContext context) {
+    protected ActivationDriver getDriver() {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;

@@ -29,25 +29,16 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder, Bindin
     }
 
     @Override
-    public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext ctx) {
-        Optional<GForwardingConstruct> fwd = ctx.get(GForwardingConstruct.class.getName());
-        assert fwd != null;
-
-        if(ForwardingConstructHelper.isTheSameNode(fwd.get())) {
-            Optional<ActivationDriver> driver= ctx.get("L2vpnBridgeDriverBuilder.driver");
-            if(driver.isPresent()) return Optional.of(new DummyActivationDriver());
-            ActivationDriver realDriver =  getDriver(port, ctx);
-            assert realDriver != null;
-
-            ctx.put("L2vpnBridgeDriverBuilder.driver", realDriver);
-            return Optional.of(realDriver);
-
-        }
-
+    public Optional<ActivationDriver> driverFor(GFcPort port, BuilderContext _ctx) {
         return Optional.empty();
     }
 
-    protected ActivationDriver getDriver(GFcPort port, BuilderContext ctx) {
+    @Override
+    public Optional<ActivationDriver> driverFor(GFcPort aPort, GFcPort zPort, BuilderContext context) {
+        return Optional.of(getDriver());
+    }
+
+    protected ActivationDriver getDriver() {
         final ActivationDriver driver = new ActivationDriver() {
             public GForwardingConstruct ctx;
             public GFcPort aEnd;

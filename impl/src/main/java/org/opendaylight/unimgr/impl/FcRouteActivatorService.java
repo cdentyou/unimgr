@@ -53,6 +53,35 @@ public class FcRouteActivatorService {
         final GFcPort a = list.get(0);
         final GFcPort z = list.get(1);
 
+        return ForwardingConstructHelper.isTheSameNode(fwdC) ?  getTxForNode(a,z, fwdC) :
+                getTxForMultiNode(a,z, fwdC);
+    }
+
+    private Optional<ActivationTransaction> getTxForMultiNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
+        lock.readLock().lock();
+        try {
+            final ActivationDriverBuilder.BuilderContext ctx = new ActivationDriverBuilder.BuilderContext();
+            ActivationDriver activator = activationRepoService.getBuilder(a, z, ctx);
+
+            activator.initialize(a, z, fwdC);
+            ActivationTransaction tx = new ActivationTransaction();
+            tx.addDriver(activator);
+            return Optional.of(tx);
+        } catch(ActivationDriverNotFoundException e) {
+            LOG.warn("No unique activation driver found for {} <-> {}", a);
+            return Optional.empty();
+        } catch(ActivationDriverAmbiguousException e) {
+            LOG.warn("Multiple activation driver found for {} <-> {}", z);
+            return Optional.empty();
+        } catch (Exception e) {
+            LOG.error("driver initialization exception",e);
+            return Optional.empty();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
         //1. find and initialize drivers
         Optional<ActivationDriver> aActivator;
         Optional<ActivationDriver> zActivator;
@@ -64,6 +93,7 @@ public class FcRouteActivatorService {
 
             aActivator = findDriver(a, ctx);
             zActivator = findDriver(z, ctx);
+
             if (aActivator.isPresent() && zActivator.isPresent()) {
                 aActivator.get().initialize(a, z, fwdC);
                 zActivator.get().initialize(z, a, fwdC);
@@ -100,10 +130,14 @@ public class FcRouteActivatorService {
         }
         try {
             return Optional.ofNullable(activationRepoService.getBuilder(port, fwdC));
-        } catch(ActivationDriverNotFoundException | ActivationDriverAmbiguousException e) {
+        } catch(ActivationDriverNotFoundException e) {
             LOG.warn("No unique activation driver found for {}", port);
             return Optional.empty();
+        } catch(ActivationDriverAmbiguousException e) {
+            LOG.warn("Multiple activation driver found for {}", port);
+            return Optional.empty();
         }
+
 
     }
 

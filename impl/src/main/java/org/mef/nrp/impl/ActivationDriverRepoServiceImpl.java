@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,8 +49,8 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
         builders.remove(builder);
     }
 
-    public ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
-        final List<ActivationDriver> drivers = builders.stream().map(x -> x.driverFor(port, context))
+    protected ActivationDriver getDriver(Function<ActivationDriverBuilder, Optional<ActivationDriver>> driver) {
+        final List<ActivationDriver> drivers = builders.stream().map(driver)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -61,5 +62,13 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
             throw new ActivationDriverNotFoundException();
         }
         return drivers.get(0);
+    }
+
+    public ActivationDriver getBuilder(GFcPort aPort, GFcPort zPort, ActivationDriverBuilder.BuilderContext context) {
+        return getDriver(x -> x.driverFor(aPort, zPort, context));
+    }
+
+    public ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
+        return getDriver(x -> x.driverFor(port, context));
     }
 }

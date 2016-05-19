@@ -88,7 +88,7 @@ Aggregation is used as for the FD to allow changes in hierarchy.
                 path '/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstructList/CoreModel-CoreNetworkModule-ObjectClasses:ForwardingConstruct/CoreModel-CoreNetworkModule-ObjectClasses:uuid';
             }
         }
-        leaf-list _fcRouteRefList {
+        leaf-list Route {
             description "An FC object can have zero or more routes, each of which is defined as a list of lower level FC objects describing the flow across the network.";
             ordered-by system;
             type leafref {
