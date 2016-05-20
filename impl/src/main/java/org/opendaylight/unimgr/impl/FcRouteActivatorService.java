@@ -31,7 +31,7 @@ public class FcRouteActivatorService {
             if (tx.isPresent()) {
                 tx.get().activate();
             } else {
-                LOG.warn("No transaction for this activation request");
+                LOG.warn("No transaction for this activation request {}", fwdC);
             }
         }
     }
@@ -42,7 +42,7 @@ public class FcRouteActivatorService {
             if (tx.isPresent()) {
                 tx.get().deactivate();
             } else {
-                LOG.warn("No transaction for this deactivation request");
+                LOG.warn("No transaction for this deactivation request {}", fwdC);
             }
         }
     }
@@ -61,7 +61,7 @@ public class FcRouteActivatorService {
         lock.readLock().lock();
         try {
             final ActivationDriverBuilder.BuilderContext ctx = new ActivationDriverBuilder.BuilderContext();
-            ActivationDriver activator = activationRepoService.getBuilder(a, z, ctx);
+            ActivationDriver activator = activationRepoService.getDriver(a, z, ctx);
 
             activator.initialize(a, z, fwdC);
             ActivationTransaction tx = new ActivationTransaction();
@@ -129,7 +129,7 @@ public class FcRouteActivatorService {
             return Optional.empty();
         }
         try {
-            return Optional.ofNullable(activationRepoService.getBuilder(port, fwdC));
+            return Optional.ofNullable(activationRepoService.getDriver(port, fwdC));
         } catch(ActivationDriverNotFoundException e) {
             LOG.warn("No unique activation driver found for {}", port);
             return Optional.empty();
