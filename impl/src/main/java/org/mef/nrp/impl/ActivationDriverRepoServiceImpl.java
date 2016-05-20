@@ -1,28 +1,24 @@
 package org.mef.nrp.impl;
 
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareService;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author alex.feigin@hpe.com
- * FIXME [bmi] reimplement as a singleton if we really need a single instance
  */
 public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoService {
     private static final Logger LOG = LoggerFactory.getLogger(ActivationDriverRepoServiceImpl.class);
-    private static DataBroker dataBroker;
-    private static MountPointService mountService;
 
-    private static Collection<ActivationDriverBuilder> builders = ConcurrentHashMap.newKeySet();
+    private Collection<ActivationDriverBuilder> builders = ConcurrentHashMap.newKeySet();
+
 
     /* (non-Javadoc)
      * @see org.mef.nrp.impl.ActivationDriverRepoService#bindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
@@ -64,11 +60,11 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
         return drivers.get(0);
     }
 
-    public ActivationDriver getBuilder(GFcPort aPort, GFcPort zPort, ActivationDriverBuilder.BuilderContext context) {
+    public ActivationDriver getDriver(GFcPort aPort, GFcPort zPort, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(aPort, zPort, context));
     }
 
-    public ActivationDriver getBuilder(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
+    public ActivationDriver getDriver(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(port, context));
     }
 }
