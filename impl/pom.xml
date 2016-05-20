@@ -17,7 +17,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     </parent>
 
     <properties>
-        <checkstyle.skip>true</checkstyle.skip>
         <ovsdb.version>1.3.0-SNAPSHOT</ovsdb.version>
         <powermock.version>1.6.4</powermock.version>
     </properties>
