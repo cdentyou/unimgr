@@ -23,6 +23,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
   </prerequisites>
   <properties>
     <karaf.localFeature>odl-unimgr-ui</karaf.localFeature>
+    <karaf.version>3.0.3</karaf.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -42,6 +43,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
       <groupId>org.apache.karaf.features</groupId>
       <artifactId>framework</artifactId>
       <type>kar</type>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>cds-access-api</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
