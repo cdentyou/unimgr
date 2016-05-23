@@ -17,12 +17,17 @@ import java.util.stream.Collectors;
 public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoService {
     private static final Logger LOG = LoggerFactory.getLogger(ActivationDriverRepoServiceImpl.class);
 
-    private Collection<ActivationDriverBuilder> builders = ConcurrentHashMap.newKeySet();
+    private Collection<ActivationDriverBuilder> builders;
 
+
+    public ActivationDriverRepoServiceImpl() {
+        this.builders = ConcurrentHashMap.newKeySet();
+        LOG.debug("ActivationDriverRepoService instance initialized");
+    }
 
     /* (non-Javadoc)
-     * @see org.mef.nrp.impl.ActivationDriverRepoService#bindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
-     */
+         * @see org.mef.nrp.impl.ActivationDriverRepoService#bindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
+         */
     @Override
     public void bindBuilder(ActivationDriverBuilder builder) {
         if (builder == null) {

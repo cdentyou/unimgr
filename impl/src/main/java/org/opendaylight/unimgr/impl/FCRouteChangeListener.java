@@ -48,7 +48,6 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
     public void onDataTreeChanged(Collection<DataTreeModification<FcRoute>> collection) {
         //TODO add lock for concurrency support
         if(activationRepoService == null) {
-            //TODO improve comment
             LOG.warn("ActivationDriverRepoService is not ready yet - ignoring request");
             return;
         }
@@ -109,13 +108,13 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
 
     }
 
+
+    @SuppressWarnings("unused")
+    /**
+     * Used by blueprint
+     */
     public void setActivationDriverRepoService(ActivationDriverRepoService service) {
         this.activationRepoService = service;
         routeActivator.setActivationRepoService(service);
-    }
-
-    public void unsetActivationDriverRepoService() {
-        this.activationRepoService = null;
-        routeActivator.unsetActivationRepoService();
     }
 }

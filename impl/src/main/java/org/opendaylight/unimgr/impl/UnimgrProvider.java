@@ -82,7 +82,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         uniListener.close();
         evcListener.close();
         ovsListener.close();
-        fwConstructListener.close();
+//        fwConstructListener.close();
     }
 
     @Override
@@ -157,11 +157,12 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
 
-        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoServiceImpl();
-        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
+//        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoServiceImpl();
+//        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
 
-        fwConstructListener = new FCRouteChangeListener(dataBroker);
-        fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
+
+//        fwConstructListener = new FCRouteChangeListener(dataBroker);
+//        fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
 
         // Initialize operational and default config data in MD-SAL data store
         initDatastore(LogicalDatastoreType.CONFIGURATION,
