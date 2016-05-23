@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,42 +13,30 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * Default application repo that is populated with the application driver builders registered as OSGi services.
+ *
+ *
  * @author alex.feigin@hpe.com
+ * @author bartosz.michalik@amartus.com [modifications]
  */
 public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoService {
     private static final Logger LOG = LoggerFactory.getLogger(ActivationDriverRepoServiceImpl.class);
 
     private Collection<ActivationDriverBuilder> builders;
 
-
     public ActivationDriverRepoServiceImpl() {
-        this.builders = ConcurrentHashMap.newKeySet();
+        this.builders = Collections.emptyList();
         LOG.debug("ActivationDriverRepoService instance initialized");
     }
 
-    /* (non-Javadoc)
-         * @see org.mef.nrp.impl.ActivationDriverRepoService#bindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
-         */
-    @Override
-    public void bindBuilder(ActivationDriverBuilder builder) {
-        if (builder == null) {
-            return;
-        }
-        LOG.info("ActivationDriverRepoService.bindBuilder got [{}] instance", builder.getClass().getSimpleName());
-        builders.add(builder);
-    }
-
-    /* (non-Javadoc)
-     * @see org.mef.nrp.impl.ActivationDriverRepoService#unbindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
+    /**
+     * Used by blueprint to inject dynamic list of driver builders
+     * @param builders list of service proxies
      */
-    @Override
-    public void unbindBuilder(ActivationDriverBuilder builder) {
-        if (builder==null)
-        {
-            return;
-        }
-        LOG.info("ActivationDriverRepoService.unbindBuilder got [{}] instance", builder.getClass().getSimpleName());
-        builders.remove(builder);
+    @SuppressWarnings("unused")
+    public void setDriverBuilders(List<ActivationDriverBuilder> builders) {
+        LOG.debug("Activation drivers initialized");
+        this.builders = builders;
     }
 
     protected ActivationDriver getDriver(Function<ActivationDriverBuilder, Optional<ActivationDriver>> driver) {

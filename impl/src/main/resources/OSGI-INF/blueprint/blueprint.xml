@@ -2,10 +2,10 @@
            xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"
            xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0" odl:use-default-for-reference-types="true">
-    <bean id="activationDriver" class="org.mef.nrp.impl.ActivationDriverRepoServiceImpl">
 
+    <bean id="activationDriver" class="org.mef.nrp.impl.ActivationDriverRepoServiceImpl">
+        <property name="driverBuilders" ref="driverBuilders" />
     </bean>
-    <service ref="activationDriver" interface="org.mef.nrp.impl.ActivationDriverRepoService" odl:type="default" />
 
     <bean id="fcRouteListener" class="org.opendaylight.unimgr.impl.FcRouteChangeListener">
         <argument ref="dataBroker" />
@@ -13,4 +13,5 @@
     </bean>
 
     <reference id="dataBroker" interface="org.opendaylight.controller.md.sal.binding.api.DataBroker"/>
+    <reference-list id="driverBuilders" interface="org.mef.nrp.impl.ActivationDriverBuilder" availability="optional" />
 </blueprint>
