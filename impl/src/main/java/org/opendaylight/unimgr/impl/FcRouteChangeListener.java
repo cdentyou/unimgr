@@ -8,7 +8,6 @@
 package org.opendaylight.unimgr.impl;
 
 import org.mef.nrp.impl.ActivationDriverRepoService;
-import org.mef.nrp.impl.ActivationDriverRepoServiceImpl;
 import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.FcRouteList;
@@ -24,20 +23,20 @@ import java.util.Collection;
  * NRP top level change model listener
  * @author bartosz.michalik@amartus.com
  */
-public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, AutoCloseable {
-    private static final Logger LOG = LoggerFactory.getLogger(FCRouteChangeListener.class);
-    private final ListenerRegistration<FCRouteChangeListener> listener;
+public class FcRouteChangeListener implements DataTreeChangeListener<FcRoute>, AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(FcRouteChangeListener.class);
+    private final ListenerRegistration<FcRouteChangeListener> listener;
     private final FcRouteActivatorService routeActivator;
 
     private volatile ActivationDriverRepoService activationRepoService;
 
-    public FCRouteChangeListener(DataBroker dataBroker) {
+    public FcRouteChangeListener(DataBroker dataBroker) {
         final InstanceIdentifier<FcRoute> fwPath = getFwConstructsPath();
         final DataTreeIdentifier<FcRoute> dataTreeIid = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, fwPath);
         listener = dataBroker.registerDataTreeChangeListener(dataTreeIid, this);
         this.routeActivator = new FcRouteActivatorService();
 
-        LOG.info("FCRouteChangeListener created and registered");
+        LOG.info("FcRouteChangeListener created and registered");
     }
 
     /**

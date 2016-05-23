@@ -7,7 +7,7 @@
     </bean>
     <service ref="activationDriver" interface="org.mef.nrp.impl.ActivationDriverRepoService" odl:type="default" />
 
-    <bean id="fcRouteListener" class="org.opendaylight.unimgr.impl.FCRouteChangeListener">
+    <bean id="fcRouteListener" class="org.opendaylight.unimgr.impl.FcRouteChangeListener">
         <argument ref="dataBroker" />
         <property name="activationDriverRepoService" ref="activationDriver"  />
     </bean>

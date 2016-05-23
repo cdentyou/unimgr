@@ -9,8 +9,6 @@ package org.opendaylight.unimgr.impl;
 
 import java.util.List;
 
-import org.mef.nrp.impl.ActivationDriverRepoService;
-import org.mef.nrp.impl.ActivationDriverRepoServiceImpl;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
@@ -55,7 +53,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private OvsNodeDataTreeChangeListener ovsListener;
     private UniDataTreeChangeListener uniListener;
     private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
-    private FCRouteChangeListener fwConstructListener;
+    private FcRouteChangeListener fwConstructListener;
 
     public UnimgrProvider() {
         LOG.info("Unimgr provider initialized");
@@ -161,7 +159,7 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
 //        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
 
 
-//        fwConstructListener = new FCRouteChangeListener(dataBroker);
+//        fwConstructListener = new FcRouteChangeListener(dataBroker);
 //        fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
 
         // Initialize operational and default config data in MD-SAL data store
