@@ -1,6 +1,6 @@
 package org.mef.nrp.cisco.xr;
 
-import org.mef.nrp.impl.ActivationDriverBuilder;
+import org.mef.nrp.api.ActivationDriverBuilder;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.osgi.framework.BundleContext;

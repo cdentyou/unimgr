@@ -1,5 +1,7 @@
 package org.mef.nrp.impl;
 
+
+import org.mef.nrp.api.*;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,13 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
 
     public ActivationDriver getDriver(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(port, context));
+    }
+
+    public void bind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} bound", builder);
+    }
+
+    public void unbind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} unbound", builder);
     }
 }

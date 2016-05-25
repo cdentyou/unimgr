@@ -2,10 +2,9 @@ package org.mef.nrp.cisco.xr;
 
 import java.util.Optional;
 
-import org.mef.nrp.impl.ActivationDriver;
-import org.mef.nrp.impl.ActivationDriverBuilder;
-import org.mef.nrp.impl.FixedServiceNaming;
-import org.mef.nrp.impl.ForwardingConstructHelper;
+import org.mef.nrp.api.ActivationDriver;
+import org.mef.nrp.api.ActivationDriverBuilder;
+import org.mef.nrp.common.FixedServiceNaming;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;

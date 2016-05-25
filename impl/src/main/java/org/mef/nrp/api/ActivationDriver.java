@@ -1,4 +1,4 @@
-package org.mef.nrp.impl;
+package org.mef.nrp.api;
 
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;

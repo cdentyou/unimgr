@@ -3,7 +3,7 @@ package org.mef.nrp.cisco.xr;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mef.nrp.impl.ResourceActivator;
+import org.mef.nrp.common.ResourceActivator;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;

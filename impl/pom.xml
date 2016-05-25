@@ -42,8 +42,26 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
+                        <!--<Import-Package>-->
+                            <!--org.slf4j,-->
+                            <!--com.google.common*,-->
+                            <!--org.opendaylight.ovsdb.southbound,-->
+                            <!--org.opendaylight.yangtools.yang.binding,-->
+                            <!--org.opendaylight.yang.gen.v1.uri.onf.coremodel*,-->
+                            <!--org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.unimgr*,-->
+                            <!--org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config*,-->
+                            <!--org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.binding*,-->
+                            <!--org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types*,-->
+                            <!--org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology*,-->
+                            <!--org.opendaylight.controller.md.sal.common*,-->
+                            <!--org.opendaylight.controller.md.sal.binding*,-->
+                            <!--org.opendaylight.controller.sal.binding*-->
+                        <!--</Import-Package>-->
                         <Import-Package>*</Import-Package>
-                        <Export-Package>org.mef.nrp.impl, org.opendaylight.unimgr
+                        <Export-Package>
+                            org.mef.nrp.common,
+                            org.mef.nrp.api,
+                            org.opendaylight.unimgr
                         </Export-Package>
                     </instructions>
                 </configuration>

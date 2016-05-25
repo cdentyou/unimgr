@@ -1,4 +1,4 @@
-package org.mef.nrp.impl;
+package org.mef.nrp.common;
 
 public interface ServiceNaming {
 

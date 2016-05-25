@@ -1,6 +1,8 @@
 package org.opendaylight.unimgr.impl;
 
-import org.mef.nrp.impl.*;
+import org.mef.nrp.api.*;
+import org.mef.nrp.impl.ActivationTransaction;
+import org.mef.nrp.impl.ForwardingConstructHelper;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.fcroutelist.FcRoute;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
@@ -131,7 +133,7 @@ public class FcRouteActivatorService {
         try {
             return Optional.ofNullable(activationRepoService.getDriver(port, fwdC));
         } catch(ActivationDriverNotFoundException e) {
-            LOG.warn("No unique activation driver found for {}", port);
+            LOG.warn("No activation driver found for {}", port);
             return Optional.empty();
         } catch(ActivationDriverAmbiguousException e) {
             LOG.warn("Multiple activation driver found for {}", port);

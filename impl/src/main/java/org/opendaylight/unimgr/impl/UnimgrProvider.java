@@ -7,8 +7,8 @@
  */
 package org.opendaylight.unimgr.impl;
 
-import java.util.List;
-
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.CheckedFuture;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
@@ -36,14 +36,10 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Link;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import java.util.List;
 
 public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUnimgrConsoleProvider {
 
@@ -52,11 +48,10 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     private EvcDataTreeChangeListener evcListener;
     private OvsNodeDataTreeChangeListener ovsListener;
     private UniDataTreeChangeListener uniListener;
-    private ServiceRegistration<IUnimgrConsoleProvider> unimgrConsoleRegistration;
-    private FcRouteChangeListener fwConstructListener;
 
-    public UnimgrProvider() {
+    public UnimgrProvider(DataBroker dataBroker) {
         LOG.info("Unimgr provider initialized");
+        this.dataBroker = dataBroker;
     }
 
     @Override
@@ -71,16 +66,6 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
             return false;
         }
         return UniUtils.createUniNode(dataBroker, uniAug);
-    }
-
-    @Override
-    public void close() throws Exception {
-        LOG.info("UnimgrProvider Closed");
-        unimgrConsoleRegistration.unregister();
-        uniListener.close();
-        evcListener.close();
-        ovsListener.close();
-//        fwConstructListener.close();
     }
 
     @Override
@@ -141,26 +126,17 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
     }
 
     @Override
-    public void onSessionInitiated(final ProviderContext session) {
-        LOG.info("UnimgrProvider Session Initiated");
+    public void onSessionInitiated(ProviderContext providerContext) {
+        //not called as provider is not registered in ODL context
+    }
 
-        // Retrieve the data broker to create transactions
-        dataBroker = session.getSALService(DataBroker.class);
-        // Register the unimgr OSGi CLI
-        final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        unimgrConsoleRegistration = context.registerService(IUnimgrConsoleProvider.class, this, null);
+    public void init() {
+        LOG.info("UnimgrProvider Session Initiated");
 
         // Register the data trees change listener
         uniListener = new UniDataTreeChangeListener(dataBroker);
         evcListener = new EvcDataTreeChangeListener(dataBroker);
         ovsListener = new OvsNodeDataTreeChangeListener(dataBroker);
-
-//        ActivationDriverRepoService activationDriverRepoService = new ActivationDriverRepoServiceImpl();
-//        context.registerService(ActivationDriverRepoService.class, activationDriverRepoService, null);
-
-
-//        fwConstructListener = new FcRouteChangeListener(dataBroker);
-//        fwConstructListener.setActivationDriverRepoService(activationDriverRepoService);
 
         // Initialize operational and default config data in MD-SAL data store
         initDatastore(LogicalDatastoreType.CONFIGURATION,
@@ -171,6 +147,15 @@ public class UnimgrProvider implements BindingAwareProvider, AutoCloseable, IUni
                 UnimgrConstants.EVC_TOPOLOGY_ID);
         initDatastore(LogicalDatastoreType.OPERATIONAL,
                 UnimgrConstants.EVC_TOPOLOGY_ID);
+    }
+
+
+    @Override
+    public void close() throws Exception {
+        LOG.info("UnimgrProvider Closed");
+        uniListener.close();
+        evcListener.close();
+        ovsListener.close();
     }
 
     @Override

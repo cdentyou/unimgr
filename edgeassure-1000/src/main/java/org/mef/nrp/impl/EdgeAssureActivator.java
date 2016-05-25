@@ -1,6 +1,7 @@
 package org.mef.nrp.impl;
 
 import com.google.common.base.Optional;
+import org.mef.nrp.common.ResourceActivator;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
