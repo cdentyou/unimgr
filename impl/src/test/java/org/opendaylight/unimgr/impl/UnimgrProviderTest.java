@@ -249,7 +249,7 @@ public class UnimgrProviderTest {
         PowerMockito.whenNew(EvcDataTreeChangeListener.class).withArguments(any(DataBroker.class)).thenReturn(evcListener);
         PowerMockito.whenNew(OvsNodeDataTreeChangeListener.class).withArguments(any(DataBroker.class)).thenReturn(ovsListener);
         MemberModifier.suppress(MemberMatcher.method(UnimgrProvider.class, "initDatastore"));
-        unimgrProvider.onSessionInitiated(session);
+        unimgrProvider.init();
         verify(unimgrProvider, atLeast(4)).initDatastore(any(LogicalDatastoreType.class), any(TopologyId.class));
     }
 

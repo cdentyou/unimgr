@@ -27,7 +27,6 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
 
     public ActivationDriverRepoServiceImpl() {
         this.builders = Collections.emptyList();
-        LOG.debug("ActivationDriverRepoService instance initialized");
     }
 
     /**
@@ -61,13 +60,5 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
 
     public ActivationDriver getDriver(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(port, context));
-    }
-
-    public void bind(ActivationDriverBuilder builder) {
-        LOG.debug("builder {} bound", builder);
-    }
-
-    public void unbind(ActivationDriverBuilder builder) {
-        LOG.debug("builder {} unbound", builder);
     }
 }

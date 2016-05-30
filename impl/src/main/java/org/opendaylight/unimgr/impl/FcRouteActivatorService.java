@@ -59,7 +59,7 @@ public class FcRouteActivatorService {
                 getTxForMultiNode(a,z, fwdC);
     }
 
-    private Optional<ActivationTransaction> getTxForMultiNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
+    private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
         lock.readLock().lock();
         try {
             final ActivationDriverBuilder.BuilderContext ctx = new ActivationDriverBuilder.BuilderContext();
@@ -83,7 +83,7 @@ public class FcRouteActivatorService {
         }
     }
 
-    private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
+    private Optional<ActivationTransaction> getTxForMultiNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
         //1. find and initialize drivers
         Optional<ActivationDriver> aActivator;
         Optional<ActivationDriver> zActivator;

@@ -10,7 +10,7 @@ public interface ActivationDriverRepoService {
     /**
      * Get driver for a port
      * @param port to
-     * @param context
+     * @param context blackboard passed between driver builders
      * @return activation driver
      * @throws ActivationDriverAmbiguousException when multiple drivers declare they can configure port
      * @throws ActivationDriverNotFoundException when no driver found for port
@@ -21,7 +21,7 @@ public interface ActivationDriverRepoService {
      * Get driver for ports
      * @param aPort from port
      * @param zPort to port
-     * @param context
+     * @param context blackboard passed between driver builders
      * @return activation driver
      * @throws ActivationDriverAmbiguousException when multiple drivers declare they can configure ports
      * @throws ActivationDriverNotFoundException when no driver found for ports
