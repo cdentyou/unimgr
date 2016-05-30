@@ -61,4 +61,14 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
     public ActivationDriver getDriver(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(port, context));
     }
+
+    @SuppressWarnings("unused")
+    public void bind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} bound", builder);
+    }
+
+    @SuppressWarnings("unused")
+    public void unbind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} unbound", builder);
+    }
 }
