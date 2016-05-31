@@ -55,8 +55,8 @@ public class FcRouteActivatorService {
         final GFcPort a = list.get(0);
         final GFcPort z = list.get(1);
 
-        return ForwardingConstructHelper.isTheSameNode(fwdC) ?  getTxForNode(a,z, fwdC) :
-                getTxForMultiNode(a,z, fwdC);
+        return ForwardingConstructHelper.isTheSameNode(fwdC) ?  getTxForMultiNode(a,z, fwdC) :
+                getTxForNode(a,z, fwdC);
     }
 
     private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
