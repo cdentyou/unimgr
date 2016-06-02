@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.mef.nrp.impl;
+package org.mef.nrp.api;
 
 import java.util.HashSet;
 import java.util.Map;

@@ -6,11 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.mef.nrp.impl;
+package org.mef.nrp.api;
 
 /**
- * his exception indicates that no activation drivers was found for activating a service. The service
- * will not be activated because the system failed to identify any driver candidate.
+ * This exception indicates that multiple activation drivers are candidates for activating a service. The service
+ * will not be activated because the system failed to select a single driver candidate.
  */
-public class ActivationDriverNotFoundException extends RuntimeException {
+public class ActivationDriverAmbiguousException extends RuntimeException {
 }

@@ -9,47 +9,44 @@
 package org.mef.nrp.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.mef.nrp.api.ActivationDriver;
+import org.mef.nrp.api.ActivationDriverAmbiguousException;
+import org.mef.nrp.api.ActivationDriverBuilder;
+import org.mef.nrp.api.ActivationDriverNotFoundException;
+import org.mef.nrp.api.ActivationDriverRepoService;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Default application repo that is populated with the application driver builders registered as OSGi services.
+ *
+ *
  * @author alex.feigin@hpe.com
+ * @author bartosz.michalik@amartus.com [modifications]
  */
 public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoService {
     private static final Logger LOG = LoggerFactory.getLogger(ActivationDriverRepoServiceImpl.class);
 
-    private Collection<ActivationDriverBuilder> builders = ConcurrentHashMap.newKeySet();
+    private Collection<ActivationDriverBuilder> builders;
 
-
-    /* (non-Javadoc)
-     * @see org.mef.nrp.impl.ActivationDriverRepoService#bindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
-     */
-    @Override
-    public void bindBuilder(ActivationDriverBuilder builder) {
-        if (builder == null) {
-            return;
-        }
-        LOG.info("ActivationDriverRepoService.bindBuilder got [{}] instance", builder.getClass().getSimpleName());
-        builders.add(builder);
+    public ActivationDriverRepoServiceImpl() {
+        this.builders = Collections.emptyList();
     }
 
-    /* (non-Javadoc)
-     * @see org.mef.nrp.impl.ActivationDriverRepoService#unbindBuilder(org.mef.nrp.impl.ActivationDriverBuilder)
+    /**
+     * Used by blueprint to inject dynamic list of driver builders.
+     * @param builders list of service proxies
      */
-    @Override
-    public void unbindBuilder(ActivationDriverBuilder builder) {
-        if (builder == null) {
-            return;
-        }
-        LOG.info("ActivationDriverRepoService.unbindBuilder got [{}] instance", builder.getClass().getSimpleName());
-        builders.remove(builder);
+    public void setDriverBuilders(List<ActivationDriverBuilder> builders) {
+        LOG.debug("Activation drivers initialized");
+        this.builders = builders;
     }
 
     protected ActivationDriver getDriver(Function<ActivationDriverBuilder, Optional<ActivationDriver>> driver) {
@@ -73,5 +70,15 @@ public class ActivationDriverRepoServiceImpl implements ActivationDriverRepoServ
 
     public ActivationDriver getDriver(GFcPort port, ActivationDriverBuilder.BuilderContext context) {
         return getDriver(x -> x.driverFor(port, context));
+    }
+
+    @SuppressWarnings("unused")
+    public void bind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} bound", builder);
+    }
+
+    @SuppressWarnings("unused")
+    public void unbind(ActivationDriverBuilder builder) {
+        LOG.debug("builder {} unbound", builder);
     }
 }

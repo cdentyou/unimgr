@@ -231,25 +231,13 @@ public class UnimgrProviderTest {
                      unimgrProvider.listUnis(any(LogicalDatastoreType.class)));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testOnSessionInitiated() throws Exception {
-        final ProviderContext session = mock(ProviderContext.class);
-        when(session.getSALService(DataBroker.class)).thenReturn(dataBroker);
-        final BundleContext context = mock(BundleContext.class);
-        PowerMockito.mockStatic(FrameworkUtil.class);
-        final Bundle bundle = mock(Bundle.class);
-        when(bundle.getBundleContext()).thenReturn(context);
-        PowerMockito.when(FrameworkUtil.getBundle(unimgrProvider.getClass())).thenReturn(bundle);
-        mockUnimgrConsoleRegistration = mock(ServiceRegistration.class);
-        when(context.registerService(eq(IUnimgrConsoleProvider.class),
-                                     any(IUnimgrConsoleProvider.class),
-                                     isNull(Dictionary.class))).thenReturn(mockUnimgrConsoleRegistration);
+    public void testInit() throws Exception {
         PowerMockito.whenNew(UniDataTreeChangeListener.class).withArguments(any(DataBroker.class)).thenReturn(uniListener);
         PowerMockito.whenNew(EvcDataTreeChangeListener.class).withArguments(any(DataBroker.class)).thenReturn(evcListener);
         PowerMockito.whenNew(OvsNodeDataTreeChangeListener.class).withArguments(any(DataBroker.class)).thenReturn(ovsListener);
         MemberModifier.suppress(MemberMatcher.method(UnimgrProvider.class, "initDatastore"));
-        unimgrProvider.onSessionInitiated(session);
+        unimgrProvider.init();
         verify(unimgrProvider, atLeast(4)).initDatastore(any(LogicalDatastoreType.class), any(TopologyId.class));
     }
 

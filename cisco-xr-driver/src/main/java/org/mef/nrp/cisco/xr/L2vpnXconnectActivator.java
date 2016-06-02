@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.mef.nrp.impl.MountPointHelper;
-import org.mef.nrp.impl.ResourceActivator;
+import org.mef.nrp.common.ResourceActivator;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;

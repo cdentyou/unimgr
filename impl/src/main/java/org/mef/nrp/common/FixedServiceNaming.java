@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.mef.nrp.impl;
+package org.mef.nrp.common;
 
 /**
  * This is a placeholder class for implementing service naming when activating and deactivating MEF services.

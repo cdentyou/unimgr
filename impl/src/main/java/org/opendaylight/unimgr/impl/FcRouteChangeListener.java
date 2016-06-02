@@ -9,7 +9,7 @@ package org.opendaylight.unimgr.impl;
 
 import java.util.Collection;
 
-import org.mef.nrp.impl.ActivationDriverRepoService;
+import org.mef.nrp.api.ActivationDriverRepoService;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
@@ -27,20 +27,20 @@ import org.slf4j.LoggerFactory;
  * NRP top level change model listener
  * @author bartosz.michalik@amartus.com
  */
-public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, AutoCloseable {
-    private static final Logger LOG = LoggerFactory.getLogger(FCRouteChangeListener.class);
-    private final ListenerRegistration<FCRouteChangeListener> listener;
+public class FcRouteChangeListener implements DataTreeChangeListener<FcRoute>, AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(FcRouteChangeListener.class);
+    private final ListenerRegistration<FcRouteChangeListener> listener;
     private final FcRouteActivatorService routeActivator;
 
     private volatile ActivationDriverRepoService activationRepoService;
 
-    public FCRouteChangeListener(DataBroker dataBroker) {
+    public FcRouteChangeListener(DataBroker dataBroker) {
         final InstanceIdentifier<FcRoute> fwPath = getFwConstructsPath();
         final DataTreeIdentifier<FcRoute> dataTreeIid = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, fwPath);
         listener = dataBroker.registerDataTreeChangeListener(dataTreeIid, this);
         this.routeActivator = new FcRouteActivatorService();
 
-        LOG.info("FCRouteChangeListener created and registered");
+        LOG.info("FcRouteChangeListener created and registered");
     }
 
     /**
@@ -50,8 +50,7 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
     @Override
     public void onDataTreeChanged(Collection<DataTreeModification<FcRoute>> collection) {
         //TODO add lock for concurrency support
-        if(activationRepoService == null) {
-            //TODO improve comment
+        if (activationRepoService == null) {
             LOG.warn("ActivationDriverRepoService is not ready yet - ignoring request");
             return;
         }
@@ -65,7 +64,7 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
                     //TO overcome whole subtree change event
                     boolean update = change.getRootNode().getDataBefore() != null;
 
-                    if(update) {
+                    if (update) {
                         update(change);
                     } else {
                         add(change);
@@ -79,21 +78,21 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
         }
     }
 
-    public void add(DataTreeModification<FcRoute> newDataObject) {
+    protected void add(DataTreeModification<FcRoute> newDataObject) {
         //TODO: Refine the logged addition
         LOG.debug("FcRoute add event received {}", newDataObject);
         routeActivator.activate(newDataObject.getRootNode().getDataAfter());
 
     }
 
-    public void remove(DataTreeModification<FcRoute> removedDataObject) {
+    protected void remove(DataTreeModification<FcRoute> removedDataObject) {
         //TODO: Refine the logged removal
         LOG.debug("FcRoute remove event received {}", removedDataObject);
         routeActivator.deactivate(removedDataObject.getRootNode().getDataBefore());
 
     }
 
-    public void update(DataTreeModification<FcRoute> modifiedDataObject) {
+    protected void update(DataTreeModification<FcRoute> modifiedDataObject) {
         //TODO: Refine the logged modification
         LOG.debug("FcRoute update event received {}", modifiedDataObject);
 
@@ -115,13 +114,12 @@ public class FCRouteChangeListener implements DataTreeChangeListener<FcRoute>, A
         return path;
     }
 
+    @SuppressWarnings("unused")
+    /**
+     * Used by blueprint
+     */
     public void setActivationDriverRepoService(ActivationDriverRepoService service) {
         this.activationRepoService = service;
         routeActivator.setActivationRepoService(service);
-    }
-
-    public void unsetActivationDriverRepoService() {
-        this.activationRepoService = null;
-        routeActivator.unsetActivationRepoService();
     }
 }

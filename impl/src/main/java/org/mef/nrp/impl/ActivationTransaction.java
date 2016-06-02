@@ -8,6 +8,7 @@
 
 package org.mef.nrp.impl;
 
+import org.mef.nrp.api.ActivationDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

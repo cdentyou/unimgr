@@ -11,6 +11,7 @@ package org.mef.nrp.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.mef.nrp.common.ResourceActivator;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
@@ -21,7 +22,6 @@ import org.opendaylight.yang.gen.v1.http.www.microsemi.com.microsemi.edge.assure
 import org.opendaylight.yang.gen.v1.http.www.microsemi.com.microsemi.edge.assure.msea.uni.evc.service.rev160317.mef.services.uni.Evc;
 import org.opendaylight.yang.gen.v1.http.www.microsemi.com.microsemi.edge.assure.msea.uni.evc.service.rev160317.mef.services.uni.EvcBuilder;
 import org.opendaylight.yang.gen.v1.http.www.microsemi.com.microsemi.edge.assure.msea.uni.evc.service.rev160317.mef.services.uni.EvcKey;
-import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -8,6 +8,9 @@
 
 package org.mef.nrp.impl;
 
+import org.mef.nrp.api.ActivationDriver;
+import org.mef.nrp.api.ActivationDriverBuilder;
+import org.mef.nrp.common.FixedServiceNaming;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;

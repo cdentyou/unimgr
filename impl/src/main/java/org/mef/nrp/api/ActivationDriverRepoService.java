@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.mef.nrp.impl;
+package org.mef.nrp.api;
 
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 
@@ -14,10 +14,6 @@ import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectcl
  * This interface is used to request an ActivationDriver for a given MEF service fragment.
  */
 public interface ActivationDriverRepoService {
-
-    void bindBuilder(ActivationDriverBuilder builder);
-
-    void unbindBuilder(ActivationDriverBuilder builder);
 
     /**
      * Get driver for a port.

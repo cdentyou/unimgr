@@ -8,6 +8,7 @@
 
 package org.mef.nrp.impl;
 
+import org.mef.nrp.api.ActivationDriver;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 
@@ -32,5 +33,5 @@ public class DummyActivationDriver implements ActivationDriver {
     public void deactivate() {}
 
     @Override
-    public int priority() {return Integer.MIN_VALUE;}
+    public int priority() { return Integer.MIN_VALUE; }
 }
