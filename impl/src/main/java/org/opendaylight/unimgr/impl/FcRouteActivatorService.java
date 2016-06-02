@@ -14,13 +14,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.Nonnull;
 
-import org.mef.nrp.impl.ActivationDriver;
-import org.mef.nrp.impl.ActivationDriverAmbiguousException;
-import org.mef.nrp.impl.ActivationDriverBuilder;
-import org.mef.nrp.impl.ActivationDriverNotFoundException;
-import org.mef.nrp.impl.ActivationDriverRepoService;
-import org.mef.nrp.impl.ActivationTransaction;
-import org.mef.nrp.impl.ForwardingConstructHelper;
+import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
+import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverAmbiguousException;
+import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder;
+import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverNotFoundException;
+import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverRepoService;
+import org.opendaylight.unimgr.mef.nrp.impl.ActivationTransaction;
+import org.opendaylight.unimgr.mef.nrp.impl.ForwardingConstructHelper;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GFcPort;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.GForwardingConstruct;
 import org.opendaylight.yang.gen.v1.uri.onf.coremodel.corenetworkmodule.objectclasses.rev160413.fcroutelist.FcRoute;
@@ -34,14 +34,14 @@ import org.slf4j.LoggerFactory;
 public class FcRouteActivatorService {
     private static final Logger LOG = LoggerFactory.getLogger(FcRouteActivatorService.class);
     private ActivationDriverRepoService activationRepoService;
-    final private ReentrantReadWriteLock lock;
+    private final ReentrantReadWriteLock lock;
 
     public FcRouteActivatorService() {
         lock = new ReentrantReadWriteLock();
     }
 
     public void activate(@Nonnull FcRoute route) {
-        for(GForwardingConstruct fwdC : route.getForwardingConstruct()) {
+        for (GForwardingConstruct fwdC : route.getForwardingConstruct()) {
             Optional<ActivationTransaction> tx = prepareTransaction(fwdC);
             if (tx.isPresent()) {
                 tx.get().activate();
@@ -52,7 +52,7 @@ public class FcRouteActivatorService {
     }
 
     public void deactivate(@Nonnull FcRoute route) {
-        for(GForwardingConstruct fwdC : route.getForwardingConstruct()) {
+        for (GForwardingConstruct fwdC : route.getForwardingConstruct()) {
             Optional<ActivationTransaction> tx = prepareTransaction(fwdC);
             if (tx.isPresent()) {
                 tx.get().deactivate();
@@ -68,11 +68,11 @@ public class FcRouteActivatorService {
         final GFcPort a = list.get(0);
         final GFcPort z = list.get(1);
 
-        return ForwardingConstructHelper.isTheSameNode(fwdC) ? getTxForNode(a,z, fwdC) :
-                getTxForMultiNode(a,z, fwdC);
+        return ForwardingConstructHelper.isTheSameNode(fwdC) ?
+                getTxForNode(a,z, fwdC) : getTxForMultiNode(a,z, fwdC);
     }
 
-    private Optional<ActivationTransaction> getTxForMultiNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
+    private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
         lock.readLock().lock();
         try {
             final ActivationDriverBuilder.BuilderContext ctx = new ActivationDriverBuilder.BuilderContext();
@@ -82,10 +82,10 @@ public class FcRouteActivatorService {
             ActivationTransaction tx = new ActivationTransaction();
             tx.addDriver(activator);
             return Optional.of(tx);
-        } catch(ActivationDriverNotFoundException e) {
+        } catch (ActivationDriverNotFoundException e) {
             LOG.warn("No unique activation driver found for {} <-> {}", a, z);
             return Optional.empty();
-        } catch(ActivationDriverAmbiguousException e) {
+        } catch (ActivationDriverAmbiguousException e) {
             LOG.warn("Multiple activation driver found for {} <-> {}", z, a);
             return Optional.empty();
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class FcRouteActivatorService {
         }
     }
 
-    private Optional<ActivationTransaction> getTxForNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
+    private Optional<ActivationTransaction> getTxForMultiNode(GFcPort a, GFcPort z, GForwardingConstruct fwdC) {
         //1. find and initialize drivers
         Optional<ActivationDriver> aActivator;
         Optional<ActivationDriver> zActivator;
@@ -133,16 +133,16 @@ public class FcRouteActivatorService {
     }
 
     protected Optional<ActivationDriver> findDriver(GFcPort port, ActivationDriverBuilder.BuilderContext fwdC) {
-        if(activationRepoService == null)  {
+        if (activationRepoService == null)  {
             LOG.warn("Activation Driver repo is not initialized");
             return Optional.empty();
         }
         try {
             return Optional.ofNullable(activationRepoService.getDriver(port, fwdC));
-        } catch(ActivationDriverNotFoundException e) {
-            LOG.warn("No unique activation driver found for {}", port);
+        } catch (ActivationDriverNotFoundException e) {
+            LOG.warn("No activation driver found for {}", port);
             return Optional.empty();
-        } catch(ActivationDriverAmbiguousException e) {
+        } catch (ActivationDriverAmbiguousException e) {
             LOG.warn("Multiple activation driver found for {}", port);
             return Optional.empty();
         }

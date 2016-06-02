@@ -1,7 +1,7 @@
 package org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.unimgr.cisco.xr.driver.impl.rev160518;
 
-import org.mef.nrp.cisco.xr.CiscoXRDriverProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.unimgr.mef.nrp.cisco.xr.CiscoXRDriverProvider;
 
 public class UnimgrXRDriverModule extends
         org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.unimgr.cisco.xr.driver.impl.rev160518.AbstractUnimgrXRDriverModule {
