@@ -55,7 +55,7 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
     @Override
     public void activate(String nodeName, String outerName, String innerName, FcPort port, FcPort neighbor, long mtu) {
         InterfaceConfigurations interfaceConfigurations = activateInterface(port, neighbor, mtu);
-        Pseudowires pseudowires = activatePseudowire(neighbor);
+        Pseudowires pseudowires = activatePseudowire(neighbor,MountPointHelper.getDataBroker(mountService, nodeName));
         XconnectGroups xconnectGroups = activateXConnect(outerName, innerName, port, neighbor, pseudowires);
         L2vpn l2vpn = activateL2Vpn(xconnectGroups);
 
@@ -111,7 +111,7 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
 
     protected abstract InterfaceConfigurations activateInterface(FcPort portA, FcPort portZ, long mtu);
 
-    protected abstract Pseudowires activatePseudowire(FcPort neighbor);
+    protected abstract Pseudowires activatePseudowire(FcPort neighbor, Optional<DataBroker> dataBrokerOptional);
 
     protected abstract XconnectGroups activateXConnect(String outerName, String innerName, FcPort portA, FcPort portZ, Pseudowires pseudowires);
 

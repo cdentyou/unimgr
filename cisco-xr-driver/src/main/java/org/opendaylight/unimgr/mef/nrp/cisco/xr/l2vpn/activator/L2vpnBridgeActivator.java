@@ -44,7 +44,7 @@ public class L2vpnBridgeActivator extends AbstractL2vpnActivator {
     }
 
     @Override
-    protected Pseudowires activatePseudowire(FcPort neighbor) {
+    protected Pseudowires activatePseudowire(FcPort neighbor, Optional<DataBroker> dataBrokerOptional) {
         return new PseudowireHelper().build();
     }
 

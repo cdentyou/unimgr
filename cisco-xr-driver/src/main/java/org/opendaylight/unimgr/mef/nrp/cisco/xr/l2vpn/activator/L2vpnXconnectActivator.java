@@ -48,9 +48,9 @@ public class L2vpnXconnectActivator extends AbstractL2vpnActivator {
     }
 
     @Override
-    public Pseudowires activatePseudowire(FcPort neighbor) {
+    public Pseudowires activatePseudowire(FcPort neighbor,Optional<DataBroker> dataBrokerOptional) {
         return new PseudowireHelper()
-             .addPseudowire(LoopbackUtils.getIpv4Address(neighbor))
+             .addPseudowire(LoopbackUtils.getIpv4Address(neighbor, dataBrokerOptional))
              .build();
     }
 
