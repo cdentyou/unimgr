@@ -20,9 +20,7 @@ import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forw
 import java.util.Optional;
 
 import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.Capability.Mode.AND;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_IFMGR;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_L2VPN;
+import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.*;
 
 /**
  * Provides drivers for binding two ports on the same node.

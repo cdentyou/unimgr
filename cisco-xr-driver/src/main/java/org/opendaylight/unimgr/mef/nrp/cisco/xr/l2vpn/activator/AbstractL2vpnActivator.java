@@ -17,6 +17,7 @@ import org.opendaylight.unimgr.mef.nrp.cisco.xr.common.helper.InterfaceHelper;
 import org.opendaylight.unimgr.mef.nrp.cisco.xr.l2vpn.helper.L2vpnHelper;
 import org.opendaylight.unimgr.mef.nrp.common.MountPointHelper;
 import org.opendaylight.unimgr.mef.nrp.common.ResourceActivator;
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.policymgr.cfg.rev150518.PolicyManager;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration;
@@ -46,20 +47,25 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractL2vpnActivator.class);
 
+    protected DataBroker dataBroker;
+
     private MountPointService mountService;
 
-    protected AbstractL2vpnActivator(MountPointService mountService) {
+    protected AbstractL2vpnActivator(DataBroker dataBroker, MountPointService mountService) {
+        this.dataBroker = dataBroker;
         this.mountService = mountService;
     }
 
     @Override
     public void activate(String nodeName, String outerName, String innerName, FcPort port, FcPort neighbor, long mtu) {
+        //TODO
+        java.util.Optional<PolicyManager> qosConfig = activateQos(innerName, port);
         InterfaceConfigurations interfaceConfigurations = activateInterface(port, neighbor, mtu);
-        Pseudowires pseudowires = activatePseudowire(neighbor,MountPointHelper.getDataBroker(mountService, nodeName));
+        Pseudowires pseudowires = activatePseudowire(neighbor);
         XconnectGroups xconnectGroups = activateXConnect(outerName, innerName, port, neighbor, pseudowires);
         L2vpn l2vpn = activateL2Vpn(xconnectGroups);
 
-        doActivate(nodeName, outerName, innerName, interfaceConfigurations, l2vpn);
+        doActivate(nodeName, outerName, innerName, interfaceConfigurations, l2vpn, qosConfig);
     }
 
     @Override
@@ -70,7 +76,8 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
         doDeactivate(nodeName, outerName, innerName, xconnectId, interfaceConfigurationId);
     }
 
-    protected void doActivate(String nodeName, String outerName, String innerName, InterfaceConfigurations interfaceConfigurations, L2vpn l2vpn) {
+    protected void doActivate(String nodeName, String outerName, String innerName,
+                              InterfaceConfigurations interfaceConfigurations, L2vpn l2vpn, java.util.Optional<PolicyManager> qosConfig) {
         Optional<DataBroker> optional = MountPointHelper.getDataBroker(mountService, nodeName);
         if (!optional.isPresent()) {
             LOG.error("Could not retrieve MountPoint for {}", nodeName);
@@ -109,9 +116,11 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
         }
     }
 
+    protected abstract java.util.Optional<PolicyManager> activateQos(String name, FcPort port);
+
     protected abstract InterfaceConfigurations activateInterface(FcPort portA, FcPort portZ, long mtu);
 
-    protected abstract Pseudowires activatePseudowire(FcPort neighbor, Optional<DataBroker> dataBrokerOptional);
+    protected abstract Pseudowires activatePseudowire(FcPort neighbor);
 
     protected abstract XconnectGroups activateXConnect(String outerName, String innerName, FcPort portA, FcPort portZ, Pseudowires pseudowires);
 

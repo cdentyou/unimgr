@@ -7,7 +7,6 @@
  */
 package org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util;
 
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -40,15 +39,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class LoopbackUtilsTest extends AbstractDataBrokerTest {
     private static final Logger LOG = LoggerFactory.getLogger(LoopbackUtilsTest.class);
-    private Optional<DataBroker> optBroker;
+    private DataBroker broker;
     private static String nodeName = "192.168.2.1";
     private static String topoName = "topo://";
     private static String loopbackAddress = "192.168.2.20";
 
     @Before
     public void setUp(){
-        DataBroker broker = getDataBroker();
-        optBroker = Optional.of(broker);
+        broker = getDataBroker();
     }
 
     @After
@@ -63,7 +61,7 @@ public class LoopbackUtilsTest extends AbstractDataBrokerTest {
         createAndPersistNode(true);
 
         //when
-        Ipv4AddressNoZone ipv4AddressNoZone = LoopbackUtils.getIpv4Address(port,optBroker);
+        Ipv4AddressNoZone ipv4AddressNoZone = LoopbackUtils.getIpv4Address(port, broker);
 
         //then
         assertEquals(loopbackAddress,ipv4AddressNoZone.getValue());
@@ -76,7 +74,7 @@ public class LoopbackUtilsTest extends AbstractDataBrokerTest {
         createAndPersistNode(false);
 
         //when
-        Ipv4AddressNoZone ipv4AddressNoZone = LoopbackUtils.getIpv4Address(port,optBroker);
+        Ipv4AddressNoZone ipv4AddressNoZone = LoopbackUtils.getIpv4Address(port, broker);
 
         //then
         assertEquals(LoopbackUtils.getDefaultLoopback(),ipv4AddressNoZone.getValue());
@@ -109,7 +107,7 @@ public class LoopbackUtilsTest extends AbstractDataBrokerTest {
 
     private InstanceIdentifier<Node> writeNode(Node node){
         InstanceIdentifier<Node> nodeInstanceId = LoopbackUtils.getNodeIid(node.getNodeId(),new TopologyId(topoName));
-        WriteTransaction transaction = optBroker.get().newWriteOnlyTransaction();
+        WriteTransaction transaction = broker.newWriteOnlyTransaction();
 
         transaction.put(LogicalDatastoreType.CONFIGURATION, nodeInstanceId, node,true);
         try {
@@ -123,13 +121,13 @@ public class LoopbackUtilsTest extends AbstractDataBrokerTest {
         return null;
     }
 
-    private void deleteNode(InstanceIdentifier<Node> noddeIid){
-        WriteTransaction transaction = optBroker.get().newWriteOnlyTransaction();
-        transaction.delete(LogicalDatastoreType.CONFIGURATION, noddeIid);
+    private void deleteNode(InstanceIdentifier<Node> nodeIid){
+        WriteTransaction transaction = broker.newWriteOnlyTransaction();
+        transaction.delete(LogicalDatastoreType.CONFIGURATION, nodeIid);
         try {
             transaction.submit().checkedGet();
         } catch (TransactionCommitFailedException e) {
-            LOG.error("Unable to remove node with Iid {} from store {}.", noddeIid, LogicalDatastoreType.CONFIGURATION);
+            LOG.error("Unable to remove node with Iid {} from store {}.", nodeIid, LogicalDatastoreType.CONFIGURATION);
         }
     }
 }

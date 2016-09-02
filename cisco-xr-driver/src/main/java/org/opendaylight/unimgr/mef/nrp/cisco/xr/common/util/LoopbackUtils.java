@@ -13,6 +13,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.unimgr.utils.MdsalUtils;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4AddressNoZone;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.unimgr.rev151012.LoopbackAugmentation;
@@ -31,23 +32,25 @@ import org.slf4j.LoggerFactory;
  * Tools designated to support operations on loopback interfaces data
  *
  * @author krzysztof.bijakowski@amartus.com
+ * @author marek.ryznar@amartus.com [modifications]
  */
 public class LoopbackUtils {
     private static final Logger LOG = LoggerFactory.getLogger(LoopbackUtils.class);
+
     private static final String DEFAULT_LOOPBACK = "127.0.0.1";
 
-    public static Ipv4AddressNoZone getIpv4Address(FcPort port, Optional<DataBroker> dataBrokerOptional) {
+    public static Ipv4AddressNoZone getIpv4Address(FcPort port, DataBroker dataBroker) {
+        String loopback = null;
         NodeId nodeId = port.getNode();
         TopologyId topologyId = port.getTopology();
-        InstanceIdentifier<Node> nodeInstanceId = getNodeIid(nodeId,topologyId);
+        Optional<Node> nodeOpt = MdsalUtils.readOptional(dataBroker, LogicalDatastoreType.CONFIGURATION, getNodeIid(nodeId,topologyId));
 
-        Node node = read(LogicalDatastoreType.CONFIGURATION,nodeInstanceId,dataBrokerOptional);
+        if(nodeOpt.isPresent()) {
+            LoopbackAugmentation la = nodeOpt.get().getAugmentation(LoopbackAugmentation.class);
 
-        LoopbackAugmentation la = node.getAugmentation(LoopbackAugmentation.class);
-        String loopback = null;
-
-        if(la!=null){
-            loopback = la.getLoopbackAddress().getIpv4Address().getValue();
+            if (la != null){
+                loopback = la.getLoopbackAddress().getIpv4Address().getValue();
+            }
         }
 
         if (loopback == null) {
@@ -56,27 +59,6 @@ public class LoopbackUtils {
         }
 
         return new Ipv4AddressNoZone(loopback);
-    }
-
-    public static <D extends org.opendaylight.yangtools.yang.binding.DataObject> D read(
-            final LogicalDatastoreType store, final InstanceIdentifier<D> path, Optional<DataBroker> optBroker)  {
-        D result = null;
-        final ReadOnlyTransaction transaction = optBroker.get().newReadOnlyTransaction();
-        Optional<D> optionalDataObject;
-        CheckedFuture<Optional<D>, ReadFailedException> future = transaction.read(store, path);
-        try {
-            optionalDataObject = future.checkedGet();
-            if (optionalDataObject.isPresent()) {
-                result = optionalDataObject.get();
-            } else {
-                LOG.error("{}: Failed to read {}",
-                        Thread.currentThread().getStackTrace()[1], path);
-            }
-        } catch (ReadFailedException e) {
-            LOG.error("Failed to read {} ", path, e);
-        }
-        transaction.close();
-        return result;
     }
 
     public static String getDefaultLoopback() {
