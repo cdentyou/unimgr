@@ -43,7 +43,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
                         <Export-Package>
                             org.opendaylight.unimgr.mef.nrp.common,
                             org.opendaylight.unimgr.mef.nrp.api,
-                            org.opendaylight.unimgr.api
+                            org.opendaylight.unimgr.api,
+                            org.opendaylight.unimgr.utils
                         </Export-Package>
                     </instructions>
                 </configuration>
