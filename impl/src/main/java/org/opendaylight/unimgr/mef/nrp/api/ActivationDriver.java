@@ -7,6 +7,7 @@
  */
 package org.opendaylight.unimgr.mef.nrp.api;
 
+import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.forwarding.constructs.ForwardingConstruct;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 
@@ -45,12 +46,12 @@ public interface ActivationDriver {
     /**
      * Performs the activation action.
      */
-    void activate();
+    void activate() throws TransactionCommitFailedException;
 
     /**
      * Performs the deactivation action.
      */
-    void deactivate();
+    void deactivate() throws TransactionCommitFailedException;
 
 
     /**

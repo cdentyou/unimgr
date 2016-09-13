@@ -18,6 +18,7 @@ import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.binding.test.AbstractDataBrokerTest;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.unimgr.mef.nrp.common.MountPointHelper;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration;
@@ -79,7 +80,11 @@ public class L2vpnBridgeActivatorTest extends AbstractDataBrokerTest{
     @Test
     public void testActivate(){
         //when
-        l2vpnBridgeActivator.activate(nodeName, outerName, innerName, port, neighbor, mtu);
+        try {
+            l2vpnBridgeActivator.activate(nodeName, outerName, innerName, port, neighbor, mtu);
+        } catch (TransactionCommitFailedException e) {
+            fail("Error during activation : " + e.getMessage());
+        }
 
         //then
         ReadOnlyTransaction transaction = optBroker.get().newReadOnlyTransaction();
@@ -101,7 +106,11 @@ public class L2vpnBridgeActivatorTest extends AbstractDataBrokerTest{
     @Test
     public void testDeactivate(){
         //when
-        l2vpnBridgeActivator.deactivate(nodeName,outerName,innerName,port,neighbor,mtu);
+        try {
+            l2vpnBridgeActivator.deactivate(nodeName,outerName,innerName,port,neighbor,mtu);
+        } catch (TransactionCommitFailedException e) {
+            fail("Error during deactivation : " + e.getMessage());
+        }
 
         //then
         L2vpnActivatorTestUtils.checkDeactivation(optBroker);

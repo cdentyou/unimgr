@@ -10,6 +10,7 @@ package org.opendaylight.unimgr.mef.nrp.cisco.xr.l2vpn.driver;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder;
 import org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService;
@@ -78,7 +79,7 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
             }
 
             @Override
-            public void activate() {
+            public void activate() throws TransactionCommitFailedException {
                 long mtu = 1500;
 
                 String aEndNodeName = aEnd.getNode().getValue();
@@ -86,7 +87,7 @@ public class L2vpnBridgeDriverBuilder implements ActivationDriverBuilder {
             }
 
             @Override
-            public void deactivate() {
+            public void deactivate() throws TransactionCommitFailedException {
                 long mtu = 1500;
 
                 String aEndNodeName = aEnd.getNode().getValue();
