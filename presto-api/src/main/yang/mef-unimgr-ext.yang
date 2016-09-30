@@ -17,6 +17,12 @@ module mef-unimgr-ext {
     }
   }
 
+  typedef CTagVlanId {
+      type uint32 {
+        range "0..4095";
+      }
+  }
+
   augment "/onf-cn:forwarding-constructs/onf-cn:forwarding-construct" {
     container unimgr-attrs {
       leaf status {
@@ -26,4 +32,12 @@ module mef-unimgr-ext {
       }
     }
   }
+
+  augment "/onf-cn:forwarding-constructs/onf-cn:forwarding-construct/onf-cn:fcPort" {
+      leaf cTagVlanId {
+        type CTagVlanId;
+        config true;
+        default 0;
+      }
+   }
 }

@@ -13,7 +13,7 @@ import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder;
-import org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService;
+import org.opendaylight.unimgr.utils.CapabilitiesService;
 import org.opendaylight.unimgr.mef.nrp.cisco.xr.l2vpn.activator.L2vpnXconnectActivator;
 import org.opendaylight.unimgr.mef.nrp.common.FixedServiceNaming;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.forwarding.constructs.ForwardingConstruct;
@@ -21,10 +21,10 @@ import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forw
 
 import java.util.Optional;
 
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.Capability.Mode.AND;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_IFMGR;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_L2VPN;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.NodeContext.NodeCapability.NETCONF;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.Capability.Mode.AND;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_IFMGR;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.NodeContext.NodeCapability.NETCONF_CISCO_IOX_L2VPN;
 
 /**
  * Xconnect builder

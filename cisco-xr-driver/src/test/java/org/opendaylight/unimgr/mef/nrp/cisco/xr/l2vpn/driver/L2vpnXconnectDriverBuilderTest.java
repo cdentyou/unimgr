@@ -18,9 +18,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NodeTestUtils.mockDataBroker;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NodeTestUtils.mockFcPort;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NodeTestUtils.mockNetconfNode;
+import static org.opendaylight.unimgr.utils.NodeTestUtils.*;
 
 public class L2vpnXconnectDriverBuilderTest {
 

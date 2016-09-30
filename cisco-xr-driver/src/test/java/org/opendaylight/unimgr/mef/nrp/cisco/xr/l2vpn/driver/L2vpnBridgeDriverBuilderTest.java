@@ -19,11 +19,12 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NodeTestUtils.*;
+import static org.opendaylight.unimgr.utils.NodeTestUtils.*;
 
 public class L2vpnBridgeDriverBuilderTest {
 
     private ActivationDriverBuilder.BuilderContext context;
+    //NodeTest
 
     @Before
     public void setUp() {
@@ -34,7 +35,6 @@ public class L2vpnBridgeDriverBuilderTest {
     public void testDriverForSinglePortNoNode() {
         //given
         FcPort port = mockFcPort();
-
         //when
         Optional<ActivationDriver> result =  new L2vpnBridgeDriverBuilder(mockDataBroker(com.google.common.base.Optional.absent()), null).driverFor(port, context);
 

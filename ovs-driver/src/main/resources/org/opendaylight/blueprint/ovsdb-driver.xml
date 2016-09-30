@@ -11,9 +11,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 
     <reference id="dataBroker" interface="org.opendaylight.controller.md.sal.binding.api.DataBroker" />
 
-    <!--<service id="bridgeDriverService" interface="org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder">-->
-        <!--<bean class="here your class for driver builder">-->
-            <!--<argument ref="dataBroker" />-->
-        <!--</bean>-->
-    <!--</service>-->
+    <service id="ovsDriverService" interface="org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder">
+        <bean class="org.opendaylight.unimgr.mef.nrp.ovs.driver.OVSDriver">
+            <argument ref="dataBroker" />
+        </bean>
+    </service>
 </blueprint>

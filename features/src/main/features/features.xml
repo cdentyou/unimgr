@@ -83,9 +83,9 @@
     <bundle>mvn:org.opendaylight.unimgr/unimgr-cisco-xr-driver/{{VERSION}}</bundle>
   </feature>
 
-  <feature name="odl-unimgr-ovsdb-driver" version="${project.version}" description='OpenDaylight :: UniMgr :: OVSDB Driver'>
+  <feature name="odl-unimgr-ovs-driver" version="${project.version}" description='OpenDaylight :: UniMgr :: OVSDB Driver'>
     <feature version='${project.version}'>odl-unimgr</feature>
-    <bundle>mvn:org.opendaylight.unimgr/ovsdb-driver/{{VERSION}}</bundle>
+    <bundle>mvn:org.opendaylight.unimgr/ovs-driver/{{VERSION}}</bundle>
   </feature>
 
 </features>

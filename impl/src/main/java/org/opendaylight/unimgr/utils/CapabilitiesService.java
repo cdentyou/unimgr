@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util;
+package org.opendaylight.unimgr.utils;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -14,10 +14,10 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NetconfConstants;
-import org.opendaylight.unimgr.mef.nrp.cisco.xr.l2vpn.driver.L2vpnXconnectDriverBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ovsdb.rev150105.OvsdbBridgeAugmentation;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ovsdb.rev150105.OvsdbNodeAugmentation;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.Topology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
@@ -62,7 +62,8 @@ public class CapabilitiesService {
                     node.getAugmentation(NetconfNode.class)
                     .getAvailableCapabilities()
                     .getAvailableCapability()
-                    .contains(NetconfConstants.CAPABILITY_IOX_ASR9K_POLICYMGR));
+                    .contains(NetconfConstants.CAPABILITY_IOX_ASR9K_POLICYMGR)),
+            OVSDB((dbBroker,node) -> node.getAugmentation(OvsdbBridgeAugmentation.class) != null);
 
             private BiFunction<DataBroker, Node, Boolean> condition;
 
@@ -113,7 +114,7 @@ public class CapabilitiesService {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(L2vpnXconnectDriverBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CapabilitiesService.class);
 
     private DataBroker dataBroker;
 

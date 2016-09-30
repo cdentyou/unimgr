@@ -6,19 +6,20 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util;
+package org.opendaylight.unimgr.utils;
 
 import com.google.common.base.Optional;
 import org.junit.Test;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.test.AbstractDataBrokerTest;
+import org.opendaylight.unimgr.utils.CapabilitiesService;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 
 import static org.junit.Assert.*;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.NodeTestUtils.*;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.Capability.Mode.AND;
-import static org.opendaylight.unimgr.mef.nrp.cisco.xr.common.util.CapabilitiesService.NodeContext.NodeCapability.*;
+import static org.opendaylight.unimgr.utils.NodeTestUtils.*;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.Capability.Mode.AND;
+import static org.opendaylight.unimgr.utils.CapabilitiesService.NodeContext.NodeCapability.*;
 
 public class CapabilitiesServiceTest extends AbstractDataBrokerTest {
 
