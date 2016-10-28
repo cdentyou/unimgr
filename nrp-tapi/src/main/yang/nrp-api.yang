@@ -1,0 +1,24 @@
+module nrp-api {
+    namespace "urn:onf:params:xml:ns:yang:NRP_API";
+    prefix nrp-api;
+    import tapi {
+        prefix tapi;
+    }
+    import tapi-connectivity {
+        prefix tapi-connectivity;
+    }
+
+    rpc activate-connectivity-request {
+        input {
+            leaf serviceId {
+                type  string;
+            }
+        }
+        output {
+            leaf status {
+                type string;
+            }
+        }
+    }
+
+}
