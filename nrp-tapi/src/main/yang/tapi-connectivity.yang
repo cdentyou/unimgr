@@ -339,6 +339,69 @@ module tapi-connectivity {
                 The structure of LTP supports all transport protocols including circuit and packet forms.";
         }
 
+        rpc create-connectivity-service {
+            description "none";
+            input {
+                list service-port {
+                    min-elements 2;
+                    uses connectivity-service-port;
+                    description "none";
+                }
+                container conn-constraint {
+                    uses connectivity-constraint;
+                    description "none";
+                }
+                leaf conn-schedule {
+                    type string;
+                    description "none";
+                }
+            }
+            output {
+                container conn-service {
+                    uses connectivity-service-attrs;
+                    description "none";
+                }
+            }
+        }
+        rpc update-connectivity-service {
+            description "none";
+            input {
+                leaf service-id-or-name {
+                    type string;
+                    description "none";
+                }
+                container conn-constraint {
+                    uses connectivity-constraint;
+                    description "none";
+                }
+                leaf connSchedule {
+                    type string;
+                    description "none";
+                }
+            }
+            output {
+                container conn-service {
+                    uses connectivity-service-attrs;
+                    description "none";
+                }
+            }
+        }
+        rpc delete-connectivity-service {
+            description "none";
+            input {
+                leaf service-id-or-name  {
+                    type string;
+                    description "none";
+                }
+            }
+            output {
+                container conn-service  {
+                    uses connectivity-service-attrs;
+                    description "none";
+                }
+            }
+        }
+
     /***********************
     * package type-definitions
     **********************/ 

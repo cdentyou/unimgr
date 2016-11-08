@@ -10,7 +10,7 @@ module nrp-api {
 
     rpc activate-connectivity-request {
         input {
-            leaf serviceId {
+            leaf service-id {
                 type  string;
             }
         }

@@ -54,16 +54,24 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
       <modules>
         <module>cisco-xrmodels</module>
         <module>edgeassure-1000</module>
+          <module>api</module>
+          <module>legato-api</module>
+          <module>presto-api</module>
+          <module>nrp-tapi</module>
+      </modules>
+      <activation><activeByDefault>true</activeByDefault></activation>
+    </profile>
+    <profile>
+      <id>drivers</id>
+      <modules>
+        <module>cisco-xrmodels</module>
+        <module>edgeassure-1000</module>
       </modules>
       <activation><activeByDefault>true</activeByDefault></activation>
     </profile>
     <profile>
       <id>main</id>
       <modules>
-        <module>api</module>
-        <module>legato-api</module>
-        <module>presto-api</module>
-        <module>nrp-tapi</module>
         <module>impl</module>
         <module>netvirt</module>
         <module>cisco-xr-driver</module>
