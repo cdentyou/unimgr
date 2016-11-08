@@ -29,7 +29,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     <bean id="topologyService" class="org.opendaylight.unimgr.mef.nrp.impl.TopologyService" init-method="init" destroy-method="close">
         <argument index="0" ref="dataBroker" />
     </bean>
-    
+
     <bean id="tapiConnectivityService" class="org.opendaylight.unimgr.mef.nrp.rpc.TapiConnectivityServiceImpl" >
         <argument ref="dataBroker" />
     </bean>
