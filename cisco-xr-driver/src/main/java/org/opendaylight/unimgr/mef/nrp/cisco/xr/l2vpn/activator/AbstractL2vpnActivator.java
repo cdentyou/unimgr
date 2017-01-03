@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstarct activator of VPLS-based L2 VPN on IOS-XR devices. It is responsible for handling activation and deactivation
+ * Abstract activator of VPLS-based L2 VPN on IOS-XR devices. It is responsible for handling activation and deactivation
  * process of VPN configuration and it provides generic transaction designated for this purpose.
  *
  * @author krzysztof.bijakowski@amartus.com
@@ -106,6 +106,7 @@ public abstract class AbstractL2vpnActivator implements ResourceActivator {
             LOG.error("Could not retrieve MountPoint for {}", nodeName);
             return;
         }
+
 
         WriteTransaction transaction = optional.get().newWriteOnlyTransaction();
         transaction.delete(LogicalDatastoreType.CONFIGURATION, xconnectId);

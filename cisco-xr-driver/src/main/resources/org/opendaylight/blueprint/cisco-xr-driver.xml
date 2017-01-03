@@ -26,4 +26,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     </bean>
   </service>
 
+  <bean id="topologyHandler" class="org.opendaylight.unimgr.mef.nrp.cisco.xr.TopologyHandler" init-method="init" destroy-method="close">
+    <argument ref="dataBroker" />
+    <argument ref="mountPointService" />
+  </bean>
+
 </blueprint>
