@@ -41,6 +41,7 @@ public class OvsActivator implements ResourceActivator {
     public void activate(String nodeName, String outerName, String innerName, FcPort flowPoint, FcPort neighbor, long mtu) throws TransactionCommitFailedException, ResourceNotAvailableException {
         // Transaction - Get Open vSwitch node and its flow table
         String portName = flowPoint.getTp().getValue();
+        LOG.info("portName: "+ portName);
         TopologyTransaction topologyTransaction = new TopologyTransaction(dataBroker);
         Node node = topologyTransaction.readNode(portName);
         Table table = OpenFlowUtils.getTable(node);

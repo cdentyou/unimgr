@@ -7,9 +7,6 @@ import org.opendaylight.controller.sal.core.api.Broker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by root on 08.12.16.
- */
 public class Providers {
     private static final Logger LOGGER = LoggerFactory.getLogger(Providers.class);
 

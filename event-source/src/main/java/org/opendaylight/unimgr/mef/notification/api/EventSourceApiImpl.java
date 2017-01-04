@@ -1,14 +1,17 @@
 package org.opendaylight.unimgr.mef.notification.api;
 
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.messagebus.spi.EventSource;
 import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.core.api.Broker;
+import org.opendaylight.unimgr.mef.notification.es.EventSourceFactory;
 import org.opendaylight.unimgr.mef.notification.es.example.ExampleEventSource;
-import org.opendaylight.unimgr.mef.notification.es.example.ExampleEventSourceGenerator;
+import org.opendaylight.unimgr.mef.notification.es.ovs.OvsEventSource;
 import org.opendaylight.unimgr.mef.notification.impl.Providers;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.*;
+import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -30,7 +33,9 @@ public class EventSourceApiImpl implements EventSourceApi{
     private final BindingAwareBroker broker;
     private EventAggregatorService eventAggregatorService;
     private List<EventSource> eventSourceList;
-    private Map<TopicId, SchemaPath> topics;
+    private Map<TopicId, SchemaPath> topicsPerNotifications;
+    private Map<TopicId, String[]> topicsPerPatterns;
+    private EventSourceFactory eventSourceFactory;
 
     public EventSourceApiImpl(Broker domBroker, EventSourceRegistry eventSourceRegistry,BindingAwareBroker broker) {
         LOG.info("EventSourceApiImpl constructor reached.");
@@ -39,42 +44,76 @@ public class EventSourceApiImpl implements EventSourceApi{
         this.broker = broker;
         initEventAggregatorService();
         eventSourceList = Collections.synchronizedList(new ArrayList<EventSource>());
-        topics = new ConcurrentHashMap<>();
+        topicsPerNotifications = new ConcurrentHashMap<>();
+        topicsPerPatterns = new ConcurrentHashMap<>();
+        eventSourceFactory = new EventSourceFactory(domBroker,eventSourceRegistry);
     }
 
     @Override
     public ExampleEventSource generateExampleEventSource(String nodeName){
         LOG.info(" generateExampleEventSource() has started.");
-        ExampleEventSourceGenerator exampleEventSourceGenerator = new ExampleEventSourceGenerator(domBroker);
-        ExampleEventSource exampleEventSource = exampleEventSourceGenerator.generateExampleEventSource(nodeName,eventSourceRegistry);
+        ExampleEventSource exampleEventSource = (ExampleEventSource) eventSourceFactory.getEventSource("Example",nodeName);
         eventSourceList.add(exampleEventSource);
-        addTopicForNotification(exampleEventSource);
         LOG.info(" generateExampleEventSource() has finished.");
         return exampleEventSource;
     }
 
     @Override
-    public void generateOvsEventSource(String nodeName) {
-        //TODO: implement
+    public OvsEventSource generateOvsEventSource(String nodeName, DataBroker dataBroker) {
+        OvsEventSource ovsEventSource = (OvsEventSource) eventSourceFactory.getEventSource("Ovs",nodeName);
+        ovsEventSource.setTopologyTransaction(dataBroker);
+        return ovsEventSource;
+    }
+
+    @Override
+    public OvsEventSource generateOvsEventSource(FcPort flowPoint, DataBroker dataBroker) {
+        String nodeName = flowPoint.getNode().getValue();
+        OvsEventSource ovsEventSource = (OvsEventSource) eventSourceFactory.getEventSource("Ovs",nodeName);
+        ovsEventSource.setTopologyTransaction(dataBroker);
+        ovsEventSource.setFcPort(flowPoint);
+        return ovsEventSource;
     }
 
     /**
-     * Method create topics corresponding to event source (created for given nodeName).
+     * Method create topicsPerNotifications corresponding to event source (created for given nodeName).
      *
      * @param nodeName Name of the node included in EventSource.
      */
     @Override
     public void createTopicToEventSource(String nodeName){
+        LOG.info("createTopicToEventSource for: {}",nodeName);
         List<EventSource> resultList = eventSourceList.stream()
                 .filter(eventSource -> checkEventSourceByNode(eventSource,nodeName))
                 .collect(Collectors.toList());
 
+        LOG.info("EventSource list size: {}, result list size: {}",eventSourceList.size(), resultList.size());
         resultList.stream()
                 .forEach(eventSource -> addTopicForNotification(eventSource));
     }
 
+    @Override
+    public void createTopicToEventSource(EventSource eventSource) {
+        addTopicForNotification(eventSource);
+    }
+
+    @Override
+    public void createTopic(String nodePattern, String notificationPattern) {
+        CreateTopicInput topicInput = createTopicInput(nodePattern,notificationPattern);
+        Future<RpcResult<CreateTopicOutput>> topicOutput = eventAggregatorService.createTopic(topicInput);
+        try {
+            TopicId topicId = topicOutput.get().getResult().getTopicId();
+            String[] patterns = {nodePattern,notificationPattern};
+            topicsPerPatterns.put(topicId,patterns);
+            LOG.info("Topic for nodePattern: {} and notificationPattern: {} created with id: {}",nodePattern,notificationPattern,topicId.getValue());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * Method destroy all topics corresponding to EventSource created by {@link #createTopicToEventSource(String) createTopicToEventSourceAt} method
+     * Method destroy all topicsPerNotifications corresponding to EventSource created by {@link #createTopicToEventSource(String) createTopicToEventSourceAt} method
      *
      * @param nodeName Name of the node included in EventSource.
      */
@@ -127,10 +166,10 @@ public class EventSourceApiImpl implements EventSourceApi{
     }
 
     private void handleNotificationDestroy(SchemaPath schemaPath){
-        if(!topics.containsValue(schemaPath)){
+        if(!topicsPerNotifications.containsValue(schemaPath)){
             return ;
         }
-        Set<Map.Entry<TopicId, SchemaPath>> toDelete = topics.entrySet().stream()
+        Set<Map.Entry<TopicId, SchemaPath>> toDelete = topicsPerNotifications.entrySet().stream()
                 .filter(topic -> topic.getValue().equals(schemaPath))
                 .collect(Collectors.toSet());
 
@@ -139,7 +178,7 @@ public class EventSourceApiImpl implements EventSourceApi{
     }
 
     private void destroyTopic(TopicId topicId){
-        topics.remove(topicId);
+        topicsPerNotifications.remove(topicId);
         DestroyTopicInputBuilder destroyTopicInputBuilder = new DestroyTopicInputBuilder();
         destroyTopicInputBuilder.setTopicId(topicId);
         eventAggregatorService.destroyTopic(destroyTopicInputBuilder.build());
@@ -166,7 +205,7 @@ public class EventSourceApiImpl implements EventSourceApi{
             Future<RpcResult<CreateTopicOutput>> topicOutput = eventAggregatorService.createTopic(topicInput);
             try {
                 TopicId topicId = topicOutput.get().getResult().getTopicId();
-                topics.put(topicId,notification);
+                topicsPerNotifications.put(topicId,notification);
                 LOG.info("Topic for node: {} and notification pattern: {} created with id: {}",nodeName,notificationPattern,topicId.getValue());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -177,7 +216,7 @@ public class EventSourceApiImpl implements EventSourceApi{
     }
 
     /**
-     * Method to initialize EventAggregatorService needed to create and destroy topics.
+     * Method to initialize EventAggregatorService needed to create and destroy topicsPerNotifications.
      */
     public void initEventAggregatorService(){
         final BindingAwareBroker.ProviderContext bindingCtx = broker.registerProvider(new Providers.BindingAware());
@@ -187,15 +226,14 @@ public class EventSourceApiImpl implements EventSourceApi{
 
     public void startUp(){
         LOG.info("Bundle EventSourceApiImpl has started.");
-        this.generateExampleEventSource("EventSource3000");
     }
 
     public List<EventSource> getEventSourceList() {
         return eventSourceList;
     }
 
-    public Map<TopicId, SchemaPath> getTopics() {
-        return topics;
+    public Map<TopicId, SchemaPath> getTopicsPerNotifications() {
+        return topicsPerNotifications;
     }
 
     public String getSchemaPathString(SchemaPath schemaPath){

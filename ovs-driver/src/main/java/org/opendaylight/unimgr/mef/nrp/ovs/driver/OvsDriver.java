@@ -9,6 +9,7 @@ package org.opendaylight.unimgr.mef.nrp.ovs.driver;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.messagebus.spi.EventSource;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder;
 import org.opendaylight.unimgr.mef.notification.api.EventSourceApi;
@@ -86,14 +87,17 @@ public class OvsDriver implements ActivationDriverBuilder {
             public void activate() throws TransactionCommitFailedException, ResourceNotAvailableException {
                 String aEndNodeName = aEnd.getNode().getValue();
                 activator.activate(aEndNodeName, uuid, GROUP_NAME, aEnd, zEnd, MTU_VALUE);
-                eventSourceApi.generateExampleEventSource(aEnd.getNode().getValue());
+
+                EventSource eventSource = eventSourceApi.generateOvsEventSource(aEnd,dataBroker);
+                eventSourceApi.createTopicToEventSource(eventSource);
             }
 
             @Override
             public void deactivate() throws TransactionCommitFailedException, ResourceNotAvailableException {
                 String aEndNodeName = aEnd.getNode().getValue();
                 activator.deactivate(aEndNodeName, uuid, GROUP_NAME, aEnd, zEnd, MTU_VALUE);
-                //TODO: delete EventSource?
+
+                eventSourceApi.deleteEventSource(aEnd.getNode().getValue());
             }
 
             @Override

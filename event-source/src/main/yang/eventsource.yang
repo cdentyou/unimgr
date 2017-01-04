@@ -1,4 +1,4 @@
-//module define notification for various event sources\
+//module define notification for various event sources
 module eventsource {
     yang-version 1;
         namespace "urn:opendaylight:params:xml:ns:yang:eventsource:api";
@@ -15,10 +15,11 @@ module eventsource {
             }
         }
 
-        notification example-event-source-notification {
+        //For now this notification will be used by every notification but it should be reconsidered if we don't need separate definition for each of created notification
+        notification event-source-notification {
 
                 description
-                    "Simple notification used in event source example.";
+                    "Simple notification used in event source";
 
                 leaf source-id {
                     type source-identifier;

@@ -10,17 +10,12 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 
 public final class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
-    public static String getUUIDIdent() {
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString();
-    }
 
     public static <T> Future<RpcResult<T>> resultRpcSuccessFor(final T output) {
         final RpcResult<T> result = RpcResultBuilder.success(output).build();

@@ -38,7 +38,8 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.opendaylight.unimgr.mef.notification.api
+                            org.opendaylight.unimgr.mef.notification.api,
+                            org.opendaylight.unimgr.mef.notification.es.*
                         </Export-Package>
                     </instructions>
                 </configuration>
@@ -144,6 +145,17 @@
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>messagebus-impl</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.openflowplugin.model</groupId>
+            <artifactId>model-flow-service</artifactId>
+            <version>${openflow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.openflowplugin.model</groupId>
+            <artifactId>model-flow-statistics</artifactId>
+            <version>${openflow.version}</version>
         </dependency>
     </dependencies>
 </project>

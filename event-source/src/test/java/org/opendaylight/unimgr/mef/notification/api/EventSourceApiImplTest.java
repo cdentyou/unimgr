@@ -66,7 +66,7 @@ public class EventSourceApiImplTest {
 
     @Test
     public void testGenerateAndDeleteExampleEventSource(){
-        //Test generate:
+        //generate test:
         //when
         ExampleEventSource exampleEventSource = eventSourceApi.generateExampleEventSource(nodeName);
 
@@ -75,7 +75,7 @@ public class EventSourceApiImplTest {
         assertEquals(1,eventSources.size());
         checkExampleEventSource((ExampleEventSource) eventSources.get(0),nodeName);
 
-        //Test delete:
+        //delete test:
         //given
         eventSourceApi.deleteEventSource(exampleEventSource);
 
@@ -92,19 +92,19 @@ public class EventSourceApiImplTest {
                 .thenReturn(createTopicMock())
                 .thenReturn(createTopicMock());
 
-        //Test create:
+        //create test:
         //when
         eventSourceApi.createTopicToEventSource(nodeName);
         joinTopicsToEventSource(exampleEventSource);
         try {
-            //sleep because notification is send every 2 seconds since join the topic (if topic was joined)
+            //sleep because notification is send every second since join the topic (if topic was joined)
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         //then
-        Map<TopicId, SchemaPath> topics = eventSourceApi.getTopics();
+        Map<TopicId, SchemaPath> topics = eventSourceApi.getTopicsPerNotifications();
         assertEquals(3,topics.size());
         exampleEventSource.getAvailableNotifications().stream()
                 .forEach(schemaPath -> assertTrue(topics.values().contains(schemaPath)));
@@ -114,12 +114,12 @@ public class EventSourceApiImplTest {
             e.printStackTrace();
         }
 
-        //Test destroy:
+        //Destroy test:
         //when
         eventSourceApi.destroyEventSourceTopics(exampleEventSource.getSourceNodeKey().getNodeId().getValue());
 
         //then
-        assertEquals(0,eventSourceApi.getTopics().size());
+        assertEquals(0,eventSourceApi.getTopicsPerNotifications().size());
         assertFalse(eventSourceApi.getEventSourceList().contains(exampleEventSource));
     }
 
@@ -130,7 +130,7 @@ public class EventSourceApiImplTest {
      * @param eventSource
      */
     private void joinTopicsToEventSource(EventSource eventSource){
-        eventSourceApi.getTopics().entrySet()
+        eventSourceApi.getTopicsPerNotifications().entrySet()
                 .stream()
                 .filter(topic -> eventSource.getAvailableNotifications().contains(topic.getValue()))
                 .forEach(topic -> eventSource.joinTopic(createJoinTopicInput(topic)));
@@ -161,7 +161,7 @@ public class EventSourceApiImplTest {
     }
 
     private boolean checkUniqueness(String nodeName){
-        return eventSourceApi.getTopics().keySet().stream()
+        return eventSourceApi.getTopicsPerNotifications().keySet().stream()
                 .anyMatch(topicId -> topicId.getValue().equals(nodeName));
     }
 
