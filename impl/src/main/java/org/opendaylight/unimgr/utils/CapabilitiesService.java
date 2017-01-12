@@ -27,7 +27,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 public class CapabilitiesService {
@@ -46,22 +50,27 @@ public class CapabilitiesService {
     }
 
     public static class NodeContext implements Context<Node> {
+
+        private static Function<Node,Collection<String>> toCapacities = node -> {
+            List<String> result = null;
+            try {
+                result = node.getAugmentation(NetconfNode.class).getAvailableCapabilities().getAvailableCapability();
+            } catch(NullPointerException npe) {}
+            return result == null ? Collections.emptySet() : result;
+        };
+
+
+
         public enum NodeCapability implements Capability<Node> {
             NETCONF((dbBroker, node) -> node.getAugmentation(NetconfNode.class) != null),
             NETCONF_CISCO_IOX_L2VPN((dbBroker, node) ->
-                    node.getAugmentation(NetconfNode.class)
-                    .getAvailableCapabilities()
-                    .getAvailableCapability()
+                    toCapacities.apply(node)
                     .contains(NetconfConstants.CAPABILITY_IOX_L2VPN)),
             NETCONF_CISCO_IOX_IFMGR((dbBroker, node) ->
-                    node.getAugmentation(NetconfNode.class)
-                    .getAvailableCapabilities()
-                    .getAvailableCapability()
+                    toCapacities.apply(node)
                     .contains(NetconfConstants.CAPABILITY_IOX_IFMGR)),
             NETCONF_CISCO_IOX_POLICYMGR((dbBroker, node) ->
-                    node.getAugmentation(NetconfNode.class)
-                    .getAvailableCapabilities()
-                    .getAvailableCapability()
+                    toCapacities.apply(node)
                     .contains(NetconfConstants.CAPABILITY_IOX_ASR9K_POLICYMGR)),
             OVSDB((dbBroker,node) -> node.getAugmentation(OvsdbBridgeAugmentation.class) != null);
 
@@ -76,6 +85,8 @@ public class CapabilitiesService {
                 return condition;
             }
         }
+
+
 
         private CapabilitiesService service;
 
