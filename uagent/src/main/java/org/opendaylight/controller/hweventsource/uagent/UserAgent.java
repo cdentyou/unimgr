@@ -123,27 +123,28 @@ public class UserAgent implements DOMNotificationListener, UagentTopicReadServic
     @Override
     public void onNotification(DOMNotification notification) {
         LOG.debug("Notification arrived...");
-        String nodeName = null;
-        TopicId topicId = null;
-        // get the nodeName (identifier of event source) from notification
-        if(notification.getBody().getChild(EVENT_SOURCE_ARG).isPresent()){
-            nodeName = notification.getBody().getChild(EVENT_SOURCE_ARG).get().getValue().toString();
-        }
-        // get the TopicId from notification
-        if(notification.getBody().getChild(TOPIC_ID_ARG).isPresent()){;
-            topicId = (TopicId) notification.getBody().getChild(TOPIC_ID_ARG).get().getValue();
-        }
-        if( nodeName != null && topicId != null ){
-        	// if nodeName and TopicId are present and TopicId has been requested to process (TopicId is in registeredTopic)
-        	// then notification is parsed and written into the file.
-            if(registeredTopic.contains(topicId.getValue())){
-                final String payLoadString = parsePayLoad(notification);
-                if(payLoadString != null){
-                    writeOutputLine(nodeName + " : " + payLoadString);
-                    LOG.debug("Notification write to FILE");
-                }
-            }
-        }
+        writeOutputLine(notification.toString());
+//        String nodeName = null;
+//        TopicId topicId = null;
+//        // get the nodeName (identifier of event source) from notification
+//        if(notification.getBody().getChild(EVENT_SOURCE_ARG).isPresent()){
+//            nodeName = notification.getBody().getChild(EVENT_SOURCE_ARG).get().getValue().toString();
+//        }
+//        // get the TopicId from notification
+//        if(notification.getBody().getChild(TOPIC_ID_ARG).isPresent()){;
+//            topicId = (TopicId) notification.getBody().getChild(TOPIC_ID_ARG).get().getValue();
+//        }
+//        if( nodeName != null && topicId != null ){
+//        	// if nodeName and TopicId are present and TopicId has been requested to process (TopicId is in registeredTopic)
+//        	// then notification is parsed and written into the file.
+//            if(registeredTopic.contains(topicId.getValue())){
+//                final String payLoadString = parsePayLoad(notification);
+//                if(payLoadString != null){
+//                    writeOutputLine(nodeName + " : " + payLoadString);
+//                    LOG.debug("Notification write to FILE");
+//                }
+//            }
+//        }
     }
 
     /*

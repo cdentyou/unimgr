@@ -10,6 +10,7 @@ package org.opendaylight.unimgr.mef.nrp.ovs.driver;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.controller.messagebus.spi.EventSource;
+import org.opendaylight.unimgr.mef.notification.model.eventsource.EventSourceWrapper;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriverBuilder;
 import org.opendaylight.unimgr.mef.notification.api.EventSourceApi;
@@ -18,6 +19,7 @@ import org.opendaylight.unimgr.mef.nrp.ovs.activator.OvsActivator;
 import org.opendaylight.unimgr.utils.CapabilitiesService;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.forwarding.constructs.ForwardingConstruct;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
+import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPortBuilder;
 
 import java.util.Optional;
 
@@ -39,6 +41,7 @@ public class OvsDriver implements ActivationDriverBuilder {
         this.dataBroker = dataBroker;
         this.eventSourceApi = eventSourceApi;
         activator = new OvsActivator(dataBroker);
+
     }
 
     @Override
@@ -86,10 +89,12 @@ public class OvsDriver implements ActivationDriverBuilder {
             @Override
             public void activate() throws TransactionCommitFailedException, ResourceNotAvailableException {
                 String aEndNodeName = aEnd.getNode().getValue();
+                //EventSource eventSource = eventSourceApi.generateOvsEventSource(aEnd,dataBroker);
                 activator.activate(aEndNodeName, uuid, GROUP_NAME, aEnd, zEnd, MTU_VALUE);
 
-                EventSource eventSource = eventSourceApi.generateOvsEventSource(aEnd,dataBroker);
-                eventSourceApi.createTopicToEventSource(eventSource);
+//                EventSource eventSource = eventSourceApi.generateOvsEventSource(aEnd,dataBroker);
+//                eventSourceApi.createTopicToEventSource(eventSource);
+
             }
 
             @Override

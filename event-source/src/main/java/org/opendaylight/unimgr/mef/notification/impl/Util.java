@@ -1,6 +1,10 @@
 package org.opendaylight.unimgr.mef.notification.impl;
 
 import com.google.common.util.concurrent.Futures;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.NodeBuilder;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.NodeKey;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -90,5 +94,12 @@ public final class Util {
         }
         s.append('$');
         return s.toString();
+    }
+
+    public static Node getNewNode(String nodeIdent){
+        NodeId nodeId = new NodeId(nodeIdent);
+        NodeBuilder nb = new NodeBuilder();
+        nb.setKey(new NodeKey(nodeId));
+        return nb.build();
     }
 }

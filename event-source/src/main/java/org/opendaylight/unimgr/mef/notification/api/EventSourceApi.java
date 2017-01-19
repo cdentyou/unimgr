@@ -2,8 +2,11 @@ package org.opendaylight.unimgr.mef.notification.api;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.messagebus.spi.EventSource;
+import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
+import org.opendaylight.controller.sal.core.api.Broker;
 import org.opendaylight.unimgr.mef.notification.es.example.ExampleEventSource;
 import org.opendaylight.unimgr.mef.notification.es.ovs.OvsEventSource;
+import org.opendaylight.unimgr.mef.notification.listener.EventSourceListener;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 
 /**
@@ -23,4 +26,10 @@ public interface EventSourceApi {
     void deleteEventSource(EventSource eventSource);
     void destroyEventSourceTopics(String nodeName);
     void destroyTopic(String topicId);
+    void subscribeToEventSource(EventSourceListener eventSourceListener);
+    //AbstractListener subscribeToEventSource(EventSourceType est) //ie subscribetoOVS()
+
+    EventSourceRegistry getEventSourceRegistry();
+    Broker getBroker();
+    //listener.onMsg()
 }

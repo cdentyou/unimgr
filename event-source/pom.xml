@@ -38,8 +38,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.opendaylight.unimgr.mef.notification.api,
-                            org.opendaylight.unimgr.mef.notification.es.*
+                            org.opendaylight.unimgr.mef.notification.*
                         </Export-Package>
                     </instructions>
                 </configuration>
@@ -156,6 +155,11 @@
             <groupId>org.opendaylight.openflowplugin.model</groupId>
             <artifactId>model-flow-statistics</artifactId>
             <version>${openflow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-binding-broker-impl</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

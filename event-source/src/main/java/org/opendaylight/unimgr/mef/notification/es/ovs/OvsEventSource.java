@@ -11,6 +11,7 @@ import org.opendaylight.unimgr.mef.nrp.common.ResourceNotAvailableException;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.Table;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -127,7 +128,8 @@ public class OvsEventSource extends AbstractEventSource implements EventSourceMe
 
     private String getOvsdbNode(){
         String message = "  OVSDB data:(TODO) \n";
-
+        Node node2 = null;
+        DataContainer dc = node2;
         Optional<Node> node = topologyTransaction.getOVSDBNode(sourceNode.getKey().getNodeId());
         if(node.isPresent()){
             //output is pretty messy this way, but it will be send as a object or will be parsed to json

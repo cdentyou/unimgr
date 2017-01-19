@@ -1,33 +1,36 @@
-package org.opendaylight.unimgr.mef.notification.api;
+package org.opendaylight.unimgr.mef.notification.model.eventsource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService;
-import org.opendaylight.controller.messagebus.spi.EventSource;
 import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.core.api.Broker;
 import org.opendaylight.unimgr.mef.notification.EventSourceTestUtils;
-import org.opendaylight.unimgr.mef.notification.es.example.ExampleEventSource;
+import org.opendaylight.unimgr.mef.notification.api.EventSourceApiImpl;
+import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.EventAggregatorService;
-import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
- * @author marek.ryznar@amartus.com
+ * Created by root on 11.01.17.
  */
 @RunWith(PowerMockRunner.class)
-public class EventSourceApiImplTest {
+public class EventSourceWrapperTest {
     private EventSourceApiImpl eventSourceApi;
     private Broker brokerMock;
     private EventSourceRegistry eventSourceRegistry;
@@ -35,7 +38,6 @@ public class EventSourceApiImplTest {
     private EventAggregatorService eventAggregatorServiceMock;
     private DOMNotificationPublishService domPublishMock;
     private RpcProviderRegistry rpcProviderRegistryMock;
-    private static final String nodeName = "testNodeName";
 
     @Before
     public void setUp(){
@@ -60,61 +62,37 @@ public class EventSourceApiImplTest {
     }
 
     @Test
-    public void testGenerateAndDeleteExampleEventSource(){
-        //generate test:
-        //when
-        ExampleEventSource exampleEventSource = eventSourceApi.generateExampleEventSource(nodeName);
-
-        //then
-        List<EventSource> eventSources = eventSourceApi.getEventSourceList();
-        assertEquals(1,eventSources.size());
-        EventSourceTestUtils.checkExampleEventSource((ExampleEventSource) eventSources.get(0),nodeName,eventSourceApi);
-
-        //delete test:
+    public void testPutMsg(){
         //given
-        eventSourceApi.deleteEventSource(exampleEventSource);
-
-        //then
-        assertFalse(eventSourceApi.getEventSourceList().contains(exampleEventSource));
-    }
-
-    @Test
-    public void testCreateAndDestroyTopicToEventSource(){
-        //given
-        ExampleEventSource exampleEventSource = eventSourceApi.generateExampleEventSource(nodeName);
         when(eventAggregatorServiceMock.createTopic(any()))
                 .thenReturn(EventSourceTestUtils.createTopicMock(eventSourceApi))
                 .thenReturn(EventSourceTestUtils.createTopicMock(eventSourceApi))
                 .thenReturn(EventSourceTestUtils.createTopicMock(eventSourceApi));
 
-        //create test:
+        EventSourceWrapper eventSourceWrapper = new EventSourceWrapper("Wrapper",eventSourceRegistry,brokerMock);
+        eventSourceWrapper.add(new NotificationType("notType"));
+        eventSourceWrapper.add(new NotificationType("testets"));
+
+        //TODO: below topic creation is to change (this funcjonality will be moved from EventSourceApi)
+        eventSourceApi.createTopicToEventSource(eventSourceWrapper.getEventSource());
+        EventSourceTestUtils.joinTopicsToEventSource(eventSourceWrapper.getEventSource(),eventSourceApi);
+
+        Node node = EventSourceTestUtils.prepareTestNode();
+        InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareNodeInstanceIdentifier(node.getNodeId());
+        DataContainer dataContainer = node;
+
         //when
-        eventSourceApi.createTopicToEventSource(nodeName);
-        EventSourceTestUtils.joinTopicsToEventSource(exampleEventSource,eventSourceApi);
-        try {
-            //sleep because notification is send every second since join the topic (if topic was joined)
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        eventSourceWrapper.putMsg(new NotificationType("notType"),dataContainer,instanceIdentifier);
 
         //then
-        Map<TopicId, SchemaPath> topics = eventSourceApi.getTopicsPerNotifications();
-        assertEquals(3,topics.size());
-        exampleEventSource.getAvailableNotifications().stream()
-                .forEach(schemaPath -> assertTrue(topics.values().contains(schemaPath)));
+        List<SchemaPath> notifications = eventSourceWrapper.getEventSource().getAvailableNotifications();
+        assertEquals(2,notifications.size());
         try {
             verify(domPublishMock).putNotification(any());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        //Destroy test:
-        //when
-        eventSourceApi.destroyEventSourceTopics(exampleEventSource.getSourceNodeKey().getNodeId().getValue());
-
-        //then
-        assertEquals(0,eventSourceApi.getTopicsPerNotifications().size());
-        assertFalse(eventSourceApi.getEventSourceList().contains(exampleEventSource));
     }
+
+
 }

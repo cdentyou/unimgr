@@ -1,0 +1,28 @@
+module user-agent-topic-read {
+    namespace "urn:opendaylight:params:xml:ns:yang:eventsource:user:agent:topic";
+    prefix "eventsource-user-agent-topic";
+
+    revision 2015-04-08 {
+        description "Initial revision";
+    }
+
+    typedef topic-id {
+        type string {
+            length 1..max;
+        }
+        description
+            "A topic identifier. It uniquely defines a topic";
+    }
+
+    rpc read-topic {
+        description
+            "Request to read nofication from topic identified by topicId.";
+
+        input {
+            leaf topic-id {
+                type topic-id;
+                mandatory true;
+            }
+        }
+    }
+}

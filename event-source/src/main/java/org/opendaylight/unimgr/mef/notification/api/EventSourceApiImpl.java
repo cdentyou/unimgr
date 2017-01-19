@@ -10,8 +10,13 @@ import org.opendaylight.unimgr.mef.notification.es.EventSourceFactory;
 import org.opendaylight.unimgr.mef.notification.es.example.ExampleEventSource;
 import org.opendaylight.unimgr.mef.notification.es.ovs.OvsEventSource;
 import org.opendaylight.unimgr.mef.notification.impl.Providers;
+import org.opendaylight.unimgr.mef.notification.listener.EventSourceListener;
+import org.opendaylight.unimgr.mef.notification.listener.OvsEventSourceListener;
+import org.opendaylight.unimgr.mef.notification.model.eventsource.EventSourceWrapper;
+import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.*;
 import org.opendaylight.yang.gen.v1.urn.onf.core.network.module.rev160630.g_forwardingconstruct.FcPort;
+import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -36,6 +41,7 @@ public class EventSourceApiImpl implements EventSourceApi{
     private Map<TopicId, SchemaPath> topicsPerNotifications;
     private Map<TopicId, String[]> topicsPerPatterns;
     private EventSourceFactory eventSourceFactory;
+    EventSourceWrapper eventSourceWrapper;
 
     public EventSourceApiImpl(Broker domBroker, EventSourceRegistry eventSourceRegistry,BindingAwareBroker broker) {
         LOG.info("EventSourceApiImpl constructor reached.");
@@ -47,6 +53,8 @@ public class EventSourceApiImpl implements EventSourceApi{
         topicsPerNotifications = new ConcurrentHashMap<>();
         topicsPerPatterns = new ConcurrentHashMap<>();
         eventSourceFactory = new EventSourceFactory(domBroker,eventSourceRegistry);
+        eventSourceWrapper = new EventSourceWrapper("WrapperTest",eventSourceRegistry,domBroker);
+        eventSourceWrapper.add(new NotificationType("notificationType"));
     }
 
     @Override
@@ -67,11 +75,14 @@ public class EventSourceApiImpl implements EventSourceApi{
 
     @Override
     public OvsEventSource generateOvsEventSource(FcPort flowPoint, DataBroker dataBroker) {
-        String nodeName = flowPoint.getNode().getValue();
-        OvsEventSource ovsEventSource = (OvsEventSource) eventSourceFactory.getEventSource("Ovs",nodeName);
-        ovsEventSource.setTopologyTransaction(dataBroker);
-        ovsEventSource.setFcPort(flowPoint);
-        return ovsEventSource;
+        LOG.info(" generateOvsEventSource() has started.");
+//        String nodeName = flowPoint.getNode().getValue();
+//        OvsEventSource ovsEventSource = (OvsEventSource) eventSourceFactory.getEventSource("Ovs",nodeName);
+//        ovsEventSource.setTopologyTransaction(dataBroker);
+//        ovsEventSource.setFcPort(flowPoint);
+       // eventSourceWrapper.putMsg(new NotificationType("notificationType"),flowPoint);
+        LOG.info(" generateOVSEventSource() has ended.");
+        return null;
     }
 
     /**
@@ -131,6 +142,24 @@ public class EventSourceApiImpl implements EventSourceApi{
     @Override
     public void destroyTopic(String topicId){
         destroyTopic(new TopicId(topicId));
+    }
+
+    @Override
+    public void subscribeToEventSource(EventSourceListener eventSourceListener) {
+
+        if(eventSourceListener instanceof OvsEventSourceListener){
+
+        }
+    }
+
+    @Override
+    public EventSourceRegistry getEventSourceRegistry() {
+        return eventSourceRegistry;
+    }
+
+    @Override
+    public Broker getBroker() {
+        return domBroker;
     }
 
     @Override

@@ -91,6 +91,7 @@ public class MessageGenerator implements Runnable {
             ListenableFuture<? extends Object> notifFuture;
             try {
                 notifFuture = domPublish.putNotification(topicNotification);
+
                 Futures.addCallback(notifFuture, new FutureCallback<Object>(){
 
                     @Override
@@ -124,6 +125,9 @@ public class MessageGenerator implements Runnable {
                 .withChild(ImmutableNodes.leafNode(EVENT_SOURCE_ARG, eventSourceIdent))
                 .withChild(encapsulate(notification))
                 .build();
+
+
+
         return new TopicDOMNotification(topicNotification);
 
     }

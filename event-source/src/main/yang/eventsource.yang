@@ -35,4 +35,26 @@ module eventsource {
                         "message / content of notification";
                 }
             }
+
+        notification ovs-event-source-notification {
+
+                description
+                    "OVS notification used to send data about Ovs device";
+
+                leaf source-id {
+                    type source-identifier;
+                    mandatory true;
+                    description
+                        "source identifier";
+                }
+
+                leaf message {
+                    type string;
+                    mandatory true;
+                    description
+                        "message / content of notification";
+                }
+
+                //leaf
+            }
 }
