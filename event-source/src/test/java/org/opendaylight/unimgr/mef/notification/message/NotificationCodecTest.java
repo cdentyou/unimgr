@@ -2,6 +2,7 @@ package org.opendaylight.unimgr.mef.notification.message;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.controller.md.sal.dom.api.DOMNotification;
 import org.opendaylight.unimgr.mef.notification.EventSourceTestUtils;
 import org.opendaylight.unimgr.mef.notification.impl.TopicDOMNotification;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
@@ -9,12 +10,10 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 
 import java.util.Collection;
-import java.util.List;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by root on 17.01.17.
@@ -59,9 +58,7 @@ public class NotificationCodecTest {
                 System.out.println("3");
                 Collection<?> obj = (Collection<?>) dataContainerChild.getValue();
             }
-
         }
-        // String topicId =
         System.out.println(notification);
     }
 

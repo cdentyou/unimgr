@@ -57,25 +57,38 @@ public class EventSourceWrapper {
     }
 
     public void putMsg(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
-        Map<TopicId,List<SchemaPath>> mapAcceptedTopics = eventSourceImpl.getMapAcceptedTopics();
+        putMessage(notificationType,dataContainer,instanceIdentifier,null);
+    }
 
-        LOG.info("topicmapsize: {}",mapAcceptedTopics.size());
-        for(Map.Entry<TopicId,List<SchemaPath>> topic: mapAcceptedTopics.entrySet()){
-            LOG.info("Loop start - topicId: {} || schemapaths: {}",topic.getKey(), topic.getValue());
-            if(topic.getValue().contains(notificationType.getSchemaPath())){
-                LOG.info("Holy shit - we passed it");
-                putMessage(topic.getKey().getValue(),dataContainer, instanceIdentifier);
-            }
-        }
+    public void putMsg(NotificationType notificationType, String message){
+        putMessage(notificationType,null,null,message);
     }
 
     public EventSource getEventSource(){
         return eventSourceImpl;
     }
 
-    private void putMessage(String topicId,DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+    private void putMessage(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message){
+        Map<TopicId,List<SchemaPath>> mapAcceptedTopics = eventSourceImpl.getMapAcceptedTopics();
+
+        LOG.info("topicmapsize: {}",mapAcceptedTopics.size());
+        for(Map.Entry<TopicId,List<SchemaPath>> topic: mapAcceptedTopics.entrySet()){
+            LOG.info("Loop start - topicId: {} || schemapaths: {}",topic.getKey(), topic.getValue());
+            if(topic.getValue().contains(notificationType.getSchemaPath())){
+                sendMessage(topic.getKey().getValue(),dataContainer, instanceIdentifier,message);
+            }
+        }
+    }
+
+    private void sendMessage(String topicId,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message){
         String eventSourceIndent = eventSourceImpl.getSourceNodeKey().getNodeId().getValue();
-        TopicDOMNotification topicNotification = notificationCodec.createNotification(dataContainer,eventSourceIndent,topicId,instanceIdentifier);
+        TopicDOMNotification topicNotification;
+        if(message==null){
+            topicNotification = notificationCodec.createNotification(dataContainer,eventSourceIndent,topicId,instanceIdentifier);
+        } else{
+            topicNotification = notificationCodec.createNotification(message,eventSourceIndent);
+        }
+
         try {
             domPublish.putNotification(topicNotification);
         } catch (InterruptedException e) {
