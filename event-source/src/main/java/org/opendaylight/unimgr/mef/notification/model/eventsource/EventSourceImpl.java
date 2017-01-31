@@ -1,7 +1,7 @@
 package org.opendaylight.unimgr.mef.notification.model.eventsource;
 
 import org.opendaylight.controller.messagebus.spi.EventSource;
-import org.opendaylight.unimgr.mef.notification.impl.Util;
+import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.NotificationPattern;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventsource.rev141202.*;

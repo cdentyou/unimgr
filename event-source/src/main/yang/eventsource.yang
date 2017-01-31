@@ -15,7 +15,7 @@ module eventsource {
             }
         }
 
-        //For now this notification will be used by every notification but it should be reconsidered if we don't need separate definition for each of created notification
+        //Notification type used to pass messages as a text.
         notification event-source-notification {
 
                 description
@@ -34,27 +34,5 @@ module eventsource {
                     description
                         "message / content of notification";
                 }
-            }
-
-        notification ovs-event-source-notification {
-
-                description
-                    "OVS notification used to send data about Ovs device";
-
-                leaf source-id {
-                    type source-identifier;
-                    mandatory true;
-                    description
-                        "source identifier";
-                }
-
-                leaf message {
-                    type string;
-                    mandatory true;
-                    description
-                        "message / content of notification";
-                }
-
-                //leaf
             }
 }

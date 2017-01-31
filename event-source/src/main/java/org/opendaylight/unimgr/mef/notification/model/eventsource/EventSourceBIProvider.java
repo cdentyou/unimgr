@@ -1,4 +1,4 @@
-package org.opendaylight.unimgr.mef.notification.es;
+package org.opendaylight.unimgr.mef.notification.model.eventsource;
 
 import org.opendaylight.controller.sal.core.api.AbstractProvider;
 import org.opendaylight.controller.sal.core.api.Broker;
@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author marek.ryznar@amartus.com
+ * BI Provider.
  */
 public class EventSourceBIProvider extends AbstractProvider implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(EventSourceBIProvider.class);

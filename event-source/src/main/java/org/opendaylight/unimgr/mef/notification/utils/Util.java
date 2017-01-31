@@ -1,4 +1,4 @@
-package org.opendaylight.unimgr.mef.notification.impl;
+package org.opendaylight.unimgr.mef.notification.utils;
 
 import com.google.common.util.concurrent.Futures;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
@@ -8,8 +8,6 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +17,7 @@ import java.util.regex.Pattern;
 
 
 public final class Util {
-    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
+    //private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     public static <T> Future<RpcResult<T>> resultRpcSuccessFor(final T output) {
         final RpcResult<T> result = RpcResultBuilder.success(output).build();
@@ -38,10 +36,10 @@ public final class Util {
 
         for (final SchemaPath notification : list) {
             final String namespace = notification.getLastComponent().getNamespace().toString();
-            LOG.info("Util - namespace: {}",namespace);
-            LOG.info("Util - pattern: {}",pattern);
+           // LOG.info("Util - namespace: {}",namespace);
+           // LOG.info("Util - pattern: {}",pattern);
             if (pattern.matcher(namespace).matches()) {
-                LOG.info("Notification {} matched by pattern {}",namespace,pattern);
+               // LOG.info("Notification {} matched by pattern {}",namespace,pattern);
                 selection.add(notification);
             }
         }
@@ -82,7 +80,7 @@ public final class Util {
                 case '.':
                 case '{':
                 case '}':
-                case '|':
+                //case '|':
                 case '\\':
                     s.append("\\");
                     s.append(c);

@@ -4,10 +4,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by root on 10.01.17.
+ * Container for NotificationType.
  */
 public class Notifications {
     private final List<NotificationType> notifications = new LinkedList<>();
 
-    //public add
+    public void add(NotificationType notificationType){
+        notifications.add(notificationType);
+    }
+
+    public void del(NotificationType notificationType){
+        notifications.remove(notificationType);
+    }
+
+    public List<NotificationType> getNotifications(){
+        return notifications;
+    }
 }
