@@ -75,20 +75,6 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
-    <!--No matter of coretutorials version, below error appear:
-    Failure to find org.opendaylight.controller:features-restconf:xml:features:1.4.0-Boron-->
-    <!--<dependency>-->
-      <!--<groupId>org.opendaylight.coretutorials</groupId>-->
-      <!--<artifactId>hweventsource-features</artifactId>-->
-      <!--<version>1.0-Lithium</version>-->
-      <!--<type>xml</type>-->
-      <!--<scope>runtime</scope>-->
-    <!--</dependency>-->
-    <dependency>
-      <groupId>org.opendaylight.coretutorials</groupId>
-      <artifactId>hweventsource-uagent</artifactId>
-      <version>1.0-Lithium</version>
-    </dependency>
     <dependency>
       <groupId>org.opendaylight.yangtools</groupId>
       <artifactId>features-yangtools</artifactId>
@@ -207,11 +193,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>event-source</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>uagent</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

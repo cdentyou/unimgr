@@ -72,6 +72,7 @@ public class EventSourceWrapper {
     }
 
     /**
+     * TODO: change put to send in name
      * Method use to send BA object.
      * @param offer If set to true, message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}
      *              If it is false, method {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)} is used
