@@ -26,7 +26,7 @@ public class NotificationCreatorTest {
     public void testCreateNotification(){
         //given
         Node node = EventSourceTestUtils.prepareTestNode();
-        InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareNodeInstanceIdentifier(node.getNodeId());
+        InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareTestNodeInstanceIdentifier(node.getNodeId());
         String testEventSourceIndent = "eventSourceIndent";
         String testTopicId = "12345";
 

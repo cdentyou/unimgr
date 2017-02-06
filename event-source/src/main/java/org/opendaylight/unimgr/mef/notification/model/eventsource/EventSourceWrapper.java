@@ -5,17 +5,17 @@ import org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService;
 import org.opendaylight.controller.messagebus.spi.EventSource;
 import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
 import org.opendaylight.controller.sal.core.api.Broker;
-import org.opendaylight.unimgr.mef.notification.message.TopicDOMNotification;
-import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.unimgr.mef.notification.message.NotificationCreator;
+import org.opendaylight.unimgr.mef.notification.message.TopicDOMNotification;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
+import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,39 +72,58 @@ public class EventSourceWrapper {
     }
 
     /**
-     * TODO: change put to send in name
-     * Method use to send BA object.
-     * @param offer If set to true, message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}
-     *              If it is false, method {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)} is used
+     * Method send BA object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)}.
      */
-    public void putMsg(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, boolean offer){
-        putMessage(notificationType,dataContainer,instanceIdentifier,null,null,offer);
+    public void putMsg(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+        putMessage(notificationType,dataContainer,instanceIdentifier,null,null,false);
     }
 
     /**
-     * Method use to send BI object.
-     * @param offer If set to true, message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}
-     *              If it is false, method {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)} is used
+     * Method send BA object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}.
      */
-    public void putMsg(NotificationType notificationType, ContainerNode containerNode, boolean offer){
-        putMessage(notificationType,null,null,null,containerNode,offer);
+    public void offerMsg(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+        putMessage(notificationType,dataContainer,instanceIdentifier,null,null,true);
     }
 
     /**
-     * Method use to send String object.
-     * @param offer If set to true, message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}
-     *              If it is false, method {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)} is used
-
+     * Method send BI object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)}.
      */
-    public void putMsg(NotificationType notificationType, String message, boolean offer){
-        putMessage(notificationType,null,null,message,null,offer);
+    public void putMsg(NotificationType notificationType, DataContainerChild<?,?> dataContainerChild){
+        putMessage(notificationType,null,null,null,dataContainerChild,false);
+    }
+
+    /**
+     * Method send BI object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}.
+     */
+    public void offerMsg(NotificationType notificationType, DataContainerChild<?,?> dataContainerChild){
+        putMessage(notificationType,null,null,null,dataContainerChild,true);
+    }
+
+    /**
+     * Method send String object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)}.
+     */
+    public void putMsg(NotificationType notificationType, String message){
+        putMessage(notificationType,null,null,message,null,false);
+    }
+
+    /**
+     * Method send String object to subscribers.
+     * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}.
+     */
+    public void offerMsg(NotificationType notificationType, String message){
+        putMessage(notificationType,null,null,message,null,true);
     }
 
     public EventSource getEventSource(){
         return eventSourceImpl;
     }
 
-    private void putMessage(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message, ContainerNode containerNode, boolean offer){
+    private void putMessage(NotificationType notificationType,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message, DataContainerChild<?,?> dataContainerChild, boolean offer){
         Map<TopicId,List<SchemaPath>> mapAcceptedTopics = eventSourceImpl.getMapAcceptedTopics();
 
         LOG.info("topicmapsize: {}",mapAcceptedTopics.size());
@@ -112,18 +131,18 @@ public class EventSourceWrapper {
             LOG.info("Loop start - topicId: {} || schemapaths: {}",topic.getKey(), topic.getValue());
             //check if notification is subscribed
             if(topic.getValue().contains(notificationType.getSchemaPath())){
-                sendMessage(topic.getKey().getValue(),dataContainer, instanceIdentifier,message, containerNode,offer);
+                sendMessage(topic.getKey().getValue(),dataContainer, instanceIdentifier,message, dataContainerChild,offer);
             }
         }
     }
 
-    private void sendMessage(String topicId,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message, ContainerNode containerNode, boolean offer){
+    private void sendMessage(String topicId,DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String message, DataContainerChild<?,?> dataContainerChild, boolean offer){
         String eventSourceIndent = eventSourceImpl.getSourceNodeKey().getNodeId().getValue();
         TopicDOMNotification topicNotification;
         if(message!=null){
             topicNotification = notificationCreator.createNotification(message,eventSourceIndent,topicId);
-        } else if(containerNode!=null){
-            topicNotification = notificationCreator.createNotification(containerNode,eventSourceIndent,topicId);
+        } else if(dataContainerChild!=null){
+            topicNotification = notificationCreator.createNotification(dataContainerChild,eventSourceIndent,topicId);
         } else if(dataContainer!=null && instanceIdentifier!=null){
             topicNotification = notificationCreator.createNotification(dataContainer,instanceIdentifier,eventSourceIndent,topicId);
         } else {

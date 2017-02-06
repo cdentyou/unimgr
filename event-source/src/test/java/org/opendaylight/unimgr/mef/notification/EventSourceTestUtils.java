@@ -1,8 +1,8 @@
 package org.opendaylight.unimgr.mef.notification;
 
-import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
 import org.opendaylight.unimgr.mef.notification.topic.TopicHandler;
+import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.CreateTopicOutput;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.CreateTopicOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.NotificationPattern;
@@ -23,7 +23,10 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.node.TerminationPointBuilder;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.node.TerminationPointKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +53,7 @@ public class EventSourceTestUtils {
         return nodeBuilder.build();
     }
 
-    public static InstanceIdentifier prepareNodeInstanceIdentifier(NodeId nodeId){
+    public static InstanceIdentifier prepareTestNodeInstanceIdentifier(NodeId nodeId){
         InstanceIdentifier<org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node> nodeIid = InstanceIdentifier
                 .builder(NetworkTopology.class)
                 .child(Topology.class,
@@ -59,6 +62,14 @@ public class EventSourceTestUtils {
                         new NodeKey(nodeId))
                 .build();
         return nodeIid;
+    }
+
+    public static LeafNode<String> prepareTestLeafNode(){
+        QName ipAddressQname = QName.create(Node.QNAME, "ip-address");
+        String nodeName = "node:1";
+        String ipAddress = "192.168.1.1";
+        LeafNode<String> nodeIpValue = ImmutableNodes.leafNode(ipAddressQname, ipAddress);
+        return nodeIpValue;
     }
 
     public static JoinTopicInput createJoinTopicInput(TopicId topicId, Notifications notifications){
@@ -81,4 +92,6 @@ public class EventSourceTestUtils {
         Future<RpcResult<CreateTopicOutput>> result = Util.resultRpcSuccessFor(cto);
         return result;
     }
+
+
 }

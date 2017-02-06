@@ -1,6 +1,8 @@
 package org.opendaylight.unimgr.mef.notification.message;
 
 import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
@@ -11,9 +13,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -32,6 +32,7 @@ public class NotificationCodec {
     private BindingNormalizedNodeCodecRegistry bindingNormalizedNodeCodecRegistry;
     private Set<Class<?>> moduleClasses;
     private Set<YangModuleInfo> moduleInfos;
+    private ClassPool classPool;
 
     public NotificationCodec(){
         moduleClasses = new HashSet<>();
@@ -41,8 +42,9 @@ public class NotificationCodec {
     }
 
     private void initBindingNormalizedNodeCodecRegistry(){
+        classPool = ClassPool.getDefault();
         JavassistUtils utils =
-                JavassistUtils.forClassPool(ClassPool.getDefault());
+                JavassistUtils.forClassPool(classPool);
         bindingNormalizedNodeCodecRegistry = new
                 BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
     }
@@ -53,38 +55,34 @@ public class NotificationCodec {
      * @param instanceIdentifier Instance Identifier of BA object.
      * @return BI object
      */
-    public DataContainerChild<?, ?> toDataContainerChild(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
-        updateCodec(dataContainer);
+    public synchronized Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> toDataContainerChild(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+        Class<?> cls = dataContainer.getClass();
+        updateCodec(cls);
 
         InstanceIdentifier<DataObject> ii = instanceIdentifier;
         DataObject dataObject = (DataObject) dataContainer;
 
+        try {
+            CtClass ctClass = classPool.get(cls.getName());
+            if(ctClass.isFrozen()){
+                ctClass.defrost();
+            }
+        } catch (NotFoundException e) {
+            LOG.warn("Could not find class {}",cls.getName());
+        }
         Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = bindingNormalizedNodeCodecRegistry.toNormalizedNode(ii,dataObject);
-        NormalizedNode<?, ?> normalizedNode = entry.getValue();
 
-        DataContainerChild<?, ?> dataContainerChild = new DataContainerChild<YangInstanceIdentifier.PathArgument, Object>() {
-            @Override
-            public QName getNodeType() {
-                return normalizedNode.getNodeType();
-            }
-
-            @Override
-            public YangInstanceIdentifier.PathArgument getIdentifier() {
-                return entry.getKey().getLastPathArgument();
-            }
-
-            @Override
-            public Object getValue() {
-                return normalizedNode.getValue();
-            }
-        };
-
-        return dataContainerChild;
+        return entry;
     }
 
-    private void updateCodec(DataContainer dataContainer){
-        Class<?> cls = dataContainer.getClass();
+    public DataContainer fromDataContainerChild(NormalizedNode<?, ?> data, Class<?> clazz,YangInstanceIdentifier yangInstanceIdentifier){
+        updateCodec(clazz);
+        Map.Entry<InstanceIdentifier<?>, DataObject> entry = bindingNormalizedNodeCodecRegistry.fromNormalizedNode(yangInstanceIdentifier,data);
+        DataContainer dataContainer = entry.getValue();
+        return dataContainer;
+    }
 
+    private void updateCodec(Class<?> cls){
         if(!moduleClasses.contains(cls)){
             moduleClasses.add(cls);
             addModuleInfo(cls);

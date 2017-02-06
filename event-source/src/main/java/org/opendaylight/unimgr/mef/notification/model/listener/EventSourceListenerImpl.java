@@ -3,6 +3,7 @@ package org.opendaylight.unimgr.mef.notification.model.listener;
 import org.opendaylight.controller.md.sal.dom.api.DOMNotification;
 import org.opendaylight.controller.md.sal.dom.api.DOMNotificationService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.unimgr.mef.notification.model.reader.DomNotificationReader;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
 import org.opendaylight.unimgr.mef.notification.topic.TopicHandler;
@@ -16,13 +17,14 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -58,16 +60,17 @@ public class EventSourceListenerImpl implements EventSourceListener {
     /**
      * @param nodeId when null is passed - everything will be matched
      * @param notifications when null is passed - everything will be matched
-     * @return
+     * @return topicId - its null if it is already registered
      */
     @Override
-    public Future<RpcResult<Void>> readTopic(NodeId nodeId, Notifications notifications) {
+    public String readTopic(NodeId nodeId, Notifications notifications) {
         Map.Entry<NodeId,Notifications> topicEntry = new AbstractMap.SimpleEntry<NodeId,Notifications>(nodeId, notifications);
+        String topicId = null;
         if(!registeredTopic.values().contains(topicEntry)){
-            String topicId = topicHandler.createTopic(nodeId,notifications);
+            topicId = topicHandler.createTopic(nodeId,notifications);
             registeredTopic.put(topicId,topicEntry);
         }
-        return immediateFuture(RpcResultBuilder.success((Void) null).build());
+        return topicId;
     }
 
     @Override
@@ -99,8 +102,7 @@ public class EventSourceListenerImpl implements EventSourceListener {
             // then notification is parsed and written into the file.
             if(registeredTopic.keySet().contains(topicId.getValue())){
                 if(body.getChild(PAYLOAD_ARG).isPresent()){
-                    DataContainerChild<?, ?> payload = (DataContainerChild<?, ?>) body.getChild(PAYLOAD_ARG).get().getValue();
-                    domNotificationReader.read(payload);
+                    domNotificationReader.read(domNotification);
                 }
             }
         }

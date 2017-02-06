@@ -61,7 +61,6 @@ public class EventSourceWrapperTest {
         when(eventAggregatorServiceMock.createTopic(any()))
                 .thenReturn(EventSourceTestUtils.createTopicMock());
 
-
         NodeId nodeId = new NodeId("Wrapper");
         EventSourceWrapper eventSourceWrapper = new EventSourceWrapper(nodeId,eventSourceRegistry,brokerMock);
         eventSourceWrapper.add(new NotificationType("notType"));
@@ -72,11 +71,11 @@ public class EventSourceWrapperTest {
         eventSourceWrapper.getEventSource().joinTopic(EventSourceTestUtils.createJoinTopicInput(new TopicId(topicId),eventSourceWrapper.getNotifications()));
 
         Node node = EventSourceTestUtils.prepareTestNode();
-        InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareNodeInstanceIdentifier(node.getNodeId());
+        InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareTestNodeInstanceIdentifier(node.getNodeId());
         DataContainer dataContainer = node;
 
         //when
-        eventSourceWrapper.putMsg(new NotificationType("notType"),dataContainer,instanceIdentifier,false);
+        eventSourceWrapper.putMsg(new NotificationType("notType"),dataContainer,instanceIdentifier);
 
         //then
         List<SchemaPath> notifications = eventSourceWrapper.getEventSource().getAvailableNotifications();
