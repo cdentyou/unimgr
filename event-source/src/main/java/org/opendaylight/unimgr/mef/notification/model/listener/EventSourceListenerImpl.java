@@ -99,7 +99,7 @@ public class EventSourceListenerImpl implements EventSourceListener {
         }
         if( nodeName != null && topicId != null ){
             // if nodeName and TopicId are present and TopicId has been requested to process (TopicId is in registeredTopic)
-            // then notification is parsed and written into the file.
+            // then notification is parsed and processed as reader defines
             if(registeredTopic.keySet().contains(topicId.getValue())){
                 if(body.getChild(PAYLOAD_ARG).isPresent()){
                     domNotificationReader.read(domNotification);

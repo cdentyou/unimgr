@@ -70,7 +70,7 @@ public class EventSourceWrapperTest {
         String topicId = topicHandler.createTopic(nodeId,eventSourceWrapper.getNotifications());
         eventSourceWrapper.getEventSource().joinTopic(EventSourceTestUtils.createJoinTopicInput(new TopicId(topicId),eventSourceWrapper.getNotifications()));
 
-        Node node = EventSourceTestUtils.prepareTestNode();
+        Node node = EventSourceTestUtils.prepareTestNode("TestNode",true);
         InstanceIdentifier instanceIdentifier = EventSourceTestUtils.prepareTestNodeInstanceIdentifier(node.getNodeId());
         DataContainer dataContainer = node;
 

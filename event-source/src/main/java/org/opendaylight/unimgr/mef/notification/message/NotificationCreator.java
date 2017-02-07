@@ -42,7 +42,7 @@ public class NotificationCreator {
     private NotificationCodec notificationCodec;
 
     public NotificationCreator(){
-        notificationCodec = new NotificationCodec();
+        notificationCodec = NotificationCodec.getInstance();
     }
 
     /**
@@ -55,7 +55,7 @@ public class NotificationCreator {
      * @return TopicDOMNotification
      */
     public TopicDOMNotification createNotification(DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String eventSourceIdent, String topicId){
-        Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> entry = notificationCodec.toDataContainerChild(dataContainer,instanceIdentifier);
+        Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> entry = notificationCodec.toNormalizedNode(dataContainer,instanceIdentifier);
         TopicDOMNotification topicNotification = prepareNotification(entry.getValue(),topicId,eventSourceIdent,dataContainer.getClass().getName(),entry.getKey());
         return topicNotification;
     }

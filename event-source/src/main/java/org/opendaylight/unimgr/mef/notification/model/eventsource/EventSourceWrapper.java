@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class that should be used by Publisher to create EventSource. Class have methods that unable producer
+ * Class that should be used by Publisher to create EventSource. Class have methods that allows producer
  * to add and delete notifications on which client will subscribe and send messages to subscriber(s).
  */
 public class EventSourceWrapper {
@@ -43,8 +43,6 @@ public class EventSourceWrapper {
         LOG.info("Wrapper started");
         EventSourceBIProvider providerBI = new EventSourceBIProvider();
         Broker.ProviderSession domCtx = domBroker.registerProvider(providerBI);
-        //final BindingAwareTest bindingAwareTest = new BindingAwareTest();
-        //Broker.ProviderSession domCtx = domBroker.registerProvider(domCtx);
         domPublish = domCtx.getService(DOMNotificationPublishService.class);
 
         String nodeName = nodeId.getValue();

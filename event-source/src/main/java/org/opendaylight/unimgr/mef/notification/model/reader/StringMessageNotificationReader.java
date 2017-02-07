@@ -10,18 +10,20 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The easiest (Test) implementation of DomNotificationReader that expect String message.
  */
 public class StringMessageNotificationReader implements DomNotificationReader {
     private static final Logger LOG = LoggerFactory.getLogger(StringMessageNotificationReader.class);
-    private final StringBuffer stringBuffer = new StringBuffer();
+    private final List<String> receivedMessages = new LinkedList<>();
 
     @Override
     public void read(DOMNotification notification) {
         String payload = parsePayLoad(notification);
-        stringBuffer.append(payload);
+        receivedMessages.add(payload);
         LOG.trace("String message payload: {}",payload);
     }
 
@@ -42,7 +44,7 @@ public class StringMessageNotificationReader implements DomNotificationReader {
         return writer.toString();
     }
 
-    public String getMessages(){
-        return stringBuffer.toString();
+    public List<String> getReceivedMessages() {
+        return receivedMessages;
     }
 }

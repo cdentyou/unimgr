@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 
 public final class Util {
-    //private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     public static <T> Future<RpcResult<T>> resultRpcSuccessFor(final T output) {
         final RpcResult<T> result = RpcResultBuilder.success(output).build();

@@ -22,9 +22,11 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.node.TerminationPoint;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.node.TerminationPointBuilder;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.node.TerminationPointKey;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
@@ -33,24 +35,36 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Future;
 
+import static org.junit.Assert.*;
+
 /**
- * Created by root on 11.01.17.
+ * Class that delivers methods utilized in Tests in event-source module.
  */
 public class EventSourceTestUtils {
 
-    public static Node prepareTestNode(){
-
-        TerminationPointBuilder terminationPointBuilder = new TerminationPointBuilder();
-        terminationPointBuilder.setTpId(new TpId("TestTP"));
-        terminationPointBuilder.setKey(new TerminationPointKey(new TpId("TestTP2")));
-        TerminationPoint terminationPoint = terminationPointBuilder.build();
-        NodeBuilder nodeBuilder = new NodeBuilder();
-        nodeBuilder.setNodeId(new NodeId("TestNode"));
+    public static Node prepareTestNode(String nodeId,boolean single){
         List<TerminationPoint> tps = new LinkedList<>();
-        tps.add(terminationPoint);
+        if(single){
+            TerminationPoint terminationPoint = buildTerminationPoint("TestTpId","TestTpKey");
+            tps.add(terminationPoint);
+        } else {
+            TerminationPoint terminationPoint2 = EventSourceTestUtils.buildTerminationPoint("TestTpId2","TestTpKey2");
+            TerminationPoint terminationPoint3 = EventSourceTestUtils.buildTerminationPoint("TestTpId3","TestTpKey3");
+            tps.add(terminationPoint2);
+            tps.add(terminationPoint3);
+        }
+        NodeBuilder nodeBuilder = new NodeBuilder();
+        nodeBuilder.setNodeId(new NodeId(nodeId));
         nodeBuilder.setTerminationPoint(tps);
-
         return nodeBuilder.build();
+    }
+
+    private static TerminationPoint buildTerminationPoint(String tpId, String tpKey){
+        TerminationPointBuilder terminationPointBuilder = new TerminationPointBuilder();
+        terminationPointBuilder.setTpId(new TpId(tpId));
+        terminationPointBuilder.setKey(new TerminationPointKey(new TpId(tpKey)));
+        TerminationPoint terminationPoint = terminationPointBuilder.build();
+        return terminationPoint;
     }
 
     public static InstanceIdentifier prepareTestNodeInstanceIdentifier(NodeId nodeId){
@@ -66,7 +80,6 @@ public class EventSourceTestUtils {
 
     public static LeafNode<String> prepareTestLeafNode(){
         QName ipAddressQname = QName.create(Node.QNAME, "ip-address");
-        String nodeName = "node:1";
         String ipAddress = "192.168.1.1";
         LeafNode<String> nodeIpValue = ImmutableNodes.leafNode(ipAddressQname, ipAddress);
         return nodeIpValue;
@@ -93,5 +106,51 @@ public class EventSourceTestUtils {
         return result;
     }
 
+    public static void checkMessages(List<String> receivedMessages,String esw1, String firstMessage, String esw2, String secondMessage){
+        esw1 = addXmlWrapper(esw1,false);
+        esw2 = addXmlWrapper(esw2,false);
+        firstMessage = addXmlWrapper(firstMessage,true);
+        secondMessage = addXmlWrapper(secondMessage,true);
+        for(String message:receivedMessages){
+            if(message.contains(esw1)){
+                assertTrue(message.contains(firstMessage));
+            } else if (message.contains(esw2)){
+                assertTrue(message.contains(secondMessage));
+            } else {
+                fail();
+            }
+        }
+    }
 
+    private static String addXmlWrapper(String s, boolean message){
+        if(message){
+            return "<Message>"+s+"</Message>";
+        } else {
+            return "<Source>"+s+"</Source>";
+        }
+    }
+
+    public static void checkPassedBaObjects(List<DataContainer> baObjects, Node node, Node node2){
+        assertEquals(2,baObjects.size());
+        for(DataContainer dataContainer:baObjects){
+            Node nodeX = (Node) dataContainer;
+            if(nodeX.getTerminationPoint().size()>1){
+                compareNodes(node2,nodeX);
+            } else {
+                compareNodes(node,nodeX);
+            }
+        }
+    }
+
+    private static void compareNodes(Node actual, Node expected){
+        assertEquals(actual.getKey().getNodeId(),expected.getKey().getNodeId());
+        assertEquals(actual.getTerminationPoint().size(),expected.getTerminationPoint().size());
+    }
+
+    public static void checkPassedBiObject(List<DataContainerChild> receivedBiObjects, LeafNode<String> leafNode){
+        long leafs = receivedBiObjects.stream()
+                .filter( x -> leafNode.equals((LeafNode<String>) x))
+                .count();
+        assertTrue(leafs>0);
+    }
 }

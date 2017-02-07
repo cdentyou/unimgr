@@ -1,8 +1,7 @@
 package org.opendaylight.unimgr.mef.notification.message;
 
 import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
+import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicNotification;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
@@ -13,7 +12,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -28,20 +29,34 @@ import java.util.Set;
  */
 public class NotificationCodec {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationCodec.class);
-
+    private static final YangInstanceIdentifier.NodeIdentifier CLASS_NAME_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "class-name").intern());
+    private static final YangInstanceIdentifier.NodeIdentifier YANG_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "yang-name").intern());
+    private static final YangInstanceIdentifier.NodeIdentifier PAYLOAD_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "payload"));
+    private static NotificationCodec notificationCodec = null;
     private BindingNormalizedNodeCodecRegistry bindingNormalizedNodeCodecRegistry;
     private Set<Class<?>> moduleClasses;
     private Set<YangModuleInfo> moduleInfos;
     private ClassPool classPool;
 
-    public NotificationCodec(){
-        moduleClasses = new HashSet<>();
-        moduleInfos = new HashSet<>();
 
+    private NotificationCodec(){
         initBindingNormalizedNodeCodecRegistry();
     }
 
+    public static NotificationCodec getInstance(){
+        if(notificationCodec==null){
+            synchronized (NotificationCodec.class){
+                if(notificationCodec==null){
+                    notificationCodec = new NotificationCodec();
+                }
+            }
+        }
+        return  notificationCodec;
+    }
+
     private void initBindingNormalizedNodeCodecRegistry(){
+        moduleClasses = new HashSet<>();
+        moduleInfos = new HashSet<>();
         classPool = ClassPool.getDefault();
         JavassistUtils utils =
                 JavassistUtils.forClassPool(classPool);
@@ -50,29 +65,39 @@ public class NotificationCodec {
     }
 
     /**
-     *
      * @param dataContainer BA object
      * @param instanceIdentifier Instance Identifier of BA object.
-     * @return BI object
+     * @return BI object and its YangInstanceIdentifier
      */
-    public synchronized Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> toDataContainerChild(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+    public synchronized Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> toNormalizedNode(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
         Class<?> cls = dataContainer.getClass();
         updateCodec(cls);
 
         InstanceIdentifier<DataObject> ii = instanceIdentifier;
         DataObject dataObject = (DataObject) dataContainer;
-
-        try {
-            CtClass ctClass = classPool.get(cls.getName());
-            if(ctClass.isFrozen()){
-                ctClass.defrost();
-            }
-        } catch (NotFoundException e) {
-            LOG.warn("Could not find class {}",cls.getName());
-        }
         Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = bindingNormalizedNodeCodecRegistry.toNormalizedNode(ii,dataObject);
 
         return entry;
+    }
+
+    public DataContainer fromNotification(ContainerNode body){
+        if(body.getChild(CLASS_NAME_ARG).isPresent() && body.getChild(YANG_ARG).isPresent()){
+            String className = (String) body.getChild(CLASS_NAME_ARG).get().getValue();
+            Class expectedClass;
+            try {
+                expectedClass = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                LOG.warn("ClassNotFoundException, {}",e.toString());
+                return null;
+            }
+            YangInstanceIdentifier yangInstanceIdentifier = (YangInstanceIdentifier) body.getChild(YANG_ARG).get().getValue();
+            NormalizedNode<?, ?> normalizedNode = (NormalizedNode<?, ?>) body.getChild(PAYLOAD_ARG).get().getValue();
+
+            DataContainer dataContainer = notificationCodec.fromDataContainerChild(normalizedNode,expectedClass,yangInstanceIdentifier);
+            return dataContainer;
+        }
+        LOG.warn("Class name or YangInstanceIdetifier is not present in notification");
+        return null;
     }
 
     public DataContainer fromDataContainerChild(NormalizedNode<?, ?> data, Class<?> clazz,YangInstanceIdentifier yangInstanceIdentifier){

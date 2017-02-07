@@ -30,7 +30,7 @@ public class NotificationType {
     private SchemaPath createSchemaPath(String schema){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(0);
-        //It is set on specific day, becouse laster we compare SchemaPaths between each other, and date have to be identical.
+        //It is set on specific day, becouse later we compare SchemaPaths between each other, and date have to be identical.
         cal.set(2017, 1, 1, 0, 0, 0);
         Date revisionDate = cal.getTime();
         URI uri;
