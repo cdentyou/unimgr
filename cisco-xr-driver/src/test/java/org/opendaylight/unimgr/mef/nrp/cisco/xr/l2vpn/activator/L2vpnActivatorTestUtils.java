@@ -37,6 +37,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
@@ -46,8 +47,6 @@ import static org.junit.Assert.*;
  *
  * @author marek.ryznar@amartus.com
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MountPointHelper.class)
 public class L2vpnActivatorTestUtils {
 
     public static MountPointService getMockedMountPointService(Optional<DataBroker> optBroker){
@@ -125,28 +124,53 @@ public class L2vpnActivatorTestUtils {
         assertNotNull(mtu.getOwner());  //getOwner=CiscoIosXrString [_value=GigabitEthernet],   (hardcoded value)
     }
 
-    public static void checkDeactivation(Optional<DataBroker> optBroker){
-        ReadOnlyTransaction transaction = optBroker.get().newReadOnlyTransaction();
-
-        InstanceIdentifier<L2vpn> l2vpn = InstanceIdentifier.builder(L2vpn.class).build();
-        InstanceIdentifier<InterfaceConfigurations> interfaceConfigurations = InstanceIdentifier.builder(InterfaceConfigurations.class).build();
-
-        CheckedFuture<Optional<L2vpn>, ReadFailedException> driverL2vpn = transaction.read(LogicalDatastoreType.CONFIGURATION, l2vpn);
-        CheckedFuture<Optional<InterfaceConfigurations>, ReadFailedException> driverInterfaceConfigurations = transaction.read(LogicalDatastoreType.CONFIGURATION, interfaceConfigurations);
-
-        try {
-            assertFalse(driverL2vpn.get().isPresent());
-            assertFalse(driverInterfaceConfigurations.get().isPresent());
-        } catch (InterruptedException | ExecutionException e) {
-            fail(e.getMessage());
-        }
-    }
-
     public static FcPort port(String topo, String host, String port) {
         return new FcPortBuilder()
                 .setTopology(new TopologyId(topo))
                 .setNode(new NodeId(host))
                 .setTp(new TpId(port))
                 .build();
+    }
+
+    public static void checkDeactivated(Optional<DataBroker> optBroker, String deactivatedPort)  {
+        ReadOnlyTransaction transaction = optBroker.get().newReadOnlyTransaction();
+
+        InstanceIdentifier<L2vpn> l2vpnIid = InstanceIdentifier.builder(L2vpn.class).build();
+        InstanceIdentifier<InterfaceConfigurations> interfaceConfigurationsIid = InstanceIdentifier.builder(InterfaceConfigurations.class).build();
+
+        CheckedFuture<Optional<L2vpn>, ReadFailedException> driverL2vpn = transaction.read(LogicalDatastoreType.CONFIGURATION, l2vpnIid);
+        CheckedFuture<Optional<InterfaceConfigurations>, ReadFailedException> driverInterfaceConfigurations = transaction.read(LogicalDatastoreType.CONFIGURATION, interfaceConfigurationsIid);
+
+        try {
+            checkL2vpnDeactivation(driverL2vpn,deactivatedPort);
+            checkInterfaceConfigurationDeactivation(driverInterfaceConfigurations,deactivatedPort);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
+
+    private static void checkL2vpnDeactivation(CheckedFuture<Optional<L2vpn>, ReadFailedException>driverL2vpn, String deactivatedPort) throws ExecutionException, InterruptedException {
+        if (driverL2vpn.get().isPresent()){
+            L2vpn l2vpn = driverL2vpn.get().get();
+            L2vpnActivatorTestUtils.checkL2vpn(l2vpn);
+
+            XconnectGroup xconnectGroup = l2vpn.getDatabase().getXconnectGroups().getXconnectGroup().get(0);
+            assertTrue(xconnectGroup.getP2pXconnects().getP2pXconnect().isEmpty());
+        } else {
+            fail("L2vpn was not found.");
+        }
+    }
+
+    private static void checkInterfaceConfigurationDeactivation(CheckedFuture<Optional<InterfaceConfigurations>, ReadFailedException> driverInterfaceConfigurations, String deactivatedPort) throws InterruptedException, ExecutionException{
+        if (driverInterfaceConfigurations.get().isPresent()){
+            InterfaceConfigurations interfaceConfigurations = driverInterfaceConfigurations.get().get();
+            L2vpnActivatorTestUtils.checkInterfaceConfigurations(interfaceConfigurations);
+
+            List<InterfaceConfiguration> interfaceConfigurationList = interfaceConfigurations.getInterfaceConfiguration();
+            assertFalse(interfaceConfigurationList.stream().anyMatch(x -> x.getInterfaceName().getValue().equals(deactivatedPort)));
+        } else {
+            fail("InterfaceConfigurations was not found.");
+        }
     }
 }
