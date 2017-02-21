@@ -1,13 +1,12 @@
-package org.opendaylight.unimgr.mef.notification.message;
+package org.opendaylight.unimgr.mef.notification.utils;
 
 import com.google.common.base.Optional;
+import org.opendaylight.unimgr.mef.notification.model.message.BiNotification;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.api.rev150408.EventSourceNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.api.rev150408.EventSourceNotificationBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.api.rev150408.SourceIdentifier;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
@@ -24,10 +23,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
-import java.util.Map;
 
 /**
- * Class that facilitate creating @see org.opendaylight.unimgr.mef.notification.message.TopicDOMNotification
+ * Class that facilitate creating @see org.opendaylight.unimgr.mef.notification.model.message.BiNotification
  */
 public class NotificationCreator {
 
@@ -37,75 +35,48 @@ public class NotificationCreator {
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_NOTIFICATION_ARG = new YangInstanceIdentifier.NodeIdentifier(TopicNotification.QNAME);
     private static final YangInstanceIdentifier.NodeIdentifier EVENT_SOURCE_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "node-id").intern());
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_ID_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "topic-id").intern());
-    private static final YangInstanceIdentifier.NodeIdentifier CLASS_NAME_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "class-name").intern());
-    private static final YangInstanceIdentifier.NodeIdentifier YANG_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "yang-name").intern());
-    private NotificationCodec notificationCodec;
-
-    public NotificationCreator(){
-        notificationCodec = NotificationCodec.getInstance();
-    }
 
     /**
-     * Method translate BA object to BI and encapsulate it into TopicDOMNotification.
-     *
-     * @param dataContainer BA object.
-     * @param instanceIdentifier Instace Identifier of BA object.
-     * @param eventSourceIdent Event source ID
-     * @param topicId Topic ID
-     * @return TopicDOMNotification
-     */
-    public TopicDOMNotification createNotification(DataContainer dataContainer, InstanceIdentifier instanceIdentifier, String eventSourceIdent, String topicId){
-        Map.Entry<YangInstanceIdentifier,NormalizedNode<?, ?>> entry = notificationCodec.toNormalizedNode(dataContainer,instanceIdentifier);
-        TopicDOMNotification topicNotification = prepareNotification(entry.getValue(),topicId,eventSourceIdent,dataContainer.getClass().getName(),entry.getKey());
-        return topicNotification;
-    }
-
-    /**
-     * Method encapsulate String message into TopicDOMNotification.
+     * Method encapsulate String message into BiNotification.
      *
      * @param message String message
      * @param eventSourceIdent Event source ID
      * @param topicId Topic ID
-     * @return TopicDOMNotification
+     * @return BiNotification
      */
-    public TopicDOMNotification createNotification(String message, String eventSourceIdent, String topicId){
+    public BiNotification createNotification(String message, String eventSourceIdent, String topicId){
         EventSourceNotificationBuilder builder = new EventSourceNotificationBuilder();
         builder.setMessage(message);
         builder.setSourceId(new SourceIdentifier(eventSourceIdent));
         EventSourceNotification notification = builder.build();
 
         DataContainerChild<?, ?> dataContainerChild = encapsulate(notification);
-        TopicDOMNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent,null,null);
+        BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent);
         return topicNotification;
     }
 
     /**
-     * Method encapsulate BI object into TopicDOMNotification.
+     * Method encapsulate BI object into BiNotification.
      *
      * @param dataContainerChild BI object
      * @param eventSourceIdent Event source ID
      * @param topicId Topic ID
-     * @return TopicDOMNotification
+     * @return BiNotification
      */
-    public  TopicDOMNotification createNotification(DataContainerChild<?,?> dataContainerChild, String eventSourceIdent, String topicId){
-        TopicDOMNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent,null,null);
+    public BiNotification createNotification(DataContainerChild<?,?> dataContainerChild, String eventSourceIdent, String topicId){
+        BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent);
         return topicNotification;
     }
 
-    private TopicDOMNotification prepareNotification(NormalizedNode<?, ?> normalizedNode, String topicId, String eventSourceIdent, String className, YangInstanceIdentifier yangInstanceIdentifier){
+    private BiNotification prepareNotification(NormalizedNode<?, ?> normalizedNode, String topicId, String eventSourceIdent){
         DataContainerNodeAttrBuilder dataContainerNodeAttrBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(TOPIC_NOTIFICATION_ARG)
                 .withChild(ImmutableNodes.leafNode(TOPIC_ID_ARG, new TopicId(topicId)))
                 .withChild(ImmutableNodes.leafNode(EVENT_SOURCE_ARG, eventSourceIdent))
                 .withChild(ImmutableNodes.leafNode(PAYLOAD_ARG, normalizedNode));
-        if(className!=null && yangInstanceIdentifier!=null){
-            dataContainerNodeAttrBuilder
-                    .withChild(ImmutableNodes.leafNode(CLASS_NAME_ARG, className))
-                    .withChild(ImmutableNodes.leafNode(YANG_ARG, yangInstanceIdentifier));
-        }
         final ContainerNode topicNotification =
                 (ContainerNode) dataContainerNodeAttrBuilder.build();
-        return new TopicDOMNotification(topicNotification);
+        return new BiNotification(topicNotification);
     }
 
     private AnyXmlNode encapsulate(EventSourceNotification notification){

@@ -1,4 +1,4 @@
-package org.opendaylight.unimgr.mef.notification.model.reader;
+package org.opendaylight.unimgr.mef.notification.listener.reader;
 
 import org.opendaylight.controller.md.sal.dom.api.DOMNotification;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;

@@ -30,7 +30,7 @@ module eventsource {
 
                 leaf message {
                     type string;
-                    mandatory true;
+                    //mandatory true;
                     description
                         "message / content of notification";
                 }

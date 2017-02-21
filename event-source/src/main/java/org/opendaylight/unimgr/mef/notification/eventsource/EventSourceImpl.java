@@ -1,4 +1,4 @@
-package org.opendaylight.unimgr.mef.notification.model.eventsource;
+package org.opendaylight.unimgr.mef.notification.eventsource;
 
 import org.opendaylight.controller.messagebus.spi.EventSource;
 import org.opendaylight.unimgr.mef.notification.utils.Util;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 /**
- * Implementation of EventSource used in @see org.opendaylight.unimgr.mef.notification.model.eventsource.EventSourceWrapper.
+ * Implementation of EventSource used in @see org.opendaylight.unimgr.mef.notification.eventsource.EventSourceWrapper.
  */
 public class EventSourceImpl implements EventSource {
     private static final Logger LOG = LoggerFactory.getLogger(EventSourceImpl.class);

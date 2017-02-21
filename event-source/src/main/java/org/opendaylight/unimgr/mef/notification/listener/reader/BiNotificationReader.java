@@ -1,4 +1,4 @@
-package org.opendaylight.unimgr.mef.notification.model.reader;
+package org.opendaylight.unimgr.mef.notification.listener.reader;
 
 import org.opendaylight.controller.md.sal.dom.api.DOMNotification;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * The easiest (Test) implementation of DomNotificationReader that expect Binding Independent objects.
  */
-public class BiObjectNotificationReader implements DomNotificationReader {
+public class BiNotificationReader implements DomNotificationReader {
 
     private List<DataContainerChild> biObjects = new LinkedList<>();
 

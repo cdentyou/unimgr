@@ -1,6 +1,6 @@
-module user-agent-topic-read {
-    namespace "urn:opendaylight:params:xml:ns:yang:eventsource:user:agent:topic";
-    prefix "eventsource-user-agent-topic";
+module topic-read {
+    namespace "urn:opendaylight:params:xml:ns:yang:eventsource:topic";
+    prefix "eventsource-topic";
 
     revision 2015-04-08 {
         description "Initial revision";
