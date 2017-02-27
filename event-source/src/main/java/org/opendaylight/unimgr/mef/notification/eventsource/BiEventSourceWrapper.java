@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class that should be used by Publisher to create EventSource. Class have methods that allows producer
+ * Class that should be used by Publisher to create EventSource. Class have methods that allows notification
  * to add and delete notifications on which client will subscribe and send Binding Independent objects to subscriber(s).
  */
 public class BiEventSourceWrapper  extends AbstractEventSourceWrapper{
@@ -75,7 +75,7 @@ public class BiEventSourceWrapper  extends AbstractEventSourceWrapper{
     private void createAndSendNotification(NotificationType notificationType, String message, DataContainerChild<?,?> dataContainerChild, boolean put){
         Map<TopicId,List<SchemaPath>> mapAcceptedTopics = getEventSourceImpl().getMapAcceptedTopics();
 
-        LOG.info("topicmapsize: {}",mapAcceptedTopics.size());
+        LOG.info("mapAcceptedTopics.size: {}",mapAcceptedTopics.size());
         for(Map.Entry<TopicId,List<SchemaPath>> topic: mapAcceptedTopics.entrySet()){
             LOG.info("Loop start - topicId: {} || schemapaths: {}",topic.getKey(), topic.getValue());
             if(topic.getValue().contains(notificationType.getSchemaPath())){

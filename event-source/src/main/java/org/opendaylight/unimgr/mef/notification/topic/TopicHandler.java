@@ -1,5 +1,6 @@
 package org.opendaylight.unimgr.mef.notification.topic;
 
+import org.opendaylight.unimgr.mef.notification.eventsource.EventSourceImpl;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
@@ -27,7 +28,9 @@ public class TopicHandler {
 
     public String createTopic(NodeId nodeId, Notifications notifications){
         CreateTopicInput topicInput = createTopicInput(nodeId,notifications);
+        LOG.info("topicInput: {}",topicInput.toString());
         Future<RpcResult<CreateTopicOutput>> topicOutput = eventAggregatorService.createTopic(topicInput);
+        LOG.info("topicOutput: {}",topicOutput.toString());
         TopicId topicId = null;
         try {
             topicId = topicOutput.get().getResult().getTopicId();

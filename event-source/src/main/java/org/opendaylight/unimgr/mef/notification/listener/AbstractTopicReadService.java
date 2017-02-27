@@ -1,5 +1,6 @@
 package org.opendaylight.unimgr.mef.notification.listener;
 
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
 import org.opendaylight.unimgr.mef.notification.topic.TopicHandler;
@@ -27,7 +28,9 @@ public class AbstractTopicReadService implements TopicReadService {
     private final Map<String,Map.Entry<NodeId,Notifications>> registeredTopic = new HashMap<>();
     private TopicHandler topicHandler;
 
-    public AbstractTopicReadService(EventAggregatorService eventAggregatorService){
+    public AbstractTopicReadService(RpcProviderRegistry rpcProviderRegistry){
+        rpcProviderRegistry.addRpcImplementation(TopicReadService.class,this);
+        EventAggregatorService eventAggregatorService = rpcProviderRegistry.getRpcService(EventAggregatorService.class);
         this.topicHandler = new TopicHandler(eventAggregatorService);
     }
 
@@ -37,7 +40,7 @@ public class AbstractTopicReadService implements TopicReadService {
         // if requested TopicId has not been requested before then it is added into to register
         if(registeredTopic.keySet().contains(topicId) == false){
             registeredTopic.put(topicId,null);
-            LOG.info("UserAgent start read notification with TopicId {}", topicId);
+            LOG.info("Listener start read notification with TopicId {}", topicId);
         }
         return immediateFuture(RpcResultBuilder.success((Void) null).build());
     }
@@ -55,6 +58,8 @@ public class AbstractTopicReadService implements TopicReadService {
         if(!registeredTopic.values().contains(topicEntry)){
             topicId = topicHandler.createTopic(nodeId,notifications);
             registeredTopic.put(topicId,topicEntry);
+            LOG.info("Listener create topic from nodeID: {}, and notifications: {}", nodeId.getValue().toString(),notifications.getNotifications().toString());
+            LOG.info("Listener start read notification with TopicId {}", topicId);
         }
         return topicId;
     }

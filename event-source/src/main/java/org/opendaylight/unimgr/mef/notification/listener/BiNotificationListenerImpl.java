@@ -32,16 +32,16 @@ public class BiNotificationListenerImpl extends AbstractTopicReadService impleme
     private DomNotificationReader domNotificationReader;
 
     /**
-     * @param eventAggregatorService Argument needed for creating topics in ODL.
+//     * @param eventAggregatorService Argument needed for creating topics in ODL.
      * @param notifyService Service needed to register current listener in ODL.
      * @param rpcRegistry Argument needed to add implementation to listener interface.
      * @param domNotificationReader Reader of the DomNotification. It could be different depending on what type of objects the client expects.
      */
-    public BiNotificationListenerImpl(EventAggregatorService eventAggregatorService, RpcProviderRegistry rpcRegistry, DOMNotificationService notifyService, DomNotificationReader domNotificationReader){
-        super(eventAggregatorService);
+    public BiNotificationListenerImpl(RpcProviderRegistry rpcRegistry, DOMNotificationService notifyService, DomNotificationReader domNotificationReader){
+        super(rpcRegistry);
         listenerReg = notifyService.registerNotificationListener(this, SchemaPath.create(true, TopicNotification.QNAME));
-        this.domNotificationReader = domNotificationReader;
         rpcRegistry.addRpcImplementation(TopicReadService.class,this);
+        this.domNotificationReader = domNotificationReader;
     }
 
     @Override
@@ -50,13 +50,14 @@ public class BiNotificationListenerImpl extends AbstractTopicReadService impleme
     }
 
     /**
-     * Method is called when producer sends messages.
+     * Method is called when notification sends messages.
      * If nodeId and topicId are not null and topicId is registered in current listener, the message is being read with use of given reader.
      *
      * @param domNotification Incoming message.
      */
     @Override
     public void onNotification(@Nonnull DOMNotification domNotification) {
+        LOG.trace("BiNotificationListenerImpl.onNotification(): {}",domNotification);
         String nodeName = null;
         TopicId topicId = null;
         if(domNotification==null){

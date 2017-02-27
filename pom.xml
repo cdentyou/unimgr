@@ -70,6 +70,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
         <module>cisco-xe-driver</module>
         <module>ovs-driver</module>
         <module>event-source</module>
+        <module>notification-producer</module>
+        <module>notification-consumer</module>
         <module>cli</module>
         <module>karaf</module>
         <module>features</module>

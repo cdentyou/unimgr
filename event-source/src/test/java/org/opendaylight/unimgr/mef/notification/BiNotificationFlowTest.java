@@ -71,7 +71,7 @@ public class BiNotificationFlowTest extends AbstractNotificationFlowTest{
         String secondTestMessage = "Second test message.";
         String testWrapperName2 = "Wrapper2";
         StringMessageNotificationReader stringMessageNotificationReader = new StringMessageNotificationReader();
-        BiNotificationListenerImpl biNotificationListener = new BiNotificationListenerImpl(eventAggregatorServiceMock, rpcProviderRegistryMock, domNotificationServiceMock,stringMessageNotificationReader);
+        BiNotificationListenerImpl biNotificationListener = new BiNotificationListenerImpl(rpcProviderRegistryMock, domNotificationServiceMock,stringMessageNotificationReader);
 
         BiEventSourceWrapper biEventSourceWrapper = setBiEventSourceWrapper(nodeId);
         BiEventSourceWrapper biEventSourceWrapper2 = setBiEventSourceWrapper(new NodeId(testWrapperName2));
@@ -111,8 +111,8 @@ public class BiNotificationFlowTest extends AbstractNotificationFlowTest{
         LeafNode<String> leafNode = EventSourceTestUtils.prepareTestLeafNode();
         BiNotificationReader biObjectNotificationReader = new BiNotificationReader();
         BiNotificationReader biObjectNotificationReader2 = new BiNotificationReader();
-        BiNotificationListenerImpl biNotificationListener = new BiNotificationListenerImpl(eventAggregatorServiceMock, rpcProviderRegistryMock, domNotificationServiceMock,biObjectNotificationReader);
-        BiNotificationListenerImpl biNotificationListener2 = new BiNotificationListenerImpl(eventAggregatorServiceMock, rpcProviderRegistryMock, domNotificationServiceMock,biObjectNotificationReader2);
+        BiNotificationListenerImpl biNotificationListener = new BiNotificationListenerImpl(rpcProviderRegistryMock, domNotificationServiceMock,biObjectNotificationReader);
+        BiNotificationListenerImpl biNotificationListener2 = new BiNotificationListenerImpl(rpcProviderRegistryMock, domNotificationServiceMock,biObjectNotificationReader2);
         notifications.add(notificationTypeForListener);
 
         //when

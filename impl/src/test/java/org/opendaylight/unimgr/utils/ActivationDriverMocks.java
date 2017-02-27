@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
  */
 public class ActivationDriverMocks {
     /**
-     * Prepare mock {@link ActivationDriverBuilder}. The driver is produced via provided producer function. This covers
+     * Prepare mock {@link ActivationDriverBuilder}. The driver is produced via provided notification function. This covers
      * single port requests.
      * @param producer to build driver
      * @return driver builder mock
@@ -45,7 +45,7 @@ public class ActivationDriverMocks {
     }
 
     /**
-     * Prepare mock {@link ActivationDriverBuilder}. The driver is produced via provided producer function.  This covers
+     * Prepare mock {@link ActivationDriverBuilder}. The driver is produced via provided notification function.  This covers
      * dual port requests (for internal cross-connect).
      * @param producer to build driver
      * @return driver builder mock

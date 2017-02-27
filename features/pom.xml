@@ -65,13 +65,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!--<dependency>-->
-        <!--<groupId>org.opendaylight.coretutorials</groupId>-->
-        <!--<artifactId>hweventsource-artifacts</artifactId>-->
-        <!--<version>1.0-Lithium</version>-->
-        <!--<type>pom</type>-->
-        <!--<scope>import</scope>-->
-      <!--</dependency>-->
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -193,6 +186,16 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>event-source</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>notification-producer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>notification-consumer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -24,7 +24,7 @@ public class StringMessageNotificationReader implements DomNotificationReader {
     public void read(DOMNotification notification) {
         String payload = parsePayLoad(notification);
         receivedMessages.add(payload);
-        LOG.trace("String message payload: {}",payload);
+        LOG.info("StringMessageNotificationReader.read(): {}",payload);
     }
 
     private String parsePayLoad(DOMNotification notification){

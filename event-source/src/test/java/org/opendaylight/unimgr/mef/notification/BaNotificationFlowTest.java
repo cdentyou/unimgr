@@ -71,7 +71,7 @@ public class BaNotificationFlowTest extends AbstractNotificationFlowTest {
 
         //listener
         BaNotificationReaderImpl baNotificationReader = new BaNotificationReaderImpl<Node>();
-        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(eventAggregatorServiceMock,rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
+        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
         notifications.add(notificationTypeForListener);
         notifications.add(notificationTypeForListener2);
 
@@ -109,8 +109,8 @@ public class BaNotificationFlowTest extends AbstractNotificationFlowTest {
 
         BaNotificationReaderImpl baNotificationReader = new BaNotificationReaderImpl<Node>();
         BaNotificationReaderImpl baNotificationReader2 = new BaNotificationReaderImpl<Node>();
-        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(eventAggregatorServiceMock,rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
-        BaNotificationListenerImpl baNotificationListener2 = new BaNotificationListenerImpl(eventAggregatorServiceMock,rpcProviderRegistryMock, notificationServiceMock, baNotificationReader2);
+        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
+        BaNotificationListenerImpl baNotificationListener2 = new BaNotificationListenerImpl(rpcProviderRegistryMock, notificationServiceMock, baNotificationReader2);
         notifications.add(notificationTypeForListener);
 
         //when
@@ -152,7 +152,7 @@ public class BaNotificationFlowTest extends AbstractNotificationFlowTest {
         BaEventSourceWrapper baEventSourceWrapper2 = setBaEventSourceWrapper(new NodeId("Wrapper2"));
 
         BaNotificationReaderImpl baNotificationReader = new BaNotificationReaderImpl<Node>();
-        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(eventAggregatorServiceMock,rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
+        BaNotificationListenerImpl baNotificationListener = new BaNotificationListenerImpl(rpcProviderRegistryMock, notificationServiceMock, baNotificationReader);
         notifications.add(notificationTypeForListener);
         notifications.add(notificationTypeForListener2);
 

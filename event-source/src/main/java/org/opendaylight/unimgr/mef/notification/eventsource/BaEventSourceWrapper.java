@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class that should be used by Publisher to create EventSource. Class have methods that allows producer
+ * Class that should be used by Publisher to create EventSource. Class have methods that allows notification
  * to add and delete notifications on which client will subscribe and send Binding Aware objects to subscriber(s).
  */
 public class BaEventSourceWrapper extends AbstractEventSourceWrapper{

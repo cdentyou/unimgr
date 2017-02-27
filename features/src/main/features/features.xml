@@ -110,7 +110,7 @@
     <feature>odl-openflowjava-protocol</feature>
     <feature>odl-openflowplugin-flow-services-rest</feature>
     <feature>odl-openflowplugin-flow-services</feature>
-    <feature>odl-unimgr-event-source</feature>
+    <!--<feature>odl-unimgr-event-source</feature>-->
     <bundle>mvn:org.opendaylight.unimgr/ovs-driver/{{VERSION}}</bundle>
   </feature>
 
@@ -118,11 +118,24 @@
     <feature version='${project.version}'>odl-unimgr</feature>
     <feature>odl-restconf</feature>
     <feature>odl-message-bus</feature>
-    <feature>odl-ovsdb-southbound-api</feature>
-    <feature>odl-ovsdb-southbound-impl</feature>
-    <feature>odl-openflowplugin-flow-services</feature>
-    <feature>odl-openflowplugin-southbound</feature>
     <bundle>mvn:org.opendaylight.unimgr/event-source/{{VERSION}}</bundle>
+  </feature>
+
+  <feature name="odl-unimgr-notification-producer" version="${project.version}" description='OpenDaylight :: UniMgr :: Notification Producer'>
+    <feature version='${project.version}'>odl-unimgr</feature>
+    <feature>odl-unimgr-event-source</feature>
+    <feature>odl-restconf</feature>
+    <feature version="${netconf.version}">odl-message-bus</feature>
+    <feature version='${mdsal.version}'>odl-mdsal-broker</feature>
+    <bundle>mvn:org.opendaylight.unimgr/notification-producer/{{VERSION}}</bundle>
+  </feature>
+
+  <feature name="odl-unimgr-notification-consumer" version="${project.version}" description='OpenDaylight :: UniMgr :: Notification Consumer'>
+    <feature version='${project.version}'>odl-unimgr</feature>
+    <feature>odl-unimgr-event-source</feature>
+    <feature version="${netconf.version}">odl-message-bus</feature>
+    <feature version='${mdsal.version}'>odl-mdsal-broker</feature>
+    <bundle>mvn:org.opendaylight.unimgr/notification-consumer/{{VERSION}}</bundle>
   </feature>
 
 </features>

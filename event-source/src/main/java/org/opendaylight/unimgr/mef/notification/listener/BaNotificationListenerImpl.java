@@ -19,15 +19,16 @@ public class BaNotificationListenerImpl extends AbstractTopicReadService impleme
     private ListenerRegistration<BaNotificationListenerImpl> listenerReg;
     private BaNotificationReader baNotificationReader;
 
-    public BaNotificationListenerImpl(EventAggregatorService eventAggregatorService, RpcProviderRegistry rpcRegistry, NotificationService notificationService, BaNotificationReader baNotificationReader){
-        super(eventAggregatorService);
+    public BaNotificationListenerImpl(RpcProviderRegistry rpcRegistry, NotificationService notificationService, BaNotificationReader baNotificationReader){
+        super(rpcRegistry);
         listenerReg = notificationService.registerNotificationListener(this);
-        rpcRegistry.addRpcImplementation(TopicReadService.class,this);
+        //rpcRegistry.addRpcImplementation(TopicReadService.class,this);
         this.baNotificationReader = baNotificationReader;
     }
 
     @Override
     public void onNotification(Notification notification) {
+        LOG.info("BiNotificationListenerImpl.onNotification(): {}",notification);
         if(notification==null){
             LOG.warn("Notification is null.");
             return;

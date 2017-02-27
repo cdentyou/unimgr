@@ -14,7 +14,6 @@ public class AbstractEventSourceWrapper {
     private final EventSourceImpl eventSourceImpl;
     private Notifications notifications = new Notifications();
 
-
     public AbstractEventSourceWrapper(NodeId nodeId, EventSourceRegistry eventSourceRegistry){
         String nodeName = nodeId.getValue();
         Node node = Util.getNewNode(nodeName);
