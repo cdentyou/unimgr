@@ -14,11 +14,11 @@ public class BaEventSourceProvider implements BindingAwareProvider, AutoCloseabl
 
     @Override
     public void close() throws Exception {
-        LOG.info("EventsourceBAProvider Closed");
+        LOG.info("EventsourceBaProvider Closed");
     }
 
     @Override
     public void onSessionInitiated(BindingAwareBroker.ProviderContext providerContext) {
-        LOG.info("EventsourceBAProvider Session Initiated");
+        LOG.info("EventsourceBaProvider Session Initiated");
     }
 }

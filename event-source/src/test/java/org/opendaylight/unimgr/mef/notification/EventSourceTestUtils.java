@@ -1,7 +1,7 @@
 package org.opendaylight.unimgr.mef.notification;
 
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
-import org.opendaylight.unimgr.mef.notification.topic.TopicHandler;
+import org.opendaylight.unimgr.mef.notification.utils.TopicHandler;
 import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.CreateTopicOutput;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.CreateTopicOutputBuilder;

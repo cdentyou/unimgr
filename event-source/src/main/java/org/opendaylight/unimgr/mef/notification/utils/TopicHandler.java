@@ -1,6 +1,5 @@
-package org.opendaylight.unimgr.mef.notification.topic;
+package org.opendaylight.unimgr.mef.notification.utils;
 
-import org.opendaylight.unimgr.mef.notification.eventsource.EventSourceImpl;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;

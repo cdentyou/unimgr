@@ -1,9 +1,10 @@
 package org.opendaylight.unimgr.mef.notification.producer;
 
 import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.core.api.Broker;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 
 import java.util.concurrent.Executors;
@@ -17,14 +18,11 @@ public class EventSourceCreator {
 
     private Broker domBroker;
     private EventSourceRegistry eventSourceRegistry;
-    private BindingAwareBroker broker;
-    private long messageGeneratePeriod = 5;
+    private long messageGeneratePeriod = 10;
 
-    public EventSourceCreator(Broker domBroker, EventSourceRegistry eventSourceRegistry, BindingAwareBroker broker){
+    public EventSourceCreator(Broker domBroker, EventSourceRegistry eventSourceRegistry){
         this.domBroker = domBroker;
         this.eventSourceRegistry = eventSourceRegistry;
-        this.broker = broker;
-
     }
 
     public void startUp(){
@@ -35,8 +33,10 @@ public class EventSourceCreator {
 
     private void createBaNodeEventSource(){
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Node node = PayloadCreator.prepareTestNode("BaNode");
-        BaNotificationGenerator baNotificationGenerator = new BaNotificationGenerator("BaEventSource",eventSourceRegistry,broker,node,"binding-aware-pattern");
+        String nodeId = "BaNode";
+        Node node = PayloadCreator.prepareTestNode(nodeId);
+        InstanceIdentifier instanceIdentifier = PayloadCreator.prepareTestNodeInstanceIdentifier(new NodeId(nodeId));
+        BaNotificationGenerator baNotificationGenerator = new BaNotificationGenerator("BaEventSource",eventSourceRegistry,node,"binding-aware-pattern",domBroker,instanceIdentifier);
         scheduler.scheduleAtFixedRate(baNotificationGenerator, messageGeneratePeriod, messageGeneratePeriod, TimeUnit.SECONDS);
     }
 
@@ -54,5 +54,4 @@ public class EventSourceCreator {
         scheduler.scheduleAtFixedRate(biNotificationGenerator, messageGeneratePeriod, messageGeneratePeriod, TimeUnit.SECONDS);
 
     }
-
 }

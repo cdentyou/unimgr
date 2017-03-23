@@ -1,7 +1,7 @@
 package org.opendaylight.unimgr.mef.notification.utils;
 
 import com.google.common.base.Optional;
-import org.opendaylight.unimgr.mef.notification.model.message.BiNotification;
+import org.opendaylight.unimgr.mef.notification.model.types.BiNotification;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.api.rev150408.EventSourceNotification;
@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 
 /**
- * Class that facilitate creating @see org.opendaylight.unimgr.mef.notification.model.message.BiNotification
+ * Class that facilitate creating @see org.opendaylight.unimgr.mef.notification.model.types.BiNotification
  */
 public class NotificationCreator {
 
@@ -36,6 +36,14 @@ public class NotificationCreator {
     private static final YangInstanceIdentifier.NodeIdentifier EVENT_SOURCE_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "node-id").intern());
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_ID_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "topic-id").intern());
 
+    public BiNotification createNotification(String eventSourceIdent, String topicId, String message, DataContainerChild<?,?> dataContainerChild){
+        if(message==null){
+            return createNotification(dataContainerChild, eventSourceIdent, topicId);
+        } else {
+            return createNotification(message, eventSourceIdent, topicId);
+        }
+    }
+
     /**
      * Method encapsulate String message into BiNotification.
      *
@@ -44,7 +52,7 @@ public class NotificationCreator {
      * @param topicId Topic ID
      * @return BiNotification
      */
-    public BiNotification createNotification(String message, String eventSourceIdent, String topicId){
+    private BiNotification createNotification(String message, String eventSourceIdent, String topicId){
         EventSourceNotificationBuilder builder = new EventSourceNotificationBuilder();
         builder.setMessage(message);
         builder.setSourceId(new SourceIdentifier(eventSourceIdent));
@@ -63,7 +71,7 @@ public class NotificationCreator {
      * @param topicId Topic ID
      * @return BiNotification
      */
-    public BiNotification createNotification(DataContainerChild<?,?> dataContainerChild, String eventSourceIdent, String topicId){
+    private BiNotification createNotification(DataContainerChild<?,?> dataContainerChild, String eventSourceIdent, String topicId){
         BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent);
         return topicNotification;
     }

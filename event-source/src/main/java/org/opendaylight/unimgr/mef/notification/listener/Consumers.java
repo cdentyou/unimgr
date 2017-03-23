@@ -1,7 +1,5 @@
-package org.opendaylight.unimgr.mef.notification.consumer;
+package org.opendaylight.unimgr.mef.notification.listener;
 
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.controller.sal.core.api.Broker;
 import org.opendaylight.controller.sal.core.api.Consumer;
 import org.slf4j.Logger;
@@ -26,14 +24,6 @@ public class Consumers {
         @Override
         public Collection<ConsumerFunctionality> getConsumerFunctionality() {
             return Collections.emptySet();
-        }
-    }
-
-    public static class NoopBaConsumer implements BindingAwareConsumer {
-
-        @Override
-        public void onSessionInitialized(BindingAwareBroker.ConsumerContext consumerContext) {
-            LOG.info("NoopBaConsumer initialized");
         }
     }
 }

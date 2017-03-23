@@ -2,12 +2,11 @@ package org.opendaylight.unimgr.mef.notification.listener;
 
 import org.opendaylight.controller.md.sal.dom.api.DOMNotification;
 import org.opendaylight.controller.md.sal.dom.api.DOMNotificationService;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.core.api.Broker;
 import org.opendaylight.unimgr.mef.notification.listener.reader.DomNotificationReader;
-import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.EventAggregatorService;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicNotification;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.topic.rev150408.TopicReadService;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -21,26 +20,24 @@ import javax.annotation.Nonnull;
 /**
  * Created by root on 15.02.17.
  */
-public class BiNotificationListenerImpl extends AbstractTopicReadService implements BiNotificationListener {
-    private static final Logger LOG = LoggerFactory.getLogger(BiNotificationListenerImpl.class);
-
+public class NotificationListenerImpl extends AbstractTopicReadService implements NotificationListener {
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationListenerImpl.class);
     private static final YangInstanceIdentifier.NodeIdentifier EVENT_SOURCE_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "node-id"));
     private static final YangInstanceIdentifier.NodeIdentifier PAYLOAD_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "payload"));
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_ID_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "topic-id"));
 
-    private ListenerRegistration<BiNotificationListenerImpl> listenerReg;
+    private ListenerRegistration<NotificationListenerImpl> listenerReg;
     private DomNotificationReader domNotificationReader;
 
     /**
-//     * @param eventAggregatorService Argument needed for creating topics in ODL.
-     * @param notifyService Service needed to register current listener in ODL.
-     * @param rpcRegistry Argument needed to add implementation to listener interface.
+     * @param bindingAwareBroker Broker needed for obtaining RpcService.
+     * @param broker Broker needed for registering customer.
      * @param domNotificationReader Reader of the DomNotification. It could be different depending on what type of objects the client expects.
      */
-    public BiNotificationListenerImpl(RpcProviderRegistry rpcRegistry, DOMNotificationService notifyService, DomNotificationReader domNotificationReader){
-        super(rpcRegistry);
+    public NotificationListenerImpl(BindingAwareBroker bindingAwareBroker, Broker broker, DomNotificationReader domNotificationReader){
+        super(bindingAwareBroker);
+        DOMNotificationService notifyService = broker.registerConsumer(new Consumers.NoopDomConsumer()).getService(DOMNotificationService.class);
         listenerReg = notifyService.registerNotificationListener(this, SchemaPath.create(true, TopicNotification.QNAME));
-        rpcRegistry.addRpcImplementation(TopicReadService.class,this);
         this.domNotificationReader = domNotificationReader;
     }
 
@@ -57,7 +54,8 @@ public class BiNotificationListenerImpl extends AbstractTopicReadService impleme
      */
     @Override
     public void onNotification(@Nonnull DOMNotification domNotification) {
-        LOG.trace("BiNotificationListenerImpl.onNotification(): {}",domNotification);
+        LOG.info("NotificationListenerImpl.onNotification() type: {}",domNotification.getType());
+        LOG.info("NotificationListenerImpl.onNotification() body: {}",domNotification.getBody());
         String nodeName = null;
         TopicId topicId = null;
         if(domNotification==null){

@@ -5,5 +5,5 @@ import org.opendaylight.controller.md.sal.dom.api.DOMNotificationListener;
 /**
  * Binding Independent Notification Listener interface.
  */
-public interface BiNotificationListener extends DOMNotificationListener, AutoCloseable {
+public interface NotificationListener extends DOMNotificationListener, AutoCloseable {
 }

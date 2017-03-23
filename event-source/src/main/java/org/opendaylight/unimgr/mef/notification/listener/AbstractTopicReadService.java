@@ -1,9 +1,11 @@
 package org.opendaylight.unimgr.mef.notification.listener;
 
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.unimgr.mef.notification.eventsource.BaEventSourceProvider;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
-import org.opendaylight.unimgr.mef.notification.topic.TopicHandler;
+import org.opendaylight.unimgr.mef.notification.utils.TopicHandler;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.EventAggregatorService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.topic.rev150408.ReadTopicInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.eventsource.topic.rev150408.TopicReadService;
@@ -28,7 +30,9 @@ public class AbstractTopicReadService implements TopicReadService {
     private final Map<String,Map.Entry<NodeId,Notifications>> registeredTopic = new HashMap<>();
     private TopicHandler topicHandler;
 
-    public AbstractTopicReadService(RpcProviderRegistry rpcProviderRegistry){
+    public AbstractTopicReadService(BindingAwareBroker bindingAwareBroker){
+        BindingAwareBroker.ProviderContext bindingCtx = bindingAwareBroker.registerProvider(new BaEventSourceProvider());
+        RpcProviderRegistry rpcProviderRegistry = bindingCtx.getSALService(RpcProviderRegistry.class);
         rpcProviderRegistry.addRpcImplementation(TopicReadService.class,this);
         EventAggregatorService eventAggregatorService = rpcProviderRegistry.getRpcService(EventAggregatorService.class);
         this.topicHandler = new TopicHandler(eventAggregatorService);
