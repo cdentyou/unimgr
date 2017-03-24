@@ -62,8 +62,7 @@ public class AbstractTopicReadService implements TopicReadService {
         if(!registeredTopic.values().contains(topicEntry)){
             topicId = topicHandler.createTopic(nodeId,notifications);
             registeredTopic.put(topicId,topicEntry);
-            LOG.info("Listener create topic from nodeID: {}, and notifications: {}", nodeId.getValue().toString(),notifications.getNotifications().toString());
-            LOG.info("Listener start read notification with TopicId {}", topicId);
+            LOG.info("Listener created topic from nodeID: {}, and notifications: {}, id: {}", nodeId.getValue().toString(),notifications.getNotifications().toString(),topicId);
         }
         return topicId;
     }

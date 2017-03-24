@@ -7,9 +7,6 @@ import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
-/**
- * Created by root on 22.02.17.
- */
 public class BiNotificationGenerator implements Runnable {
 
     private BiEventSourceWrapper biEventSourceWrapper;

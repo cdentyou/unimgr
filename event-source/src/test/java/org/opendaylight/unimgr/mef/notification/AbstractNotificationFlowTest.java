@@ -1,6 +1,7 @@
 package org.opendaylight.unimgr.mef.notification;
 
 import org.opendaylight.controller.messagebus.spi.EventSourceRegistry;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
@@ -16,7 +17,8 @@ class AbstractNotificationFlowTest {
     EventSourceRegistry eventSourceRegistryMock = mock(EventSourceRegistry.class);
 
     RpcProviderRegistry rpcProviderRegistryMock = mock(RpcProviderRegistry.class);
-    EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);;
+    EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
+    BindingAwareBroker bindingAwareBroker = mock(BindingAwareBroker.class);
 
     private String testNotificationName = "notType";
     private String testNotificationName2 = "test";

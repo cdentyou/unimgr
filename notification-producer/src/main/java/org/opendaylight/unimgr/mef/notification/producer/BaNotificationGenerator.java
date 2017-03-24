@@ -8,9 +8,6 @@ import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-/**
- * Created by root on 22.02.17.
- */
 public class BaNotificationGenerator implements Runnable {
 
     private BaEventSourceWrapper baEventSourceWrapper;

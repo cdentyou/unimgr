@@ -11,9 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by root on 22.02.17.
- */
 public class EventSourceCreator {
 
     private Broker domBroker;

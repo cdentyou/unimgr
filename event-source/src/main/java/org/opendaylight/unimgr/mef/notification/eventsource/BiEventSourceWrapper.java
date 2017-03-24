@@ -23,7 +23,6 @@ public class BiEventSourceWrapper extends AbstractEventSourceWrapper{
      */
     public BiEventSourceWrapper(NodeId nodeId, EventSourceRegistry eventSourceRegistry, Broker domBroker){
         super(nodeId,eventSourceRegistry,domBroker);
-        LOG.info("Binding Independent Wrapper started");
     }
 
     /**
@@ -31,7 +30,7 @@ public class BiEventSourceWrapper extends AbstractEventSourceWrapper{
      * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)}.
      */
     public void putNotification(NotificationType notificationType, DataContainerChild<?,?> dataContainerChild){
-        sendNotification(notificationType,null,dataContainerChild,true);
+        sendNotification(notificationType,null,dataContainerChild,true,null,null);
     }
 
     /**
@@ -39,7 +38,7 @@ public class BiEventSourceWrapper extends AbstractEventSourceWrapper{
      * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}.
      */
     public void offerNotification(NotificationType notificationType, DataContainerChild<?,?> dataContainerChild){
-        sendNotification(notificationType,null,dataContainerChild,false);
+        sendNotification(notificationType,null,dataContainerChild,false,null,null);
     }
 
     /**
@@ -47,7 +46,7 @@ public class BiEventSourceWrapper extends AbstractEventSourceWrapper{
      * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#putNotification(DOMNotification)}.
      */
     public void putNotification(NotificationType notificationType, String message){
-        sendNotification(notificationType,message,null,true);
+        sendNotification(notificationType,message,null,true,null,null);
     }
 
     /**
@@ -55,6 +54,6 @@ public class BiEventSourceWrapper extends AbstractEventSourceWrapper{
      * Message is sent via {@link org.opendaylight.controller.md.sal.dom.api.DOMNotificationPublishService#offerNotification(DOMNotification)}.
      */
     public void offerNotification(NotificationType notificationType, String message){
-        sendNotification(notificationType,message,null,false);
+        sendNotification(notificationType,message,null,false,null,null);
     }
 }

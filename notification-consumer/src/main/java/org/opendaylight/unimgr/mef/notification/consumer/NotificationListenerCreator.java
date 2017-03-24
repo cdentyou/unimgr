@@ -9,20 +9,17 @@ import org.opendaylight.unimgr.mef.notification.listener.reader.StringMessageNot
 import org.opendaylight.unimgr.mef.notification.model.types.NodeId;
 import org.opendaylight.unimgr.mef.notification.model.types.NotificationType;
 import org.opendaylight.unimgr.mef.notification.model.types.Notifications;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.nodes.Node;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by root on 22.02.17.
- */
 public class NotificationListenerCreator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationListenerCreator.class);
     final private BindingAwareBroker bindingAwareBroker;
     private Broker broker;
 
     public NotificationListenerCreator(BindingAwareBroker bindingAwareBroker, Broker broker){
-        LOG.info("Start.");
         this.bindingAwareBroker = bindingAwareBroker;
         this.broker = broker;
     }
@@ -34,7 +31,6 @@ public class NotificationListenerCreator {
     }
 
     private void createBaNotificationListener(){
-        LOG.info("createBaNotificationListener()");
         BaNotificationReader baNotificationReader = new BaNotificationReader();
         NotificationListenerImpl notificationListener = new NotificationListenerImpl(bindingAwareBroker,broker,baNotificationReader);
         NodeId nodeId = new NodeId("BaEventSource");

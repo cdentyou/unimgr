@@ -17,7 +17,6 @@ public class BiNotificationReader implements DomNotificationReader {
 
     @Override
     public void read(DOMNotification notification) {
-        LOG.info("Notification: {}",notification.getBody().getValue().toString());
         DataContainerChild dataContainerChild = parsePayload(notification);
         LOG.info("BiNotificationReader.read(): {}",dataContainerChild.toString());
         biObjects.add(dataContainerChild);

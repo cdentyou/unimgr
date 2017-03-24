@@ -35,10 +35,12 @@ public class NotificationCreator {
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_NOTIFICATION_ARG = new YangInstanceIdentifier.NodeIdentifier(TopicNotification.QNAME);
     private static final YangInstanceIdentifier.NodeIdentifier EVENT_SOURCE_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "node-id").intern());
     private static final YangInstanceIdentifier.NodeIdentifier TOPIC_ID_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "topic-id").intern());
+    private static final YangInstanceIdentifier.NodeIdentifier YANG_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "yang-name").intern());
+    private static final YangInstanceIdentifier.NodeIdentifier CLASS_NAME_ARG = new YangInstanceIdentifier.NodeIdentifier(QName.create(TopicNotification.QNAME, "class-name").intern());
 
-    public BiNotification createNotification(String eventSourceIdent, String topicId, String message, DataContainerChild<?,?> dataContainerChild){
+    public BiNotification createNotification(String eventSourceIdent, String topicId, String message, NormalizedNode<?,?> normalizedNode, YangInstanceIdentifier yangInstanceIdentifier, String className){
         if(message==null){
-            return createNotification(dataContainerChild, eventSourceIdent, topicId);
+            return createNotification(normalizedNode, eventSourceIdent, topicId, yangInstanceIdentifier, className);
         } else {
             return createNotification(message, eventSourceIdent, topicId);
         }
@@ -59,29 +61,35 @@ public class NotificationCreator {
         EventSourceNotification notification = builder.build();
 
         DataContainerChild<?, ?> dataContainerChild = encapsulate(notification);
-        BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent);
+        BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent,null,null);
         return topicNotification;
     }
 
     /**
      * Method encapsulate BI object into BiNotification.
      *
-     * @param dataContainerChild BI object
+     * @param normalizedNode BI object
      * @param eventSourceIdent Event source ID
      * @param topicId Topic ID
      * @return BiNotification
      */
-    private BiNotification createNotification(DataContainerChild<?,?> dataContainerChild, String eventSourceIdent, String topicId){
-        BiNotification topicNotification = prepareNotification(dataContainerChild,topicId,eventSourceIdent);
+    private BiNotification createNotification(NormalizedNode<?,?> normalizedNode, String eventSourceIdent, String topicId, YangInstanceIdentifier yangInstanceIdentifier, String className){
+        BiNotification topicNotification = prepareNotification(normalizedNode,topicId,eventSourceIdent, yangInstanceIdentifier, className);
         return topicNotification;
     }
 
-    private BiNotification prepareNotification(NormalizedNode<?, ?> normalizedNode, String topicId, String eventSourceIdent){
+    private BiNotification prepareNotification(NormalizedNode<?, ?> normalizedNode, String topicId, String eventSourceIdent, YangInstanceIdentifier yangInstanceIdentifier, String className){
         DataContainerNodeAttrBuilder dataContainerNodeAttrBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(TOPIC_NOTIFICATION_ARG)
                 .withChild(ImmutableNodes.leafNode(TOPIC_ID_ARG, new TopicId(topicId)))
                 .withChild(ImmutableNodes.leafNode(EVENT_SOURCE_ARG, eventSourceIdent))
                 .withChild(ImmutableNodes.leafNode(PAYLOAD_ARG, normalizedNode));
+        if(yangInstanceIdentifier!=null && className!=null){
+            dataContainerNodeAttrBuilder
+                    .withChild(ImmutableNodes.leafNode(CLASS_NAME_ARG, className))
+                    .withChild(ImmutableNodes.leafNode(YANG_ARG, yangInstanceIdentifier));
+
+        }
         final ContainerNode topicNotification =
                 (ContainerNode) dataContainerNodeAttrBuilder.build();
         return new BiNotification(topicNotification);

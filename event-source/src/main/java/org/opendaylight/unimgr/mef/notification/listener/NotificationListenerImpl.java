@@ -54,8 +54,6 @@ public class NotificationListenerImpl extends AbstractTopicReadService implement
      */
     @Override
     public void onNotification(@Nonnull DOMNotification domNotification) {
-        LOG.info("NotificationListenerImpl.onNotification() type: {}",domNotification.getType());
-        LOG.info("NotificationListenerImpl.onNotification() body: {}",domNotification.getBody());
         String nodeName = null;
         TopicId topicId = null;
         if(domNotification==null){

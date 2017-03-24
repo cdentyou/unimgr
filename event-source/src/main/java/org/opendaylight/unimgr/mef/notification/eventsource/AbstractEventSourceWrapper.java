@@ -11,7 +11,9 @@ import org.opendaylight.unimgr.mef.notification.utils.NotificationCreator;
 import org.opendaylight.unimgr.mef.notification.utils.Util;
 import org.opendaylight.yang.gen.v1.urn.cisco.params.xml.ns.yang.messagebus.eventaggregator.rev141202.TopicId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,32 +54,28 @@ public class AbstractEventSourceWrapper {
         notifications.del(notificationType);
     }
 
-    protected void sendNotification(NotificationType notificationType, String message, DataContainerChild dataContainerChild, boolean put){
+    protected void sendNotification(NotificationType notificationType, String message, NormalizedNode normalizedNode, boolean put, YangInstanceIdentifier yangInstanceIdentifier, String className){
         Map<TopicId,List<SchemaPath>> mapAcceptedTopics = getEventSourceImpl().getMapAcceptedTopics();
 
-        LOG.info("mapAcceptedTopics.size: {}",mapAcceptedTopics.size());
         for(Map.Entry<TopicId,List<SchemaPath>> topic: mapAcceptedTopics.entrySet()){
-            LOG.info("Loop start - topicId: {} || schemapaths: {}",topic.getKey(), topic.getValue());
             if(topic.getValue().contains(notificationType.getSchemaPath())){
-                BiNotification biNotification = notificationCreator.createNotification(eventSourceIndent,topic.getKey().getValue(),message,dataContainerChild);
+                BiNotification biNotification = notificationCreator.createNotification(eventSourceIndent,topic.getKey().getValue(),message,normalizedNode, yangInstanceIdentifier, className);
                 sendNotification(biNotification,put);
             }
         }
     }
 
     private void sendNotification(BiNotification topicNotification, boolean put){
+        LOG.info("Sending notification: {} ",topicNotification.toString());
         try {
             if(put){
-                LOG.info("putNotification: {}",topicNotification.toString());
                 domPublish.putNotification(topicNotification);
             } else {
-                LOG.info("offerNotification: {}",topicNotification.toString());
                 domPublish.offerNotification(topicNotification);
             }
         } catch (InterruptedException e) {
             LOG.error(e.getMessage());
         }
-        LOG.info("Notification has been sent.");
     }
 
     public Notifications getNotifications(){

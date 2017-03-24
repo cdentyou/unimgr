@@ -21,9 +21,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by root on 22.02.17.
- */
 public class PayloadCreator {
 
     public static Node prepareTestNode(String nodeId){

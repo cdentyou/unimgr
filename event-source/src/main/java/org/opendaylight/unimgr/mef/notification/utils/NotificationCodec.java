@@ -1,6 +1,8 @@
 package org.opendaylight.unimgr.mef.notification.utils;
 
 import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
@@ -17,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,9 +40,9 @@ public class NotificationCodec {
     }
 
     public static NotificationCodec getInstance(){
-        if(notificationCodec ==null){
+        if(notificationCodec == null){
             synchronized (NotificationCodec.class){
-                if(notificationCodec ==null){
+                if(notificationCodec == null){
                     notificationCodec = new NotificationCodec();
                 }
             }
@@ -69,33 +72,34 @@ public class NotificationCodec {
      * @param instanceIdentifier Instance Identifier of BA object.
      * @return BI object
      */
-    public DataContainerChild<?, ?> toDataContainerChild(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
-        updateCodec(dataContainer.getClass());
+    public Map.Entry<YangInstanceIdentifier,  NormalizedNode<?, ?>> toDataContainerChild(DataContainer dataContainer, InstanceIdentifier instanceIdentifier){
+        Class<?> cls = dataContainer.getClass();
+        updateCodec(cls);
 
         InstanceIdentifier<DataObject> ii = instanceIdentifier;
         DataObject dataObject = (DataObject) dataContainer;
 
+        try {
+            CtClass ctClass = classPool.get(cls.getName());
+            if(ctClass.isFrozen()){
+                ctClass.defrost();
+            }
+        } catch (NotFoundException e) {
+            LOG.warn("Could not find class {}",cls.getName());
+        }
+
         Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = bindingNormalizedNodeCodecRegistry.toNormalizedNode(ii,dataObject);
-        NormalizedNode<?, ?> normalizedNode = entry.getValue();
+        return entry;
+    }
 
-        DataContainerChild<?, ?> dataContainerChild = new DataContainerChild<YangInstanceIdentifier.PathArgument, Object>() {
-            @Override
-            public QName getNodeType() {
-                return normalizedNode.getNodeType();
-            }
-
-            @Override
-            public YangInstanceIdentifier.PathArgument getIdentifier() {
-                return entry.getKey().getLastPathArgument();
-            }
-
-            @Override
-            public Object getValue() {
-                return normalizedNode.getValue();
-            }
-        };
-
-        return dataContainerChild;
+    public DataContainer fromDataContainerChild(NormalizedNode<?, ?> data,Class<?> expectedClass,YangInstanceIdentifier yangInstanceIdentifier){
+        updateCodec(expectedClass);
+        Map.Entry<InstanceIdentifier<?>, DataObject> entry = bindingNormalizedNodeCodecRegistry.fromNormalizedNode(yangInstanceIdentifier,data);
+        if(entry == null){
+            return null;
+        }
+        DataContainer dataContainer = entry.getValue();
+        return dataContainer;
     }
 
     private void updateCodec(Class<?> cls){
