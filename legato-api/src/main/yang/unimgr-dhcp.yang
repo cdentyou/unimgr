@@ -1,7 +1,7 @@
 module unimgr-dhcp {
     namespace "urn:opendaylight:unimgr:unimgr-dhcp";
     prefix "unimgr-dhcp";
-    
+
     import dhcp_allocation_pool {
         prefix dhcp;
     }
@@ -20,7 +20,6 @@ module unimgr-dhcp {
                 description "unimgr network id";
                 type string;
             }
-            uses dhcp:dhcp_allocations;
         }
     }
 }
