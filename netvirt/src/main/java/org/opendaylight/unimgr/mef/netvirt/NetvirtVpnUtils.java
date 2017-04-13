@@ -61,8 +61,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.l3vpn.rev130911.vpn
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.l3vpn.rev130911.vpn.instance.op.data.VpnInstanceOpDataEntryKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.NetworkMaps;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.NeutronVpnPortipPortData;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.SubnetAddedToVpnBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.SubnetDeletedFromVpnBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.Subnetmaps;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.networkmaps.NetworkMap;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netvirt.neutronvpn.rev150602.networkmaps.NetworkMapBuilder;
@@ -364,7 +362,7 @@ public class NetvirtVpnUtils {
         subnetBuilder.setKey(subnetkey);
         subnetBuilder.setNetworkId(subnetName);
         MdsalUtils.syncWrite(dataBroker, LogicalDatastoreType.CONFIGURATION, subnetidentifier, subnetBuilder.build());
-        
+
         logger.info("Adding subnet {} {} to elan map", subnetName, subnetName);
         createSubnetToNetworkMapping(dataBroker, subnetName, subnetName);
 
@@ -382,7 +380,7 @@ public class NetvirtVpnUtils {
                 .child(Subnets.class).child(Subnet.class, subnetkey);
 
         MdsalUtils.syncDelete(dataBroker, LogicalDatastoreType.CONFIGURATION, subnetidentifier);
-        
+
 
         logger.info("Removing port {} from subnet {}", interfaceName, subnetName);
         updateSubnetmapNodeWithPorts(dataBroker, subnetName, null, new Uuid(interfaceName), vpnName);
@@ -419,16 +417,16 @@ public class NetvirtVpnUtils {
         logger.info("Publish subnet {}", subnetName);
         publishSubnetAddNotification(notificationPublishService, subnetId, subnetIp, vpnName, elanTag);
         logger.info("Finished Working on subnet {}", subnetName);
-      
+
     }
-    
+
     public static void refreshDpnGw(final NotificationPublishService notificationPublishService, String vpnName, BigInteger dpId) {
-        
+
         AddDpnEventBuilder addDpnEventBuilder = new AddDpnEventBuilder();
         AddEventDataBuilder eventData = new AddEventDataBuilder();
         eventData.setVpnName(vpnName);
         eventData.setDpnId(dpId);
-        
+
         addDpnEventBuilder.setAddEventData(eventData.build());
         try {
             logger.info("Refrehein dpId {}", dpId);
@@ -595,41 +593,41 @@ public class NetvirtVpnUtils {
 
     private static void publishSubnetAddNotification(final NotificationPublishService notificationPublishService,
             Uuid subnetId, String subnetIp, String vpnName, Long elanTag) {
-        SubnetAddedToVpnBuilder builder = new SubnetAddedToVpnBuilder();
-
-        logger.info("publish notification called for network creation");
-
-        builder.setSubnetId(subnetId);
-        builder.setSubnetIp(subnetIp);
-        builder.setVpnName(vpnName);
-        builder.setBgpVpn(true);
-        builder.setElanTag(elanTag);
-
-        try {
-            notificationPublishService.putNotification(builder.build());
-        } catch (InterruptedException e) {
-            logger.error("Fail to publish notification {}", builder, e);
-            throw new RuntimeException(e.getMessage());
-        }
+//        SubnetAddedToVpnBuilder builder = new SubnetAddedToVpnBuilder();
+//
+//        logger.info("publish notification called for network creation");
+//
+//        builder.setSubnetId(subnetId);
+//        builder.setSubnetIp(subnetIp);
+//        builder.setVpnName(vpnName);
+//        builder.setBgpVpn(true);
+//        builder.setElanTag(elanTag);
+//
+//        try {
+//            notificationPublishService.putNotification(builder.build());
+//        } catch (InterruptedException e) {
+//            logger.error("Fail to publish notification {}", builder, e);
+//            throw new RuntimeException(e.getMessage());
+//        }
     }
 
     private static void publishSubnetRemoveNotification(final NotificationPublishService notificationPublishService,
             Uuid subnetId, String vpnName, Long elanTag) {
-        SubnetDeletedFromVpnBuilder builder = new SubnetDeletedFromVpnBuilder();
-
-        logger.info("publish notification called for network deletion");
-
-        builder.setSubnetId(subnetId);
-        builder.setVpnName(vpnName);
-        builder.setBgpVpn(true);
-        builder.setElanTag(elanTag);
-
-        try {
-            notificationPublishService.putNotification(builder.build());
-        } catch (InterruptedException e) {
-            logger.error("Fail to publish notification {}", builder, e);
-            throw new RuntimeException(e.getMessage());
-        }
+//        SubnetDeletedFromVpnBuilder builder = new SubnetDeletedFromVpnBuilder();
+//
+//        logger.info("publish notification called for network deletion");
+//
+//        builder.setSubnetId(subnetId);
+//        builder.setVpnName(vpnName);
+//        builder.setBgpVpn(true);
+//        builder.setElanTag(elanTag);
+//
+//        try {
+//            notificationPublishService.putNotification(builder.build());
+//        } catch (InterruptedException e) {
+//            logger.error("Fail to publish notification {}", builder, e);
+//            throw new RuntimeException(e.getMessage());
+//        }
     }
 
     public static void sendArpRequest(OdlArputilService arpUtilService, IpAddress srcIpAddress, IpAddress dstIpAddress,
