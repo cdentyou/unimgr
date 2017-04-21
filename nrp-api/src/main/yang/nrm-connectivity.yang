@@ -358,7 +358,61 @@ module nrm-connectivity {
                     type tapi-common:universal-id;
                     description "none";
                 }
-                description "none";
+                leaf envelope {
+                    type string;
+                    description "This attribute represents the relationship between the BwpFlow and the Envelope, indicating which Envel
+ope the BwpFlow belongs.";
+                }
+                leaf cbs {
+                    type natural-number;
+                    description "This attribute denotes the Committed Burst Size that limits the maximum number of bytes available for a
+ burst of frames that will be declared Green, in bytes,";
+                }
+                leaf cir {
+                    type natural-number;
+                    description "This attribute denotes the Committed Information Rate that limits the average rate of frames that will 
+be declared Green. In bits per second.";
+                }
+                leaf cir-max {
+                    type natural-number;
+                    description "This attribute denotes the maximum Committed Information Rate that limits the rate of tokens added to t
+he committed token bucket. In bits per second.";
+                }
+                leaf color-mode {
+                    type color-mode;
+                    description "This attribute denotes the Color Mode that Indicates whether the Color Identifier of the frame is consi
+dered by the Bandwidth Profile Algorithm.";
+                }
+                leaf coupling-flag {
+                    type boolean;
+                    description "This attribute denotes the Coupling Flag that Determines if overflow Green tokens can be used as Yellow
+ tokens. FALSE for 0 (overflow green tokens are discarded) and TRUE for 1 (overflow green tokens can be used as yellow tokens)";
+                }
+                leaf ebs {
+                    type natural-number;
+                    description "This attribute denotes the Excessive Burst Size that limits the maximum number of bytes available for a
+ burst of frames that will be declared Yellow, in bytes.";
+                }
+                leaf eir {
+                    type natural-number;
+                    description "This attribute denotes the Excess Information Rate that limits the average rate of frames that will be 
+declared Yellow, in bits per second.";
+                }
+                leaf eir-max {
+                    type natural-number;
+                    description "This attribute denotes the Maximum Excess Information Rate that Limits the rate of tokens added to the 
+excess token bucket, in bits per second.";
+                }
+                leaf rank {
+                    type positive-integer;
+                    description "This attribute denotes the rank of the bandwidth profile flow in the envelope.";
+                }
+                leaf token-request-offset {
+                    type natural-number;
+                    description "This attribute adjusts the number of tokens requested for each external interface frame.";
+                }
+                description "The BwpFlow object class represents the Bandwidth Profile Flow which includes the bandwidth profile paramet
+ers such as CIR, CIR Max, EIR, EIR Max, CBS, EBS, Coupling Flag, Color Mode, etc.  The BwpFlow object class is associated with OperatorUni, ServiceProviderUni, VUNI, CosIdentifier, EecIdentifier, and Envelope, etc. ";
             }
             grouping cg-eth-envelope {
                 leaf uuid {
