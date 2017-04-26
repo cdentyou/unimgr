@@ -16,10 +16,18 @@ import java.util.List;
  * @author bartosz.michalik@amartus.com
  */
 public class Subrequrest {
-    final UniversalId nodeUuid;
+	final UniversalId driverId;
+	final UniversalId nodeUuid;
     final List<EndPoint> endpoints;
 
     public Subrequrest(UniversalId nodeUuid, List<EndPoint> endpoints) {
+    	this.driverId = nodeUuid;
+        this.nodeUuid = nodeUuid;
+        this.endpoints = endpoints;
+    }
+
+    public Subrequrest(UniversalId driverId, UniversalId nodeUuid, List<EndPoint> endpoints) {
+    	this.driverId = driverId;
         this.nodeUuid = nodeUuid;
         this.endpoints = endpoints;
     }
@@ -31,4 +39,8 @@ public class Subrequrest {
     public List<EndPoint> getEndpoints() {
         return endpoints;
     }
+    
+    public UniversalId getDriverId() {
+		return driverId;
+	}
 }

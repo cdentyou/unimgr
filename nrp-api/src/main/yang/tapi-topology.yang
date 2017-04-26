@@ -92,6 +92,11 @@ module tapi-topology {
             description "The Link object class models effective adjacency between two or more ForwardingDomains (FD). ";
         }
         grouping node {
+        	leaf driver-id {
+        		type tapi-common:universal-id;
+        		config false;
+        		description "the owning driver id";
+        	}
             list owned-node-edge-point {
                 key 'uuid';
                 config false;

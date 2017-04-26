@@ -61,15 +61,20 @@ public class NrpDao  {
 
     private Function<NodeEdgePoint, OwnedNodeEdgePoint> toNep = nep -> new OwnedNodeEdgePointBuilder(nep).build();
 
-    public void createSystemNode(String nodeId, List<OwnedNodeEdgePoint> neps) {
+    public void createSystemNode(String driverId, String nodeId, List<OwnedNodeEdgePoint> neps) {
         verifyTx();
         UniversalId uuid = new UniversalId(nodeId);
         Node node = new NodeBuilder()
                 .setKey(new NodeKey(uuid))
+                .setDriverId(new UniversalId(driverId))
                 .setUuid(uuid)
                 .setOwnedNodeEdgePoint(neps)
                 .build();
         tx.put(LogicalDatastoreType.OPERATIONAL, node(nodeId), node);
+    }
+
+    public void createSystemNode(String nodeId, List<OwnedNodeEdgePoint> neps) {
+    	createSystemNode(nodeId, nodeId, neps);
     }
 
     private void verifyTx() {
@@ -130,6 +135,11 @@ public class NrpDao  {
     public Topology getTopology(String uuid) throws ReadFailedException {
         Optional<Topology> topology = rtx.read(LogicalDatastoreType.OPERATIONAL, topo(uuid)).checkedGet();
         return topology.orNull();
+    }
+
+    public Node getNode(String uuid) throws ReadFailedException {
+        Optional<Node> node = rtx.read(LogicalDatastoreType.OPERATIONAL, node(uuid)).checkedGet();
+        return node.orNull();
     }
 
     public static InstanceIdentifier<Context> ctx() {

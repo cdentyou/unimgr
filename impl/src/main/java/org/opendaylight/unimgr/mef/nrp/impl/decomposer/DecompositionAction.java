@@ -63,7 +63,7 @@ public class DecompositionAction {
 
         return path.getVertexList().stream().collect(Collectors.groupingBy(v -> v.getNodeUuid()))
                 .entrySet().stream().map(e -> {
-                    return new Subrequrest(e.getKey(), e.getValue().stream().map(v -> toEndPoint(v)).collect(Collectors.toList()));
+                    return new Subrequrest(e.getValue().get(0).getDriverUuid(), e.getKey(), e.getValue().stream().map(v -> toEndPoint(v)).collect(Collectors.toList()));
         }).collect(Collectors.toList());
     }
 
@@ -124,28 +124,35 @@ public class DecompositionAction {
         return n.getOwnedNodeEdgePoint().stream().map(nep -> {
             List<UniversalId> sips = nep.getMappedServiceInterfacePoint();
             if(sips == null || sips.isEmpty()) {
-                return  new Vertex(nodeUuid, nep.getUuid(), null);
+                return  new Vertex(n.getDriverId(), nodeUuid, nep.getUuid(), null);
             }
             if(sips.size() > 1) log.warn("NodeEdgePoint {} have multiple ServiceInterfacePoint mapped, selecting first one", nep.getUuid());
-            return new Vertex(nodeUuid, nep.getUuid(), sips.get(0));
+            return new Vertex(n.getDriverId(), nodeUuid, nep.getUuid(), sips.get(0));
 
         });
     }
 
     public class Vertex implements Comparable<Vertex> {
 
+		private final UniversalId driverUuid;
         private final UniversalId nodeUuid;
         private final UniversalId uuid;
         private final UniversalId sip;
 
-        public Vertex(UniversalId nodeUuid, UniversalId uuid, UniversalId sip) {
+        public Vertex(UniversalId driverUuid, UniversalId nodeUuid, UniversalId uuid, UniversalId sip) {
             this.sip = sip;
+            Objects.requireNonNull(driverUuid);
             Objects.requireNonNull(nodeUuid);
             Objects.requireNonNull(uuid);
+            this.driverUuid = driverUuid;
             this.nodeUuid = nodeUuid;
             this.uuid = uuid;
         }
 
+        public UniversalId getDriverUuid() {
+			return driverUuid;
+		}
+        
         public UniversalId getNodeUuid() {
             return nodeUuid;
         }

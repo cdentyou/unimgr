@@ -10,6 +10,7 @@ package org.opendaylight.unimgr.mef.nrp.impl.connectivityservice;
 
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.unimgr.mef.nrp.api.ActivationDriver;
 import org.opendaylight.unimgr.mef.nrp.api.EndPoint;
@@ -27,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.mef.yang.tapiconnectivity.rev170227.conn
 import org.opendaylight.yang.gen.v1.urn.mef.yang.tapiconnectivity.rev170227.connectivity.context.ConnectivityServiceKey;
 import org.opendaylight.yang.gen.v1.urn.mef.yang.tapiconnectivity.rev170227.delete.connectivity.service.output.Service;
 import org.opendaylight.yang.gen.v1.urn.mef.yang.tapiconnectivity.rev170227.delete.connectivity.service.output.ServiceBuilder;
+import org.opendaylight.yang.gen.v1.urn.mef.yang.tapitopology.rev170227.topology.Node;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -70,7 +72,7 @@ public class DeleteConnectivityAction implements Callable<RpcResult<DeleteConnec
                     .withError(RpcError.ErrorType.APPLICATION, MessageFormat.format("Service {0} does not exist", input.getServiceIdOrName()))
                     .build();
         }
-        Map<UniversalId, LinkedList<EndPoint>> data = null;
+        Map<Node, LinkedList<EndPoint>> data = null;
         try {
             data = prepareData(cs, nrpDao);
         } catch(Exception e) {
@@ -123,13 +125,13 @@ public class DeleteConnectivityAction implements Callable<RpcResult<DeleteConnec
         tx.submit().checkedGet();
     }
 
-    private ActivationTransaction prepareTransaction(Map<UniversalId, LinkedList<EndPoint>> data) {
+    private ActivationTransaction prepareTransaction(Map<Node, LinkedList<EndPoint>> data) {
         assert data != null;
         ActivationTransaction tx = new ActivationTransaction();
         data.entrySet().stream().map(e -> {
-            Optional<ActivationDriver> driver = service.getDriverRepo().getDriver(e.getKey());
+            Optional<ActivationDriver> driver = service.getDriverRepo().getDriver(e.getKey().getDriverId());
             if (!driver.isPresent()) {
-                throw new IllegalStateException(MessageFormat.format("driver {} cannot be created", e.getKey()));
+                throw new IllegalStateException(MessageFormat.format("driver {} cannot be created", e.getKey().getDriverId()));
             }
             driver.get().initialize(e.getValue(), serviceId.getValue(), null);
             log.debug("driver {} added to deactivation transaction", driver.get());
@@ -138,7 +140,7 @@ public class DeleteConnectivityAction implements Callable<RpcResult<DeleteConnec
         return tx;
     }
 
-    private Map<UniversalId, LinkedList<EndPoint>> prepareData(ConnectivityService cs, NrpDao nrpDao) {
+    private Map<Node, LinkedList<EndPoint>> prepareData(ConnectivityService cs, NrpDao nrpDao) {
 
         assert cs.getConnection() != null && cs.getConnection().size() == 1;
 
@@ -158,28 +160,35 @@ public class DeleteConnectivityAction implements Callable<RpcResult<DeleteConnec
                     UniversalId nodeId = c.getNode();
                     return c.getConnectionEndPoint().stream().map(cep -> {
                         EndPoint ep = new EndPoint(null, null).setSystemNepUuid(cep.getServerNodeEdgePoint());
-                        return new Pair(nodeId, ep);
+                        Node node = null;
+                        try {
+							node = nrpDao.getNode(nodeId.getValue());
+						} catch (ReadFailedException e) {
+							log.error(e.getMessage() ,e);
+							return new Pair(null, ep);
+						}
+						return new Pair(node, ep);
                     });
-                }).collect(Collectors.toMap(p -> p.getNodeId(), p -> new LinkedList<>(Arrays.asList(p.getEndPoint())), (ol, nl) -> {
+                }).collect(Collectors.toMap(p -> p.getNode(), p -> new LinkedList<>(Arrays.asList(p.getEndPoint())), (ol, nl) -> {
                     ol.addAll(nl);
                     return ol;
                 }));
     }
 
     private static  class Pair {
-        private final UniversalId nodeId;
+        private final Node node;
         private final EndPoint endPoint;
 
-        private Pair(UniversalId nodeId, EndPoint endPoint) {
-            this.nodeId = nodeId;
+        private Pair(Node node, EndPoint endPoint) {
+            this.node = node;
             this.endPoint = endPoint;
         }
 
-        public UniversalId getNodeId() {
-            return nodeId;
+        public Node getNode() {
+            return node;
         }
 
-        public EndPoint getEndPoint() {
+		public EndPoint getEndPoint() {
             return endPoint;
         }
     }
